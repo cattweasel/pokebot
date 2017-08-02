@@ -1,0 +1,2 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TaskDefinition name="Perform Maintenance Task" executor="net.cattweasel.pokebot.task.PerformMaintenanceTask" resultAction="Delete" />

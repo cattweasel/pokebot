@@ -1,0 +1,5 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TaskSchedule name="Perform Maintenance Task">
+    <CronExpression>0 0/5 * 1/1 * ? *</CronExpression>
+    <TaskDefinition>Perform Maintenance Task</TaskDefinition>
+</TaskSchedule>

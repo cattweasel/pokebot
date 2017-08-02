@@ -2,7 +2,19 @@
 <ImportContainer>
 	<ImportActions>
 		
-		<!-- TODO -->
+		<!-- DEFAULT CAPABILITIES -->
+		<ImportAction location="Capability/Capability - SystemAdministrator.xml" />
+		
+		<!-- DEFAULT SERVICE DEFINITIONS -->
+		<ImportAction location="ServiceDefinition/ServiceDefinition - Task.xml" />
+		
+		<!-- DEFAULT TASK DEFINITIONS -->
+		<ImportAction location="TaskDefinition/TaskDefinition - Gomap Refresh Task.xml" />
+		<ImportAction location="TaskDefinition/TaskDefinition - Perform Maintenance Task.xml" />
+		
+		<!-- DEFAULT TASK SCHEDULES -->
+		<ImportAction location="TaskSchedule/TaskSchedule - Gomap Refresh Task.xml" />
+		<ImportAction location="TaskSchedule/TaskSchedule - Perform Maintenance Task.xml" />
 
 	</ImportActions>
 </ImportContainer>
