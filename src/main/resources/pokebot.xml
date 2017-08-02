@@ -1,0 +1,156 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE beans PUBLIC "-//SPRING//DTD BEAN//EN" "http://www.springframework.org/dtd/spring-beans.dtd">
+
+<beans default-autowire="byName" default-lazy-init="false">
+	
+	<!--
+    ===========================================================
+    DataSource Configuration
+    =========================================================== 
+    -->
+    
+    <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
+		<property name="url" value="jdbc:mysql://localhost:3306/pokebot" />
+		<property name="username" value="pokebot" />
+		<property name="password" value="pokebot" />
+	</bean>
+	
+    <bean id="sessionFactory" class="net.cattweasel.pokebot.persistence.ExtendedAnnotationFactoryBean">
+        <property name="dataSource">
+            <ref bean="dataSource"/>
+        </property>
+        <property name="basePackages">
+      		<list>
+        			<value>net.cattweasel.pokebot.object</value>
+      		</list>
+    	</property>
+		<property name="hibernateProperties">
+          	<props>
+          		<!--<prop key="hibernate.cache.use.query_cache">false</prop>-->
+          		<!--<prop key="hibernate.cache.use_second_level_cache">false</prop>-->
+            		<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+            		<prop key="hibernate.hbm2ddl.auto">create</prop>
+            		<prop key="hibernate.bytecode.provider">cglib</prop>
+            		<!--<prop key="hibernate.connection.isolation">2</prop>-->
+          	</props>
+        </property>
+        <property name="entityInterceptor">
+			<bean class="net.cattweasel.pokebot.persistence.ExtendedEntityInterceptor"/>
+		</property>
+    </bean>
+    
+    <!--
+    ===========================================================
+    Quartz Configuration
+    =========================================================== 
+    -->
+
+    <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
+        <property name="quartzProperties">
+          <props>
+            <prop key="org.quartz.threadPool.class">org.quartz.simpl.SimpleThreadPool</prop>
+            <prop key="org.quartz.threadPool.threadCount">5</prop>
+            <prop key="org.quartz.threadPool.threadPriority">5</prop>
+			<prop key="org.quartz.jobStore.class">org.quartz.impl.jdbcjobstore.JobStoreTX</prop>
+			<prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
+			<prop key="org.quartz.jobStore.tablePrefix">QRTZ_</prop>
+			<prop key="org.quartz.jobStore.useProperties">true</prop> 
+          </props>
+        </property>
+        <property name='dataSource' ref='dataSource'/>
+        <property name='autoStartup' value='false' />
+	</bean>
+	
+    <bean id="schedulerJobFactory" class="net.cattweasel.pokebot.scheduler.PokeJobFactory">
+      	<property name='scheduler' ref='scheduler'/>
+    </bean>
+
+    <bean id='quartzStarter' class='net.cattweasel.pokebot.scheduler.QuartzSchedulerStarter' destroy-method='shutdownAndWaitForThread'>
+      	<constructor-arg><ref bean='scheduler'/></constructor-arg>
+    </bean>
+    
+    <!-- 
+    ===========================================================
+    PersistenceManager
+    ============================================================
+    -->
+	
+	<bean id="hibernatePersistenceManager" class="net.cattweasel.pokebot.persistence.HibernatePersistenceManager"/>
+	
+	<bean id='quartzPersistenceManager' class='net.cattweasel.pokebot.scheduler.QuartzPersistenceManager'>
+      	<property name='scheduler' ref='scheduler'/>
+    </bean>
+	
+    <bean id="persistenceManager" class='net.cattweasel.pokebot.persistence.ClassPersistenceManager'>
+        <property name='defaultManager'>
+            <ref bean="hibernatePersistenceManager"/>
+        </property>
+        <property name='managers'>
+            <map>
+                <entry key='TaskSchedule'>
+                  <ref bean='quartzPersistenceManager'/>
+                </entry>
+            </map>
+        </property>
+    </bean>
+    
+    <!--
+    ===========================================================
+    RuleRunner
+    ============================================================
+    -->
+
+    <bean id='bsfManagerFactory' class='net.cattweasel.pokebot.server.BSFManagerFactory'>
+        <property name='maxManagerReuse' value='1000'/>
+    </bean>
+
+    <bean id='bsfManagerPool' class="org.apache.commons.pool.impl.GenericKeyedObjectPool">
+        <property name='factory' ref='bsfManagerFactory'/>
+        <property name='testOnBorrow' value='true'/>
+    </bean>
+
+    <bean id="ruleRunner" class="net.cattweasel.pokebot.server.BSFRuleRunner">
+        <property name='BSFManagerPool' ref='bsfManagerPool'/>
+    </bean>
+    
+    <!--
+    ===========================================================
+    Environment
+    ============================================================
+    -->
+    
+    <bean id='environment' class='net.cattweasel.pokebot.server.Environment'>
+        <property name='dataSource' ref='dataSource' />
+        <property name='sessionFactory' ref='sessionFactory' />
+        <property name='persistenceManager' ref='persistenceManager' />
+        <property name='taskScheduler' ref='quartzStarter' />
+        <property name='ruleRunner' ref='ruleRunner' />
+    </bean>
+    
+    <!--
+    ===========================================================
+    PokeContext, PokeFactory
+    ============================================================
+    -->
+    
+    <bean id='internalContext' class='net.cattweasel.pokebot.server.InternalContext'>
+        <property name='environment' ref='environment'/>
+    </bean>
+
+    <bean id='pokebotFactory' class='net.cattweasel.pokebot.api.PokeFactory' factory-method='getFactory'>
+       <property name='contextPrototype' ref='internalContext'/>
+    </bean>
+    
+    <!--
+    ===========================================================
+    SystemStarter
+    ===========================================================
+    -->
+    
+    <bean id='systemStarter' class='net.cattweasel.pokebot.server.SystemStarter'
+       		depends-on='pokebotFactory' init-method='springInit' destroy-method='springDestroy'>
+      	<property name='environment' ref='environment'/>
+    </bean>
+	
+</beans> 
