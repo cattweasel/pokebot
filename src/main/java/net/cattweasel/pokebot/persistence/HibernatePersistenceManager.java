@@ -29,7 +29,9 @@ import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.PokeObject;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.Util;
 
+@SuppressWarnings("deprecation")
 public class HibernatePersistenceManager implements PersistenceManager, Cloneable {
 
 	private SessionFactory factory;
@@ -256,27 +258,55 @@ public class HibernatePersistenceManager implements PersistenceManager, Cloneabl
 
 	@Override
 	public <T extends PokeObject> Iterator<String> search(Class<T> clazz) throws GeneralException {
-		return search(clazz, null, null);
+		return search(clazz, new QueryOptions());
 	}
 
 	@Override
 	public <T extends PokeObject> Iterator<String> search(Class<T> clazz, QueryOptions options) throws GeneralException {
-		return search(clazz, options, null);
+		return search(clazz, options, "id");
 	}
 
 	@Override
+	@SuppressWarnings("unchecked")
 	public <T extends PokeObject> Iterator<String> search(Class<T> clazz, QueryOptions options, String property)
 			throws GeneralException {
-		
-		throw new UnsupportedOperationException("not yet implemented"); // TODO
-		
+		List<String> objects = new ArrayList<String>();
+		try {
+			startTransaction();
+			Session session = getSession();
+			Criteria criteria = session.createCriteria(clazz);
+			if (options != null) {
+				mergeCriteriaWithQueryOptions(criteria, options);
+			}
+			if (Util.isNotNullOrEmpty(property)) {
+				criteria.setProjection(Projections.property(property));
+			} else {
+				criteria.setProjection(Projections.property("id"));
+			}
+			List<String> list = criteria.list();
+			if (list != null) {
+				objects = list;
+			}
+		} catch (HibernateException ex) {
+			throw new GeneralException(ex);
+		}
+		return objects.iterator();
 	}
 
 	@Override
 	public <T extends PokeObject> T getUniqueObject(Class<T> clazz, Filter filter) throws GeneralException {
-		
-		throw new UnsupportedOperationException("not yet implemented"); // TODO
-		
+		T result = null;
+		QueryOptions qo = new QueryOptions();
+		qo.addFilter(filter);
+		Iterator<String> it = search(clazz, qo);
+		if (it != null && it.hasNext()) {
+			String id = it.next();
+			if (it.hasNext()) {
+				throw new GeneralException("Expected one result!");
+			}
+			result = getObjectById(clazz, id);
+		}
+		return result;
 	}
 	
 	@Override
@@ -340,7 +370,6 @@ public class HibernatePersistenceManager implements PersistenceManager, Cloneabl
 		}
 	}
 	
-	@SuppressWarnings("deprecation")
 	private static Criterion createCriterion(Filter filter) {
 		Criterion result = null;
 		switch (filter.getMode()) {

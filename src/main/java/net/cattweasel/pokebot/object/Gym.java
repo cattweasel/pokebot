@@ -13,6 +13,7 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import net.cattweasel.pokebot.tools.xml.DateAdapter;
 import net.cattweasel.pokebot.tools.xml.WrappedReferenceAdapter;
 
 @Entity
@@ -109,6 +110,7 @@ public class Gym extends PokeObject {
 
 	@Column(unique = false, nullable = true)
 	@XmlAttribute
+	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getRaidStart() {
 		return raidStart;
 	}
@@ -119,6 +121,7 @@ public class Gym extends PokeObject {
 
 	@Column(unique = false, nullable = true)
 	@XmlAttribute
+	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getRaidEnd() {
 		return raidEnd;
 	}

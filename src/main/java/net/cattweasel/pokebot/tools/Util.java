@@ -63,6 +63,18 @@ public class Util {
 		}
 		return path;
 	}
+	
+	public static double atod(String a) {
+		double d = 0.0d;
+		if (a != null) {
+			try {
+				d = Double.parseDouble(a);
+			} catch (NumberFormatException e) {
+				log.error(e);
+			}
+		}
+		return d;
+	}
 
 	public static float atof(String a) {
 		float f = 0.0F;
