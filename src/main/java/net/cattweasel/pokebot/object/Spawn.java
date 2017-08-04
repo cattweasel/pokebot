@@ -4,15 +4,21 @@ import java.util.Date;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Column;
+import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
 import net.cattweasel.pokebot.tools.xml.DateAdapter;
 import net.cattweasel.pokebot.tools.xml.WrappedReferenceAdapter;
 
+@Entity
+@Table(name = "db_spawn")
+@XmlRootElement(name = "Spawn")
 public class Spawn extends PokeObject {
 	
 	private static final long serialVersionUID = 394496324808164843L;
