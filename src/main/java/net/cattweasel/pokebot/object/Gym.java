@@ -2,11 +2,18 @@ package net.cattweasel.pokebot.object;
 
 import java.util.Date;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.cattweasel.pokebot.tools.xml.WrappedReferenceAdapter;
 
 @Entity
 @Table(name = "db_gym")
@@ -16,16 +23,16 @@ public class Gym extends PokeObject {
 	private static final long serialVersionUID = 7281718792637457962L;
 	
 	private Long eid;
-	private Integer teamId;
+	private Team team;
 	private Double latitude;
 	private Double longitude;
 	private Integer score;
 	private Boolean inBatte;
-	private Long timeOccupied;
+	private Long timeOcuppied;
 	private Date raidStart;
 	private Date raidEnd;
 	private Integer raidLevel;
-	private Integer raidPokemonId;
+	private Pokemon raidPokemon;
 	private Integer raidCp;
 	
 	@Column(unique = false, nullable = false)
@@ -38,14 +45,16 @@ public class Gym extends PokeObject {
 		this.eid = eid;
 	}
 
-	@Column(unique = false, nullable = true)
-	@XmlAttribute
-	public Integer getTeamId() {
-		return teamId;
+	@ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "team", unique = false, nullable = false)
+	@XmlElement(name = "Team")
+	@XmlJavaTypeAdapter(WrappedReferenceAdapter.class)
+	public Team getTeam() {
+		return team;
 	}
 
-	public void setTeamId(Integer teamId) {
-		this.teamId = teamId;
+	public void setTeam(Team team) {
+		this.team = team;
 	}
 
 	@Column(unique = false, nullable = false)
@@ -90,12 +99,12 @@ public class Gym extends PokeObject {
 
 	@Column(unique = false, nullable = true)
 	@XmlAttribute
-	public Long getTimeOccupied() {
-		return timeOccupied;
+	public Long getTimeOcuppied() {
+		return timeOcuppied;
 	}
 
-	public void setTimeOccupied(Long timeOccupied) {
-		this.timeOccupied = timeOccupied;
+	public void setTimeOcuppied(Long timeOcuppied) {
+		this.timeOcuppied = timeOcuppied;
 	}
 
 	@Column(unique = false, nullable = true)
@@ -128,14 +137,15 @@ public class Gym extends PokeObject {
 		this.raidLevel = raidLevel;
 	}
 
-	@Column(unique = false, nullable = true)
-	@XmlAttribute
-	public Integer getRaidPokemonId() {
-		return raidPokemonId;
+	@ManyToOne(cascade = CascadeType.MERGE)
+    @JoinColumn(name = "raid_pokemon", unique = false, nullable = false)
+	@XmlElement(name = "RaidPokemon")
+	public Pokemon getRaidPokemon() {
+		return raidPokemon;
 	}
 
-	public void setRaidPokemonId(Integer raidPokemonId) {
-		this.raidPokemonId = raidPokemonId;
+	public void setRaidPokemon(Pokemon raidPokemon) {
+		this.raidPokemon = raidPokemon;
 	}
 
 	@Column(unique = false, nullable = true)

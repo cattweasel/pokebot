@@ -2,6 +2,7 @@ package net.cattweasel.pokebot.object;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
@@ -101,6 +102,7 @@ public class TaskDefinition extends PokeObject {
 	 * 
 	 * @return The attributes of this task definition
 	 */
+	@Lob
 	@Column(unique = false, nullable = true)
 	@XmlElement(name = "Attributes")
 	public Attributes<String, Object> getAttributes() {

@@ -386,7 +386,7 @@ public class Servicer extends Thread {
 				LOG.info("No modification date for: " + src.getClass().getSimpleName() + ":" + src.getName());
 			}
 		} catch (Throwable t) {
-			LOG.error("Exception tring to get modification date for: " + src.getClass().getSimpleName() + ":"
+			LOG.error("Exception trying to get modification date for: " + src.getClass().getSimpleName() + ":"
 					+ src.getName());
 			LOG.error(t);
 			LOG.error(Util.stackToString(t));

@@ -9,6 +9,7 @@ import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
 import org.telegram.telegrambots.TelegramBotsApi;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
+import org.telegram.telegrambots.generics.BotSession;
 
 import net.cattweasel.pokebot.api.PersistenceManager;
 import net.cattweasel.pokebot.api.PokeContext;
@@ -28,6 +29,7 @@ public class Environment {
 	private QuartzSchedulerStarter _taskScheduler;
 	private Servicer _servicer;
 	private TelegramBot _bot;
+	private BotSession _botSession;
 	
 	private static final Logger LOG = Logger.getLogger(Environment.class);
 	
@@ -109,7 +111,7 @@ public class Environment {
 		try {
 			this._servicer.start(con);
 			TelegramBotsApi api = new TelegramBotsApi();
-			api.registerBot(_bot);
+			this._botSession = api.registerBot(_bot);
 		} catch (TelegramApiException ex) {
 			throw new GeneralException(ex);
 		} finally {
@@ -120,6 +122,7 @@ public class Environment {
 	}
 
 	public void stop() {
+		this._botSession.stop();
 		this._servicer.terminate();
 		long start = System.currentTimeMillis();
 		try {
