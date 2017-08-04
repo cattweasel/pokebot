@@ -93,9 +93,74 @@
     			<artifactId>quartz</artifactId>
     			<version>${quartz.version}</version>
 		</dependency>
+		<dependency>
+        		<groupId>org.telegram</groupId>
+        		<artifactId>telegrambots</artifactId>
+        		<version>3.2</version>
+    		</dependency>
+    		<dependency>
+    			<groupId>org.aspectj</groupId>
+    			<artifactId>aspectjrt</artifactId>
+    			<version>1.8.9</version>
+		</dependency>
+		<dependency>
+    <groupId>org.slf4j</groupId>
+    <artifactId>slf4j-log4j12</artifactId>
+    <version>1.7.25</version>
+</dependency>
 	</dependencies>
 	<build>
+		<resources>
+      		<resource>
+        			<directory>src/main/resources</directory>
+        			<filtering>true</filtering>
+      		</resource>
+    		</resources>
 		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+    				<artifactId>maven-enforcer-plugin</artifactId>
+    				<version>1.4.1</version>
+    				<executions>
+    					<execution>
+    						<goals>
+    							<goal>enforce</goal>
+    						</goals>
+    						<configuration>
+    							<rules>
+    								<requireProperty>
+                  					<property>db.hostname</property>
+                  					<message>You must set a db.hostname property!</message>
+                					</requireProperty>
+                					<requireProperty>
+                  					<property>db.port</property>
+                  					<message>You must set a db.port property!</message>
+                					</requireProperty>
+    								<requireProperty>
+                  					<property>db.username</property>
+                  					<message>You must set a db.username property!</message>
+                					</requireProperty>
+                					<requireProperty>
+                  					<property>db.password</property>
+                  					<message>You must set a db.password property!</message>
+                					</requireProperty>
+                					<requireProperty>
+                  					<property>db.database</property>
+                  					<message>You must set a db.database property!</message>
+                					</requireProperty>
+                					<requireProperty>
+                  					<property>bot.username</property>
+                  					<message>You must set a bot.username property!</message>
+                					</requireProperty>
+                					<requireProperty>
+                  					<property>bot.token</property>
+                  					<message>You must set a bot.token property!</message>
+                					</requireProperty>
+    							</rules>
+    						</configuration>
+    					</execution>
+    				</executions>
+			</plugin>
 			<plugin>
 				<groupId>org.apache.maven.plugins</groupId>
 				<artifactId>maven-compiler-plugin</artifactId>
@@ -105,6 +170,32 @@
 					<target>${java.version}</target>
 				</configuration>
 			</plugin>
+			<plugin>
+				<groupId>org.codehaus.mojo</groupId>
+				<artifactId>aspectj-maven-plugin</artifactId>
+				<version>1.10</version>
+				<configuration>
+					<complianceLevel>${java.version}</complianceLevel>
+					<source>${java.version}</source>
+					<target>${java.version}</target>
+				</configuration>
+				<executions>
+					<execution>
+						<phase>prepare-package</phase>
+						<goals>
+							<goal>compile</goal>
+						</goals>
+					</execution>
+				</executions>
+			</plugin>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+        			<artifactId>maven-war-plugin</artifactId>
+        			<version>3.1.0</version>
+        			<configuration>
+          			<archiveClasses>true</archiveClasses>
+        			</configuration>
+      		</plugin>
 		</plugins>
 	</build>
 </project>

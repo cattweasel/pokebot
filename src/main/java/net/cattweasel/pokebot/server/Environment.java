@@ -7,12 +7,15 @@ import javax.sql.DataSource;
 import org.apache.commons.dbcp.BasicDataSource;
 import org.apache.log4j.Logger;
 import org.hibernate.SessionFactory;
+import org.telegram.telegrambots.TelegramBotsApi;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PersistenceManager;
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.api.RuleRunner;
 import net.cattweasel.pokebot.scheduler.QuartzSchedulerStarter;
+import net.cattweasel.pokebot.telegram.TelegramBot;
 import net.cattweasel.pokebot.tools.GeneralException;
 
 public class Environment {
@@ -24,9 +27,10 @@ public class Environment {
 	private RuleRunner _ruleRunner;
 	private QuartzSchedulerStarter _taskScheduler;
 	private Servicer _servicer;
+	private TelegramBot _bot;
 	
 	private static final Logger LOG = Logger.getLogger(Environment.class);
-
+	
 	public static Environment getEnvironment() {
 		return _singleton;
 	}
@@ -42,6 +46,14 @@ public class Environment {
 
 	public DataSource getSpringDataSource() {
 		return this._dataSource;
+	}
+	
+	public void setTelegramBot(TelegramBot bot) {
+		this._bot = bot;
+	}
+	
+	public TelegramBot getTelegramBot() {
+		return this._bot;
 	}
 
 	public int getActiveConnections() {
@@ -96,6 +108,10 @@ public class Environment {
 		PokeContext con = PokeFactory.createContext("System");
 		try {
 			this._servicer.start(con);
+			TelegramBotsApi api = new TelegramBotsApi();
+			api.registerBot(_bot);
+		} catch (TelegramApiException ex) {
+			throw new GeneralException(ex);
 		} finally {
 			if (con != null) {
 				PokeFactory.releaseContext(con);

@@ -11,9 +11,9 @@
     
     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
 		<property name="driverClassName" value="com.mysql.jdbc.Driver" />
-		<property name="url" value="jdbc:mysql://localhost:3306/pokebot" />
-		<property name="username" value="pokebot" />
-		<property name="password" value="pokebot" />
+		<property name="url" value="jdbc:mysql://${db.hostname}:${db.port}/${db.database}" />
+		<property name="username" value="${db.username}" />
+		<property name="password" value="${db.password}" />
 	</bean>
 	
     <bean id="sessionFactory" class="net.cattweasel.pokebot.persistence.ExtendedAnnotationFactoryBean">
@@ -24,15 +24,12 @@
       		<list>
         			<value>net.cattweasel.pokebot.object</value>
       		</list>
-    	</property>
+    		</property>
 		<property name="hibernateProperties">
           	<props>
-          		<!--<prop key="hibernate.cache.use.query_cache">false</prop>-->
-          		<!--<prop key="hibernate.cache.use_second_level_cache">false</prop>-->
-            		<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
+          		<prop key="hibernate.dialect">org.hibernate.dialect.MySQLDialect</prop>
             		<prop key="hibernate.hbm2ddl.auto">create</prop>
             		<prop key="hibernate.bytecode.provider">cglib</prop>
-            		<!--<prop key="hibernate.connection.isolation">2</prop>-->
           	</props>
         </property>
         <property name="entityInterceptor">
@@ -116,6 +113,21 @@
     
     <!--
     ===========================================================
+    Telegram Integration
+    ============================================================
+    -->
+    
+    <bean id="telegramFactory" class="org.springframework.beans.factory.config.MethodInvokingBean">
+    		<property name="staticMethod" value="org.telegram.telegrambots.ApiContextInitializer.init"/>
+    </bean>
+    
+    <bean id="telegramBot" class="net.cattweasel.pokebot.telegram.TelegramBot" depends-on="telegramFactory">
+    		<property name='botUsername' value='${bot.username}' />
+    		<property name='botToken' value='${bot.token}' />
+    </bean>
+    
+    <!--
+    ===========================================================
     Environment
     ============================================================
     -->
@@ -126,6 +138,7 @@
         <property name='persistenceManager' ref='persistenceManager' />
         <property name='taskScheduler' ref='quartzStarter' />
         <property name='ruleRunner' ref='ruleRunner' />
+        <property name='telegramBot' ref='telegramBot' />
     </bean>
     
     <!--
