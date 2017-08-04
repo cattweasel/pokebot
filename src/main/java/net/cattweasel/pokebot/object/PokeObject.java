@@ -59,7 +59,7 @@ public class PokeObject extends AbstractXmlObject implements Serializable {
 	 * 
 	 * @return The internal name of this object
 	 */
-	@Column(unique = true, nullable = false, length = 64)
+	@Column(unique = true, nullable = false, length = 128)
 	@XmlAttribute
 	public String getName() {
 		return name;

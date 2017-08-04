@@ -23,7 +23,7 @@ public class Gym extends PokeObject {
 	
 	private static final long serialVersionUID = 7281718792637457962L;
 	
-	private Long eid;
+	private String displayName;
 	private Team team;
 	private Double latitude;
 	private Double longitude;
@@ -38,16 +38,16 @@ public class Gym extends PokeObject {
 	
 	@Column(unique = false, nullable = false)
 	@XmlAttribute
-	public Long getEid() {
-		return eid;
+	public String getDisplayName() {
+		return displayName;
 	}
 	
-	public void setEid(Long eid) {
-		this.eid = eid;
+	public void setDisplayName(String displayName) {
+		this.displayName = displayName;
 	}
 
 	@ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "team", unique = false, nullable = false)
+    @JoinColumn(name = "team", unique = false, nullable = true)
 	@XmlElement(name = "Team")
 	@XmlJavaTypeAdapter(WrappedReferenceAdapter.class)
 	public Team getTeam() {
@@ -141,8 +141,9 @@ public class Gym extends PokeObject {
 	}
 
 	@ManyToOne(cascade = CascadeType.MERGE)
-    @JoinColumn(name = "raid_pokemon", unique = false, nullable = false)
+    @JoinColumn(name = "raid_pokemon", unique = false, nullable = true)
 	@XmlElement(name = "RaidPokemon")
+	@XmlJavaTypeAdapter(WrappedReferenceAdapter.class)
 	public Pokemon getRaidPokemon() {
 		return raidPokemon;
 	}
