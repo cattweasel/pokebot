@@ -1,20 +1,21 @@
 package net.cattweasel.pokebot.telegram;
 
 import org.telegram.telegrambots.api.objects.Update;
-import org.telegram.telegrambots.bots.TelegramLongPollingBot;
+import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
 
-public class TelegramBot extends TelegramLongPollingBot {
+import net.cattweasel.pokebot.telegram.command.MenuCommand;
+import net.cattweasel.pokebot.telegram.command.StartCommand;
+import net.cattweasel.pokebot.telegram.command.StopCommand;
 
-	private String botUsername;
+public class TelegramBot extends TelegramLongPollingCommandBot {
+
 	private String botToken;
 	
-	@Override
-	public String getBotUsername() {
-		return botUsername;
-	}
-	
-	public void setBotUsername(String botUsername) {
-		this.botUsername = botUsername;
+	public TelegramBot(String botUsername) {
+		super(botUsername);
+		register(new StartCommand());
+		register(new MenuCommand());
+		register(new StopCommand());
 	}
 	
 	@Override
@@ -27,9 +28,9 @@ public class TelegramBot extends TelegramLongPollingBot {
 	}
 
 	@Override
-	public void onUpdateReceived(Update update) {
+	public void processNonCommandUpdate(Update update) {
 		
-		System.out.println("** debug: update: " + update); // TODO
+		System.out.println("\n** debug: non-command update: " + update); // TODO
 		
 	}
 }

@@ -182,20 +182,9 @@ public class GomapRefreshTask implements TaskExecutor {
 	}
 	
 	private void saveSpawn(PokeContext context, Spawn spawn) throws GeneralException {
-		Spawn existing = context.getUniqueObject(Spawn.class, Filter.eq("eid", spawn.getEid()));
-		if (existing != null) {
-			spawn = mergeSpawn(existing, spawn);
+		if (spawn.getDisappearTime().getTime() > new Date().getTime()
+				&& context.getUniqueObject(Spawn.class, Filter.eq("eid", spawn.getEid())) == null) {
+			context.saveObject(spawn);
 		}
-		context.saveObject(spawn);
-	}
-	
-	private Spawn mergeSpawn(Spawn existing, Spawn current) {
-		Spawn result = existing;
-		result.setDisappearTime(current.getDisappearTime());
-		result.setLatitude(current.getLatitude());
-		result.setLongitude(current.getLongitude());
-		result.setPokemon(current.getPokemon());
-		result.setName(current.getName());
-		return result;
 	}
 }

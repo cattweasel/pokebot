@@ -122,7 +122,7 @@
     </bean>
     
     <bean id="telegramBot" class="net.cattweasel.pokebot.telegram.TelegramBot" depends-on="telegramFactory">
-    		<property name='botUsername' value='${bot.username}' />
+    		<constructor-arg value='${bot.username}' />
     		<property name='botToken' value='${bot.token}' />
     </bean>
     
