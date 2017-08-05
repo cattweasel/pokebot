@@ -107,10 +107,9 @@ public class GomapRefreshTask implements TaskExecutor {
 	private void processSpawn(PokeContext context, JSONObject spawn) throws GeneralException {
 		Spawn result = new Spawn();
 		result.setDisappearTime(new Date(Util.atol(Util.otos(spawn.get(ARG_DISAPPEAR_TIME))) * 1000L));
-		result.setEid(Util.otoi(spawn.get(ARG_EID)));
+		result.setName(Util.otos(spawn.get(ARG_EID)));
 		result.setLatitude(Util.atod(Util.otos(spawn.get(ARG_LATITUDE))));
 		result.setLongitude(Util.atod(Util.otos(spawn.get(ARG_LONGITUDE))));
-		result.setName(String.format("%s:%s:%s", result.getEid(), result.getLatitude(), result.getLongitude()));
 		result.setPokemon(resolvePokemon(context, Util.otoi(spawn.get(ARG_POKEMON_ID))));
 		saveSpawn(context, result);
 	}
@@ -183,7 +182,7 @@ public class GomapRefreshTask implements TaskExecutor {
 	
 	private void saveSpawn(PokeContext context, Spawn spawn) throws GeneralException {
 		if (spawn.getDisappearTime().getTime() > new Date().getTime()
-				&& context.getUniqueObject(Spawn.class, Filter.eq("eid", spawn.getEid())) == null) {
+				&& context.getObjectByName(Spawn.class, spawn.getName()) == null) {
 			context.saveObject(spawn);
 		}
 	}

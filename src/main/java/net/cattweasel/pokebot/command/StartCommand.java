@@ -10,6 +10,7 @@ import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.Util;
 
 public class StartCommand extends BotCommand {
 
@@ -31,7 +32,7 @@ public class StartCommand extends BotCommand {
 				session = new BotSession();
 				session.setName(name);
 				session.setChatId(chat.getId());
-				session.setUserId(user.getId());
+				session.setUser(resolveUser(context, user));
 				LOG.debug("Creating new BotSession: " + session);
 			} else {
 				LOG.debug("Re-allocating BotSession: " + session);
@@ -49,5 +50,25 @@ public class StartCommand extends BotCommand {
 				}
 			}
 		}
+	}
+	
+	private net.cattweasel.pokebot.object.User resolveUser(PokeContext context, User user) {
+		net.cattweasel.pokebot.object.User result = null;
+		try {
+			result = context.getObjectByName(net.cattweasel.pokebot.object.User.class, Util.otos(user.getId()));
+			if (result == null) {
+				result = new net.cattweasel.pokebot.object.User();
+				result.setFirstname(user.getFirstName());
+				result.setLanguageCode(user.getLanguageCode());
+				result.setLastname(user.getLastName());
+				result.setName(Util.otos(user.getId()));
+				result.setUsername(user.getUserName());
+				context.saveObject(result);
+				context.commitTransaction();
+			}
+		} catch (GeneralException ex) {
+			LOG.error("Error resolving User: " + ex.getMessage(), ex);
+		}
+		return result;
 	}
 }

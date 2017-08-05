@@ -8,7 +8,6 @@ import javax.persistence.Entity;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
@@ -18,7 +17,7 @@ import net.cattweasel.pokebot.tools.xml.DateAdapter;
 import net.cattweasel.pokebot.tools.xml.WrappedReferenceAdapter;
 
 @Entity
-@Table(name = "db_spawn", uniqueConstraints = { @UniqueConstraint(columnNames = "eid") })
+@Table(name = "db_spawn")
 @XmlRootElement(name = "Spawn")
 public class Spawn extends PokeObject {
 	
@@ -26,7 +25,6 @@ public class Spawn extends PokeObject {
 	
 	private Pokemon pokemon;
 	private Date disappearTime;
-	private Integer eid;
 	private Double latitude;
 	private Double longitude;
 	
@@ -51,16 +49,6 @@ public class Spawn extends PokeObject {
 
 	public void setDisappearTime(Date disappearTime) {
 		this.disappearTime = disappearTime;
-	}
-
-	@Column(unique = false, nullable = false)
-	@XmlAttribute
-	public Integer getEid() {
-		return eid;
-	}
-
-	public void setEid(Integer eid) {
-		this.eid = eid;
 	}
 
 	@Column(unique = false, nullable = false)
