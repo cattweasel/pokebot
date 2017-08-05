@@ -7,6 +7,7 @@
 	<packaging>war</packaging>
 	<properties>
 		<java.version>1.8</java.version>
+		<telegram.version>3.2</telegram.version>
 		<spring.version>4.2.6.RELEASE</spring.version>
 		<hibernate.version>5.1.0.Final</hibernate.version>
 		<faces.version>2.2.13</faces.version>
@@ -107,7 +108,12 @@
 		<dependency>
         		<groupId>org.telegram</groupId>
         		<artifactId>telegrambots</artifactId>
-        		<version>3.2</version>
+        		<version>${telegram.version}</version>
+    		</dependency>
+    		<dependency>
+        		<groupId>org.telegram</groupId>
+        		<artifactId>telegrambotsextensions</artifactId>
+        		<version>${telegram.version}</version>
     		</dependency>
     		<dependency>
     			<groupId>org.aspectj</groupId>
