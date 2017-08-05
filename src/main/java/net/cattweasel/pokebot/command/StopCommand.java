@@ -4,14 +4,13 @@ import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.tools.GeneralException;
 
-public class StopCommand extends BotCommand {
+public class StopCommand extends AbstractCommand {
 
 	private static final Logger LOG = Logger.getLogger(StopCommand.class);
 	
@@ -31,6 +30,11 @@ public class StopCommand extends BotCommand {
 				LOG.debug("Destroying BotSession: " + session);
 				context.removeObject(session);
 				context.commitTransaction();
+				sendMessage(sender, chat, String.format("Alles klar, %s, mach's gut, bis demnächst!",
+						getDisplayableName(user)));
+			} else {
+				sendMessage(sender, chat, String.format("Nicht nötig, %s, ich arbeite doch gerade garnicht für dich!",
+						getDisplayableName(user)));
 			}
 		} catch (GeneralException ex) {
 			LOG.error("Error executing StopCommand: " + ex.getMessage(), ex);

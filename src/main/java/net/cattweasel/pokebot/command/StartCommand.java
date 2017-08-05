@@ -4,15 +4,13 @@ import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
-import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.tools.GeneralException;
-import net.cattweasel.pokebot.tools.Util;
 
-public class StartCommand extends BotCommand {
+public class StartCommand extends AbstractCommand {
 
 	private static final Logger LOG = Logger.getLogger(StartCommand.class);
 	
@@ -34,8 +32,12 @@ public class StartCommand extends BotCommand {
 				session.setChatId(chat.getId());
 				session.setUser(resolveUser(context, user));
 				LOG.debug("Creating new BotSession: " + session);
+				sendMessage(sender, chat, String.format("Hey, %s! Schön dich zu sehen!",
+						getDisplayableName(user)));
 			} else {
 				LOG.debug("Re-allocating BotSession: " + session);
+				sendMessage(sender, chat, String.format("Hey, %s! Ich bin noch immer für dich am arbeiten!",
+						getDisplayableName(user)));
 			}
 			context.saveObject(session);
 			context.commitTransaction();
@@ -50,25 +52,5 @@ public class StartCommand extends BotCommand {
 				}
 			}
 		}
-	}
-	
-	private net.cattweasel.pokebot.object.User resolveUser(PokeContext context, User user) {
-		net.cattweasel.pokebot.object.User result = null;
-		try {
-			result = context.getObjectByName(net.cattweasel.pokebot.object.User.class, Util.otos(user.getId()));
-			if (result == null) {
-				result = new net.cattweasel.pokebot.object.User();
-				result.setFirstname(user.getFirstName());
-				result.setLanguageCode(user.getLanguageCode());
-				result.setLastname(user.getLastName());
-				result.setName(Util.otos(user.getId()));
-				result.setUsername(user.getUserName());
-				context.saveObject(result);
-				context.commitTransaction();
-			}
-		} catch (GeneralException ex) {
-			LOG.error("Error resolving User: " + ex.getMessage(), ex);
-		}
-		return result;
 	}
 }

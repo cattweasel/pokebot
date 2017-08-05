@@ -58,4 +58,15 @@ public class BotSession extends PokeObject {
 	public void setAttributes(Attributes<String, Object> attributes) {
 		this.attributes = attributes;
 	}
+	
+	public Object get(String key) {
+		return attributes == null ? null : attributes.get(key);
+	}
+	
+	public void put(String key, Object value) {
+		if (attributes == null) {
+			attributes = new Attributes<String, Object>();
+		}
+		attributes.put(key, value);
+	}
 }

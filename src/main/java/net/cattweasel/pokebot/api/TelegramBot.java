@@ -1,23 +1,28 @@
 package net.cattweasel.pokebot.api;
 
+import org.apache.log4j.Logger;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Location;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
 
-import net.cattweasel.pokebot.command.MenuCommand;
 import net.cattweasel.pokebot.command.StartCommand;
 import net.cattweasel.pokebot.command.StopCommand;
+import net.cattweasel.pokebot.object.BotSession;
+import net.cattweasel.pokebot.tools.GeneralException;
 
 public class TelegramBot extends TelegramLongPollingCommandBot {
 
 	private String botToken;
 	
+	private static final Logger LOG = Logger.getLogger(TelegramBot.class);
+	
 	public TelegramBot(String botUsername) {
 		super(botUsername);
 		register(new StartCommand());
-		register(new MenuCommand());
 		register(new StopCommand());
 	}
 	
@@ -39,13 +44,43 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 	}
 	
 	private void handleLocationUpdate(Chat chat, User user, Location location) {
-		
-		// TODO !!!
-		
-		System.out.println("\n** debug: location update!");
-		System.out.println("** debug: chat: " + chat);
-		System.out.println("** debug: user: " + user);
-		System.out.println("** debug: location: " + location);
-		
+		BotSession session = null;
+		PokeContext context = null;
+		try {
+			context = PokeFactory.createContext(getClass().getSimpleName());
+			session = context.getObjectByName(BotSession.class,
+					String.format("%s:%s", chat.getId(), user.getId()));
+			if (session != null) {
+				LOG.debug("Updating Location: " + user + " -> " + location);
+				session.put("latitude", location.getLatitude());
+				session.put("longitude", location.getLongitude());
+				context.saveObject(session);
+				context.commitTransaction();
+				confirmLocation(chat, user, location);
+			}
+		} catch (GeneralException ex) {
+			LOG.error("Error handling location update: " + ex.getMessage(), ex);
+		} finally {
+			if (context != null) {
+				try {
+					PokeFactory.releaseContext(context);
+				} catch (GeneralException ex) {
+					LOG.error("Error releasing PokeContext: " + ex.getMessage(), ex);
+				}
+			}
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void confirmLocation(Chat chat, User user, Location location) {
+		SendMessage message = new SendMessage();
+		message.setChatId(chat.getId());
+		message.setText(String.format("Alles klar, deine neue Position ist nun: %s / %s",
+				location.getLatitude(), location.getLongitude()));
+		try {
+			sendMessage(message);
+		} catch (TelegramApiException ex) {
+			LOG.error("Error confirming location change: " + ex.getMessage(), ex);
+		}
 	}
 }
