@@ -15,8 +15,8 @@ import net.cattweasel.pokebot.api.PersistenceManager;
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.api.RuleRunner;
+import net.cattweasel.pokebot.api.TelegramBot;
 import net.cattweasel.pokebot.scheduler.QuartzSchedulerStarter;
-import net.cattweasel.pokebot.telegram.TelegramBot;
 import net.cattweasel.pokebot.tools.GeneralException;
 
 public class Environment {

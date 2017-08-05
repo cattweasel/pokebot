@@ -1,4 +1,4 @@
-package net.cattweasel.pokebot.telegram.command;
+package net.cattweasel.pokebot.command;
 
 import java.util.Arrays;
 
@@ -7,10 +7,10 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.AbsSender;
 import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 
-public class StopCommand extends BotCommand {
+public class MenuCommand extends BotCommand {
 
-	public StopCommand() {
-		super("stop", "Deaktiviert Meldungen von deinem Bot");
+	public MenuCommand() {
+		super("menu", "Öffnet dein persönliches Bot-Menü");
 	}
 
 	@Override
@@ -18,7 +18,7 @@ public class StopCommand extends BotCommand {
 		
 		// TODO Auto-generated method stub
 		
-		System.out.println("\n** debug: executing stop command!");
+		System.out.println("\n** debug: executing menu command!");
 		System.out.println("** debug: sender: " + sender);
 		System.out.println("** debug: user: " + user);
 		System.out.println("** debug: chat: " + chat);
