@@ -33,6 +33,8 @@ public class StartCommand extends BotCommand {
 				session.setChatId(chat.getId());
 				session.setUserId(user.getId());
 				LOG.debug("Creating new BotSession: " + session);
+			} else {
+				LOG.debug("Re-allocating BotSession: " + session);
 			}
 			context.saveObject(session);
 			context.commitTransaction();

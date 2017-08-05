@@ -2,8 +2,10 @@ package net.cattweasel.pokebot.object;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
@@ -15,6 +17,7 @@ public class BotSession extends PokeObject {
 	
 	private Long chatId;
 	private Integer userId;
+	private Attributes<String, Object> attributes;
 	
 	@Column(unique = true, nullable = false)
 	@XmlAttribute
@@ -34,5 +37,16 @@ public class BotSession extends PokeObject {
 
 	public void setUserId(Integer userId) {
 		this.userId = userId;
+	}
+
+	@Lob
+	@Column(unique = false, nullable = true)
+	@XmlElement(name = "Attributes")
+	public Attributes<String, Object> getAttributes() {
+		return attributes;
+	}
+
+	public void setAttributes(Attributes<String, Object> attributes) {
+		this.attributes = attributes;
 	}
 }
