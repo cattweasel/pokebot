@@ -16,6 +16,7 @@ import net.cattweasel.pokebot.object.Attributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.Pokemon;
+import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
 import net.cattweasel.pokebot.object.Team;
@@ -46,6 +47,9 @@ public class GomapRefreshTask implements TaskExecutor {
 	private static final String ARG_GYM_POINTS = "gym_points";
 	private static final String ARG_TEAM_ID = "team_id";
 	private static final String ARG_TIME_OCUPPIED = "time_ocuppied";
+	private static final String ARG_DISAPPEAR_TIME = "disappear_time";
+	private static final String ARG_EID = "eid";
+	private static final String ARG_POKEMON_ID = "pokemon_id";
 	
 	private static final Logger LOG = Logger.getLogger(GomapRefreshTask.class);
 	
@@ -87,7 +91,7 @@ public class GomapRefreshTask implements TaskExecutor {
 	}
 	
 	private void processSpawns(PokeContext context, JSONArray spawns) {
-		if (spawns != null && spawns.isEmpty()) {
+		if (spawns != null && !spawns.isEmpty()) {
 			for (int i=0; i<spawns.size(); i++) {
 				if (running) {
 					try {
@@ -101,9 +105,14 @@ public class GomapRefreshTask implements TaskExecutor {
 	}
 	
 	private void processSpawn(PokeContext context, JSONObject spawn) throws GeneralException {
-		
-		//System.out.println("** debug: spawn: " + spawn.toJSONString()); // TODO !!!
-		
+		Spawn result = new Spawn();
+		result.setDisappearTime(new Date(Util.atol(Util.otos(spawn.get(ARG_DISAPPEAR_TIME))) * 1000L));
+		result.setEid(Util.otoi(spawn.get(ARG_EID)));
+		result.setLatitude(Util.atod(Util.otos(spawn.get(ARG_LATITUDE))));
+		result.setLongitude(Util.atod(Util.otos(spawn.get(ARG_LONGITUDE))));
+		result.setName(String.format("%s:%s:%s", result.getEid(), result.getLatitude(), result.getLongitude()));
+		result.setPokemon(resolvePokemon(context, Util.otoi(spawn.get(ARG_POKEMON_ID))));
+		saveSpawn(context, result);
 	}
 	
 	private void processGyms(PokeContext context, JSONArray gyms) {
@@ -151,7 +160,7 @@ public class GomapRefreshTask implements TaskExecutor {
 	}
 	
 	private void saveGym(PokeContext context, Gym gym) throws GeneralException {
-		Gym existing = context.getUniqueObject(Gym.class, Filter.eq("name", gym.getName()));
+		Gym existing = context.getObjectByName(Gym.class, gym.getName());
 		if (existing != null) {
 			gym = mergeGym(existing, gym);
 		}
@@ -169,6 +178,24 @@ public class GomapRefreshTask implements TaskExecutor {
 		result.setScore(current.getScore());
 		result.setTeam(current.getTeam());
 		result.setTimeOcuppied(current.getTimeOcuppied());
+		return result;
+	}
+	
+	private void saveSpawn(PokeContext context, Spawn spawn) throws GeneralException {
+		Spawn existing = context.getUniqueObject(Spawn.class, Filter.eq("eid", spawn.getEid()));
+		if (existing != null) {
+			spawn = mergeSpawn(existing, spawn);
+		}
+		context.saveObject(spawn);
+	}
+	
+	private Spawn mergeSpawn(Spawn existing, Spawn current) {
+		Spawn result = existing;
+		result.setDisappearTime(current.getDisappearTime());
+		result.setLatitude(current.getLatitude());
+		result.setLongitude(current.getLongitude());
+		result.setPokemon(current.getPokemon());
+		result.setName(current.getName());
 		return result;
 	}
 }
