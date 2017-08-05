@@ -26,7 +26,7 @@ public class UserNotificationTask implements TaskExecutor {
 
 	@Override
 	public boolean terminate() {
-		//running = false;
+		//running = false; 
 		return true;
 	}
 }
