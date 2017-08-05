@@ -9,6 +9,7 @@ import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.TaskExecutor;
 import net.cattweasel.pokebot.object.Attributes;
 import net.cattweasel.pokebot.object.Filter;
+import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
@@ -32,6 +33,10 @@ public class PerformMaintenanceTask implements TaskExecutor {
 			Attributes<String, Object> attributes) throws Exception {
 		if (running) {
 			removeOrphanSpawns(context);
+			context.commitTransaction();
+		}
+		if (running) {
+			removeOrphanRaids(context);
 			context.commitTransaction();
 		}
 	}
@@ -58,7 +63,32 @@ public class PerformMaintenanceTask implements TaskExecutor {
 				}
 			}
 		} catch (GeneralException ex) {
-			LOG.error(ex);
+			LOG.error("Error removing orphan spawns: " + ex.getMessage(), ex);
+		}
+	}
+	
+	private void removeOrphanRaids(PokeContext context) {
+		QueryOptions qo = new QueryOptions();
+		qo.addFilter(Filter.and(Filter.notnull("raidEnd"), Filter.lt("raidEnd", new Date())));
+		Iterator<String> it = null;
+		try {
+			it = context.search(Gym.class, qo);
+			if (it != null) {
+				while (running && it.hasNext()) {
+					Gym gym = context.getObjectById(Gym.class, it.next());
+					if (gym != null) {
+						LOG.debug("Removing raid: " + gym);
+						gym.setRaidCp(null);
+						gym.setRaidEnd(null);
+						gym.setRaidLevel(null);
+						gym.setRaidPokemon(null);
+						gym.setRaidStart(null);
+						context.saveObject(gym);
+					}
+				}
+			}
+		} catch (GeneralException ex) {
+			LOG.error("Error removing orphan raids: " + ex.getMessage(), ex);
 		}
 	}
 }
