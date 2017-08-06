@@ -57,6 +57,8 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 				context.saveObject(session);
 				context.commitTransaction();
 				confirmLocation(chat, user, location);
+			} else {
+				informNotWorking(chat, user, location);
 			}
 		} catch (GeneralException ex) {
 			LOG.error("Error handling location update: " + ex.getMessage(), ex);
@@ -81,6 +83,18 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 			sendMessage(message);
 		} catch (TelegramApiException ex) {
 			LOG.error("Error confirming location change: " + ex.getMessage(), ex);
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void informNotWorking(Chat chat, User user, Location location) {
+		SendMessage message = new SendMessage();
+		message.setChatId(chat.getId());
+		message.setText("Ich bin gerade nicht am arbeiten. Du musst mich zuerst aktivieren!");
+		try {
+			sendMessage(message);
+		} catch (TelegramApiException ex) {
+			LOG.error("Error informing not working: " + ex.getMessage(), ex);
 		}
 	}
 }

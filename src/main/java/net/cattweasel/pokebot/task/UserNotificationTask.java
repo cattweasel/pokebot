@@ -1,13 +1,29 @@
 package net.cattweasel.pokebot.task;
 
+import java.text.SimpleDateFormat;
 import java.util.Iterator;
+
+import org.apache.log4j.Logger;
+import org.telegram.telegrambots.api.methods.send.SendLocation;
+import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.TaskExecutor;
+import net.cattweasel.pokebot.api.TelegramBot;
 import net.cattweasel.pokebot.object.Attributes;
 import net.cattweasel.pokebot.object.BotSession;
+import net.cattweasel.pokebot.object.Filter;
+import net.cattweasel.pokebot.object.Gym;
+import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
+import net.cattweasel.pokebot.object.UserNotification;
+import net.cattweasel.pokebot.server.Environment;
+import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.GeoLocation;
+import net.cattweasel.pokebot.tools.GeoLocation.BoundingCoordinates;
+import net.cattweasel.pokebot.tools.Util;
 
 /**
  * This task is used to send out notifications to users.
@@ -17,7 +33,13 @@ import net.cattweasel.pokebot.object.TaskSchedule;
  */
 public class UserNotificationTask implements TaskExecutor {
 	
+	private static final String ARG_LATITUDE = "latitude";
+	private static final String ARG_LONGITUDE = "longitude";
+	private static final String ARG_RAID_LEVEL = "raidLevel";
+	
 	private boolean running = true;
+	
+	private static final Logger LOG = Logger.getLogger(UserNotificationTask.class);
 	
 	@Override
 	public void execute(PokeContext context, TaskSchedule schedule, TaskResult result,
@@ -38,8 +60,74 @@ public class UserNotificationTask implements TaskExecutor {
 	}
 	
 	private void handleSession(PokeContext context, BotSession session) {
-		
-		// TODO !!!
-		
+		Double lat = Util.atod(Util.otos(session.get(ARG_LATITUDE)));
+		Double lon = Util.atod(Util.otos(session.get(ARG_LONGITUDE)));
+		if (lat != null && lat != 0.0D && lon != null && lon != 0.0D) {
+			handleSession(context, session, GeoLocation.fromDegrees(lat, lon));
+		}
+	}
+	
+	private void handleSession(PokeContext context, BotSession session, GeoLocation loc) {
+		BoundingCoordinates coords = loc.boundingCoordinates(3000D);
+		QueryOptions qo = new QueryOptions();
+		qo.addFilter(Filter.or(Filter.eq(ARG_RAID_LEVEL, 4), Filter.eq(ARG_RAID_LEVEL, 5)));
+		qo.addFilter(Filter.gt(ARG_LATITUDE, coords.getX().getLatitudeInDegrees()));
+		qo.addFilter(Filter.gt(ARG_LONGITUDE, coords.getX().getLongitudeInDegrees()));
+		qo.addFilter(Filter.lt(ARG_LATITUDE, coords.getY().getLatitudeInDegrees()));
+		qo.addFilter(Filter.lt(ARG_LONGITUDE, coords.getY().getLongitudeInDegrees()));
+		Iterator<String> it = null;
+		try {
+			it = context.search(Gym.class, qo);
+			if (it != null) {
+				while (it.hasNext()) {
+					Gym gym = context.getObjectById(Gym.class, it.next());
+					handleGym(context, session, gym);
+				}
+			}
+			
+			// TODO: SPAWNS !!!
+			
+		} catch (GeneralException ex) {
+			LOG.error("Error handling Session: " + ex.getMessage(), ex);
+		}
+	}
+	
+	private void handleGym(PokeContext context, BotSession session, Gym gym) {
+		String name = String.format("%s:%s:%s", session.getUser().getName(),
+				gym.getClass().getSimpleName(), gym.getName());
+		try {
+			if (context.getObjectByName(UserNotification.class, name) == null) {
+				try {
+					announceGym(session, gym);
+					UserNotification n = new UserNotification();
+					n.setName(name);
+					n.setExpiration(gym.getRaidEnd());
+					context.saveObject(n);
+					context.commitTransaction();
+				} catch (TelegramApiException ex) {
+					LOG.error("Error announcing Gym: " + ex.getMessage(), ex);
+				}
+			}
+		} catch (GeneralException ex) {
+			LOG.error("Error handling Gym: " + ex.getMessage(), ex);
+		}
+	}
+
+	@SuppressWarnings("deprecation")
+	private void announceGym(BotSession session, Gym gym) throws TelegramApiException {
+		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		String txt = String.format("%s [ Level: %s, CP: %s, Arena: %s ] Start: %s Uhr - Ende: %s Uhr",
+				gym.getRaidPokemon().getName(), gym.getRaidLevel(), gym.getRaidCp(),
+				gym.getDisplayName(), sdf.format(gym.getRaidStart()), sdf.format(gym.getRaidEnd()));
+		SendMessage msg = new SendMessage();
+		msg.setChatId(session.getChatId());
+		msg.setText(txt);
+		bot.sendMessage(msg);
+		SendLocation loc = new SendLocation();
+		loc.setChatId(session.getChatId());
+		loc.setLatitude(Util.atof(Util.otos(gym.getLatitude())));
+		loc.setLongitude(Util.atof(Util.otos(gym.getLongitude())));
+		bot.sendLocation(loc);
 	}
 }

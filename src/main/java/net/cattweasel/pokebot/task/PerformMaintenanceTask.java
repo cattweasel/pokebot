@@ -14,6 +14,7 @@ import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
+import net.cattweasel.pokebot.object.UserNotification;
 import net.cattweasel.pokebot.tools.GeneralException;
 
 /**
@@ -32,6 +33,10 @@ public class PerformMaintenanceTask implements TaskExecutor {
 	public void execute(PokeContext context, TaskSchedule schedule, TaskResult result,
 			Attributes<String, Object> attributes) throws Exception {
 		if (running) {
+			removeOrphanUserNotifications(context);
+			context.commitTransaction();
+		}
+		if (running) {
 			removeOrphanSpawns(context);
 			context.commitTransaction();
 		}
@@ -45,6 +50,26 @@ public class PerformMaintenanceTask implements TaskExecutor {
 	public boolean terminate() {
 		running = false;
 		return true;
+	}
+	
+	private void removeOrphanUserNotifications(PokeContext context) {
+		QueryOptions qo = new QueryOptions();
+		qo.addFilter(Filter.lt("expiration", new Date()));
+		Iterator<String> it = null;
+		try {
+			it = context.search(UserNotification.class, qo);
+			if (it != null) {
+				while (running && it.hasNext()) {
+					UserNotification notif = context.getObjectById(UserNotification.class, it.next());
+					if (notif != null) {
+						LOG.debug("Removing notification: " + notif);
+						context.removeObject(notif);
+					}
+				}
+			}
+		} catch (GeneralException ex) {
+			LOG.error("Error removing orphan notifications: " + ex.getMessage(), ex);
+		}
 	}
 	
 	private void removeOrphanSpawns(PokeContext context) {
