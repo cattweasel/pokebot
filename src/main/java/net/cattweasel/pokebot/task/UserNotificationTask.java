@@ -1,6 +1,7 @@
 package net.cattweasel.pokebot.task;
 
 import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
@@ -71,6 +72,7 @@ public class UserNotificationTask implements TaskExecutor {
 		BoundingCoordinates coords = loc.boundingCoordinates(3000D);
 		QueryOptions qo = new QueryOptions();
 		qo.addFilter(Filter.or(Filter.eq(ARG_RAID_LEVEL, 4), Filter.eq(ARG_RAID_LEVEL, 5)));
+		qo.addFilter(Filter.gt("raidEnd", new Date(new Date().getTime() + 1800000L)));
 		qo.addFilter(Filter.gt(ARG_LATITUDE, coords.getX().getLatitudeInDegrees()));
 		qo.addFilter(Filter.gt(ARG_LONGITUDE, coords.getX().getLongitudeInDegrees()));
 		qo.addFilter(Filter.lt(ARG_LATITUDE, coords.getY().getLatitudeInDegrees()));
