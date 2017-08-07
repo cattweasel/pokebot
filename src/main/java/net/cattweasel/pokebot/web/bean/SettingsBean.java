@@ -20,7 +20,7 @@ import net.cattweasel.pokebot.tools.Util;
 
 @Named
 @RequestScoped
-public class SettingsBean extends AbstractBean {
+public class SettingsBean extends BaseBean {
 
 	private User user;
 	private List<PokemonSetting> pokemonSettings;
@@ -78,14 +78,6 @@ public class SettingsBean extends AbstractBean {
 	
 	public void setGymRange(Integer gymRange) {
 		this.gymRange = gymRange;
-	}
-	
-	public String save() {
-		
-		System.out.println("** SAVE **"); // TODO
-		
-		return "foobar";
-		
 	}
 	
 	private List<PokemonSetting> createPokemonSettings() {

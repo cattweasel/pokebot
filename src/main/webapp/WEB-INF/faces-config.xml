@@ -6,6 +6,12 @@
 	metadata-complete="true" version="2.1">
 	
 	<managed-bean>
+		<managed-bean-name>base</managed-bean-name>
+		<managed-bean-class>net.cattweasel.pokebot.web.bean.BaseBean</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
 		<managed-bean-name>settings</managed-bean-name>
 		<managed-bean-class>net.cattweasel.pokebot.web.bean.SettingsBean</managed-bean-class>
 		<managed-bean-scope>request</managed-bean-scope>

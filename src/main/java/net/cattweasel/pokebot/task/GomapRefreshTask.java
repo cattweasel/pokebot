@@ -105,16 +105,13 @@ public class GomapRefreshTask implements TaskExecutor {
 	}
 	
 	private void processSpawn(PokeContext context, JSONObject spawn) throws GeneralException {
-		
-		// TODO: Re-Enable, tune database processing
-		/*Spawn result = new Spawn();
+		Spawn result = new Spawn();
 		result.setDisappearTime(new Date(Util.atol(Util.otos(spawn.get(ARG_DISAPPEAR_TIME))) * 1000L));
 		result.setName(Util.otos(spawn.get(ARG_EID)));
 		result.setLatitude(Util.atod(Util.otos(spawn.get(ARG_LATITUDE))));
 		result.setLongitude(Util.atod(Util.otos(spawn.get(ARG_LONGITUDE))));
 		result.setPokemon(resolvePokemon(context, Util.otoi(spawn.get(ARG_POKEMON_ID))));
-		saveSpawn(context, result);*/
-		
+		saveSpawn(context, result);
 	}
 	
 	private void processGyms(PokeContext context, JSONArray gyms) {
