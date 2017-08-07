@@ -14,6 +14,7 @@
                 		<p>Bitte vergewissere dich, dass du die korrekte URL angegeben hast.</p>
                 </ui:fragment>
                 <ui:fragment rendered="#{settings.user ne null}">
+                		<p><b>Achtung:</b> Diese Seite befindet sich aktuell noch im Aufbau. Das Speichern funktioniert noch nicht, wird aber schon bald funktionieren!</p>
                 		<h:form id="settings-form">
                 			<h3>Arena Einstellungen</h3>
                 			<table>
@@ -32,14 +33,14 @@
                 					<td>&nbsp;</td>
                 					<td><h:inputText value="#{settings.gymRange}" /></td>
                 				</tr>
-                				<tr>
+                				<!--<tr>
                 					<td>&nbsp;</td>
                 				</tr>
                 				<tr>
                 					<td>Einstellungen speichern:</td>
                 					<td>&nbsp;</td>
                 					<td><h:commandButton id="gym-save" value="speichern" action="#{settings.save}" /></td>
-                				</tr>
+                				</tr>-->
                 			</table>
                 			<h3>Pokemon Einstellungen</h3>
                 			<table>
@@ -63,7 +64,7 @@
 		                				<td><h:inputText value="#{setting.range}" /></td>
 		                			</tr>
 		                		</ui:repeat>
-		                		<tr>
+		                		<!--<tr>
                 					<td>&nbsp;</td>
                 				</tr>
                 				<tr>
@@ -74,7 +75,7 @@
                 					<td>&nbsp;</td>
                 					<td>&nbsp;</td>
                 					<td><h:commandButton id="pokemon-save" value="speichern" action="#{settings.save}" /></td>
-                				</tr>
+                				</tr>-->
 		                	</table>
 		                	<br />
                 		</h:form>
