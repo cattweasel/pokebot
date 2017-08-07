@@ -37,6 +37,8 @@ public class UserNotificationTask implements TaskExecutor {
 	private static final String ARG_LATITUDE = "latitude";
 	private static final String ARG_LONGITUDE = "longitude";
 	private static final String ARG_RAID_LEVEL = "raidLevel";
+	private static final String ARG_RAID_END = "raidEnd";
+	private static final String ARG_RANGE = "range";
 	
 	private boolean running = true;
 	
@@ -69,10 +71,12 @@ public class UserNotificationTask implements TaskExecutor {
 	}
 	
 	private void handleSession(PokeContext context, BotSession session, GeoLocation loc) {
-		BoundingCoordinates coords = loc.boundingCoordinates(3000D);
+		Double range = Util.atod(Util.otos(session.get(ARG_RANGE)));
+		range = range == null || range == 0D ? 3000D : range;
+		BoundingCoordinates coords = loc.boundingCoordinates(range);
 		QueryOptions qo = new QueryOptions();
 		qo.addFilter(Filter.or(Filter.eq(ARG_RAID_LEVEL, 4), Filter.eq(ARG_RAID_LEVEL, 5)));
-		qo.addFilter(Filter.gt("raidEnd", new Date(new Date().getTime() + 1800000L)));
+		qo.addFilter(Filter.gt(ARG_RAID_END, new Date(new Date().getTime() + 1800000L)));
 		qo.addFilter(Filter.gt(ARG_LATITUDE, coords.getX().getLatitudeInDegrees()));
 		qo.addFilter(Filter.gt(ARG_LONGITUDE, coords.getX().getLongitudeInDegrees()));
 		qo.addFilter(Filter.lt(ARG_LATITUDE, coords.getY().getLatitudeInDegrees()));
@@ -119,7 +123,7 @@ public class UserNotificationTask implements TaskExecutor {
 	private void announceGym(BotSession session, Gym gym) throws TelegramApiException {
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-		String txt = String.format("%s [ Level: %s, CP: %s, Arena: %s ] Start: %s Uhr - Ende: %s Uhr",
+		String txt = String.format("RAID: %s [ Level: %s, CP: %s, Arena: %s ] Start: %s Uhr - Ende: %s Uhr",
 				gym.getRaidPokemon().getName(), gym.getRaidLevel(), gym.getRaidCp(),
 				gym.getDisplayName(), sdf.format(gym.getRaidStart()), sdf.format(gym.getRaidEnd()));
 		SendMessage msg = new SendMessage();

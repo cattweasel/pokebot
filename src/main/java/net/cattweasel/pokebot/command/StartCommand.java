@@ -31,15 +31,14 @@ public class StartCommand extends AbstractCommand {
 				session.setName(name);
 				session.setChatId(chat.getId());
 				session.setUser(resolveUser(context, user));
+				session.put("range", 3000);
 				LOG.debug("Creating new BotSession: " + session);
-				sendMessage(sender, chat, String.format("Hey, %s! Schön dich zu sehen."
-						+ " Vergiss bitte nicht, deine Position zu updaten!",
-						getDisplayableName(user)));
+				sendMessage(sender, chat, String.format("Hey, schön dich zu sehen."
+						+ " Vergiss bitte nicht, deine Position zu updaten!"));
 			} else {
 				LOG.debug("Re-allocating BotSession: " + session);
-				sendMessage(sender, chat, String.format("Hey, %s! Ich bin noch immer für dich am arbeiten."
-						+ " Aber über eine neue Position freue ich mich natürlich immer!",
-						getDisplayableName(user)));
+				sendMessage(sender, chat, String.format("Ich bin noch immer für dich am arbeiten."
+						+ " Aber über eine neue Position freue ich mich natürlich immer!"));
 			}
 			context.saveObject(session);
 			context.commitTransaction();

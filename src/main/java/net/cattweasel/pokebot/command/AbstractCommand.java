@@ -20,10 +20,6 @@ public abstract class AbstractCommand extends BotCommand {
 		super(commandIdentifier, description);
 	}
 	
-	protected String getDisplayableName(User user) {
-		return user.getFirstName() == null ? user.getUserName() : user.getFirstName();
-	}
-	
 	@SuppressWarnings("deprecation")
 	protected void sendMessage(AbsSender sender, Chat chat, String message) {
 		SendMessage msg = new SendMessage();

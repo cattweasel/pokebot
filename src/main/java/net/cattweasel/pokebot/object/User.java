@@ -21,7 +21,7 @@ public class User extends PokeObject {
 	private String languageCode;
 	private Attributes<String, Object> settings;
 	
-	@Column(unique = false, nullable = false)
+	@Column(unique = false, nullable = true)
 	@XmlAttribute
 	public String getUsername() {
 		return username;

@@ -30,11 +30,9 @@ public class StopCommand extends AbstractCommand {
 				LOG.debug("Destroying BotSession: " + session);
 				context.removeObject(session);
 				context.commitTransaction();
-				sendMessage(sender, chat, String.format("Alles klar, %s, mach's gut, bis demnächst!",
-						getDisplayableName(user)));
+				sendMessage(sender, chat, String.format("Alles klar, mach's gut, bis demnächst!"));
 			} else {
-				sendMessage(sender, chat, String.format("Nicht nötig, %s, ich arbeite doch gerade garnicht für dich!",
-						getDisplayableName(user)));
+				sendMessage(sender, chat, String.format("Nicht nötig, ich arbeite doch gerade garnicht für dich!"));
 			}
 		} catch (GeneralException ex) {
 			LOG.error("Error executing StopCommand: " + ex.getMessage(), ex);
