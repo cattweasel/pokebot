@@ -1,6 +1,7 @@
 .classpath
 .project
 .settings/
+.metadata/
 target/
 **/.DS_Store
 
