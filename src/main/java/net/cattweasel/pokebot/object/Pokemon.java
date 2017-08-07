@@ -15,6 +15,7 @@ public class Pokemon extends PokeObject {
 	private static final long serialVersionUID = 7080727075450830557L;
 	
 	private Integer pokemonId;
+	private Boolean enabled;
 	
 	@Column(unique = false, nullable = false)
 	@XmlAttribute
@@ -24,5 +25,15 @@ public class Pokemon extends PokeObject {
 	
 	public void setPokemonId(Integer pokemonId) {
 		this.pokemonId = pokemonId;
+	}
+	
+	@Column(unique = false, nullable = false)
+	@XmlAttribute
+	public Boolean isEnabled() {
+		return enabled;
+	}
+	
+	public void setEnabled(Boolean enabled) {
+		this.enabled = enabled;
 	}
 }

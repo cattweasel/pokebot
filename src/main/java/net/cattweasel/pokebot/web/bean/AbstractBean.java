@@ -33,7 +33,7 @@ public class AbstractBean {
 	
 	protected PokeContext getContext() throws GeneralException {
 		if (context == null) {
-			context = PokeFactory.createContext(getClass().getSimpleName());
+			context = PokeFactory.getCurrentContext();
 		}
 		return context;
 	}

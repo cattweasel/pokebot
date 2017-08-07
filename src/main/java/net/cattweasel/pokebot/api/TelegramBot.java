@@ -79,7 +79,7 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 	private void confirmLocation(Chat chat, User user, Location location) {
 		SendMessage message = new SendMessage();
 		message.setChatId(chat.getId());
-		message.setText(String.format("Alles klar, deine neue Position ist nun: %s / %s!",
+		message.setText(String.format("Alles klar, deine neue Position ist nun: %s / %s",
 				location.getLatitude(), location.getLongitude()));
 		try {
 			sendMessage(message);
