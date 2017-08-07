@@ -105,14 +105,14 @@ public class UserNotificationTask implements TaskExecutor {
 			if (context.getObjectByName(UserNotification.class, name) == null) {
 				try {
 					announceGym(session, gym);
-					UserNotification n = new UserNotification();
-					n.setName(name);
-					n.setExpiration(gym.getRaidEnd());
-					context.saveObject(n);
-					context.commitTransaction();
 				} catch (TelegramApiException ex) {
 					LOG.error("Error announcing Gym: " + ex.getMessage(), ex);
 				}
+				UserNotification n = new UserNotification();
+				n.setName(name);
+				n.setExpiration(gym.getRaidEnd());
+				context.saveObject(n);
+				context.commitTransaction();
 			}
 		} catch (GeneralException ex) {
 			LOG.error("Error handling Gym: " + ex.getMessage(), ex);
@@ -123,9 +123,10 @@ public class UserNotificationTask implements TaskExecutor {
 	private void announceGym(BotSession session, Gym gym) throws TelegramApiException {
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-		String txt = String.format("RAID: %s [ Level: %s, CP: %s, Arena: %s ] Start: %s Uhr - Ende: %s Uhr",
+		String txt = String.format("RAID: %s [ Level: %s, CP: %s, Arena: %s ] %sStart: %s Uhr - Ende: %s Uhr",
 				gym.getRaidPokemon().getName(), gym.getRaidLevel(), gym.getRaidCp(),
-				gym.getDisplayName(), sdf.format(gym.getRaidStart()), sdf.format(gym.getRaidEnd()));
+				gym.getDisplayName(), calculateDistance(session, gym.getLatitude(), gym.getLongitude()),
+				sdf.format(gym.getRaidStart()), sdf.format(gym.getRaidEnd()));
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
 		msg.setText(txt);
@@ -135,5 +136,17 @@ public class UserNotificationTask implements TaskExecutor {
 		loc.setLatitude(Util.atof(Util.otos(gym.getLatitude())));
 		loc.setLongitude(Util.atof(Util.otos(gym.getLongitude())));
 		bot.sendLocation(loc);
+	}
+	
+	private String calculateDistance(BotSession session, Double latitude, Double longitude) {
+		StringBuilder sb = new StringBuilder();
+		if (session != null && session.get(ARG_LATITUDE) != null && session.get(ARG_LONGITUDE) != null) {
+			GeoLocation loc = GeoLocation.fromDegrees(latitude, longitude);
+			Double lat = Util.atod(Util.otos(session.get(ARG_LATITUDE)));
+			Double lon = Util.atod(Util.otos(session.get(ARG_LONGITUDE)));
+			Double distance = loc.distanceTo(GeoLocation.fromDegrees(lat, lon));
+			sb.append(String.format("Entfernung: %sm - ", Math.round(distance)));
+		}
+		return sb.toString();
 	}
 }
