@@ -4,6 +4,9 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import javax.faces.bean.ManagedBean;
+import javax.faces.bean.RequestScoped;
+
 import org.apache.log4j.Logger;
 
 import net.cattweasel.pokebot.object.Attributes;
@@ -15,6 +18,8 @@ import net.cattweasel.pokebot.object.User;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 
+@ManagedBean(name = "settings")
+@RequestScoped
 public class SettingsBean extends BaseBean {
 
 	private User user;
@@ -73,6 +78,12 @@ public class SettingsBean extends BaseBean {
 	
 	public void setGymRange(Integer gymRange) {
 		this.gymRange = gymRange;
+	}
+	
+	public void save() {
+		
+		System.out.println("\n\n***** SAVE *****\n"); // TODO
+		
 	}
 	
 	private List<PokemonSetting> createPokemonSettings() {

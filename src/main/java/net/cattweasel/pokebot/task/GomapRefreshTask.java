@@ -3,6 +3,10 @@ package net.cattweasel.pokebot.task;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -105,10 +109,13 @@ public class GomapRefreshTask implements TaskExecutor {
 	}
 	
 	private void processSpawn(PokeContext context, JSONObject spawn) throws GeneralException {
-		String name = Util.otos(spawn.get(ARG_EID));
+		
+		// TODO !!!
+		
+		/*String name = Util.otos(spawn.get(ARG_EID));
 		Date disappearTime = new Date(Util.atol(Util.otos(spawn.get(ARG_DISAPPEAR_TIME))) * 1000L);
 		if (disappearTime.getTime() > new Date().getTime()
-				&& context.getObjectByName(Spawn.class, name) != null) {
+				&& context.getObjectByName(Spawn.class, name) == null) {
 			Spawn result = new Spawn();
 			result.setDisappearTime(disappearTime);
 			result.setName(name);
@@ -116,7 +123,7 @@ public class GomapRefreshTask implements TaskExecutor {
 			result.setLongitude(Util.atod(Util.otos(spawn.get(ARG_LONGITUDE))));
 			result.setPokemon(resolvePokemon(context, Util.otoi(spawn.get(ARG_POKEMON_ID))));
 			context.saveObject(result);
-		}
+		}*/
 	}
 	
 	private void processGyms(PokeContext context, JSONArray gyms) {

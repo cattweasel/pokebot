@@ -18,4 +18,5 @@ public class Capability extends PokeObject {
 	private static final long serialVersionUID = 3853446081165861447L;
 	
 	public static final String SYSTEM_ADMINISTRATOR = "SystemAdministrator";
+	public static final String BROADCAST_ADMINISTRATOR = "BroadcastAdministrator";
 }

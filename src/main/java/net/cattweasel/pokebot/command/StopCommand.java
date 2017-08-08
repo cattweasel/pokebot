@@ -41,7 +41,7 @@ public class StopCommand extends AbstractCommand {
 				try {
 					PokeFactory.releaseContext(context);
 				} catch (GeneralException ex) {
-					LOG.error("Error releasing PokeContext: " + ex.getMessage(), ex);
+					LOG.error("Error releasing context: " + ex.getMessage(), ex);
 				}
 			}
 		}

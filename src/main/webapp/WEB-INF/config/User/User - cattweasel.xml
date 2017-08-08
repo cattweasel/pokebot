@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<User name="266644306" username="cattweasel" firstname="Benjamin" lastname="Wesp" languageCode="de">
+	<Capabilities>
+		<Reference class="net.cattweasel.pokebot.object.Capability" name="SystemAdministrator" />
+	</Capabilities>
+</User>

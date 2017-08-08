@@ -1,12 +1,22 @@
 package net.cattweasel.pokebot.object;
 
+import java.util.List;
+
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.JoinColumn;
+import javax.persistence.JoinTable;
 import javax.persistence.Lob;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElementWrapper;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
+
+import net.cattweasel.pokebot.tools.xml.ReferenceAdapter;
 
 @Entity
 @Table(name = "db_user")
@@ -20,6 +30,7 @@ public class User extends PokeObject {
 	private String lastname;
 	private String languageCode;
 	private Attributes<String, Object> settings;
+	private List<Capability> capabilities;
 	
 	@Column(unique = false, nullable = true)
 	@XmlAttribute
@@ -70,5 +81,30 @@ public class User extends PokeObject {
 
 	public void setSettings(Attributes<String, Object> settings) {
 		this.settings = settings;
+	}
+	
+	/**
+	 * Returns the capabilities of this user.
+	 * 
+	 * @return A list of capabilities
+	 */
+	@ManyToMany(cascade = CascadeType.MERGE)
+	@JoinTable(name = "db_user_capability",
+			joinColumns = {  @JoinColumn(name = "user", nullable = false, updatable = false) }, 
+			inverseJoinColumns = { @JoinColumn(name = "capability",  nullable = false, updatable = false) })
+	@XmlElementWrapper(name = "Capabilities")
+	@XmlElement(name = "Reference")
+	@XmlJavaTypeAdapter(ReferenceAdapter.class)
+	public List<Capability> getCapabilities() {
+		return capabilities;
+	}
+	
+	/**
+	 * Sets the capabilities for this user.
+	 * 
+	 * @param capabilities A list of capabilities
+	 */
+	public void setCapabilities(List<Capability> capabilities) {
+		this.capabilities = capabilities;
 	}
 }

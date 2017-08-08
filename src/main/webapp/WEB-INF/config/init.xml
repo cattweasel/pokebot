@@ -4,6 +4,10 @@
 		
 		<!-- DEFAULT CAPABILITIES -->
 		<ImportAction location="Capability/Capability - SystemAdministrator.xml" />
+		<ImportAction location="Capability/Capability - BroadcastAdministrator.xml" />
+		
+		<!-- DEFAULT USERS -->
+		<ImportAction location="User/User - cattweasel.xml" />
 		
 		<!-- DEFAULT SERVICE DEFINITIONS -->
 		<ImportAction location="ServiceDefinition/ServiceDefinition - Task.xml" />
