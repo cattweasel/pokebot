@@ -45,7 +45,7 @@ public class StatusCommand extends AbstractCommand {
 					+ "\nArenen: %s (Davon Raids: %s)\nLetzte Mitteilung: %s",
 					Util.separateNumber(context.countObjects(net.cattweasel.pokebot.object.User.class)),
 					Util.separateNumber(context.countObjects(BotSession.class)),
-					Util.separateNumber(context.countObjects(Gym.class), raids, lastMessage)));
+					Util.separateNumber(context.countObjects(Gym.class)), Util.separateNumber(raids), lastMessage));
 		} catch (GeneralException ex) {
 			LOG.error("Error executing status command: " + ex.getMessage(), ex);
 		} finally {
