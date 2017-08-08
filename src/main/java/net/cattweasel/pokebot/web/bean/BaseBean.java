@@ -14,6 +14,7 @@ import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.User;
+import net.cattweasel.pokebot.object.UserNotification;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 
@@ -29,6 +30,10 @@ public class BaseBean {
 	
 	public Integer getSessionCount() throws GeneralException {
 		return getContext().countObjects(BotSession.class);
+	}
+	
+	public Integer getNotificationCount() throws GeneralException {
+		return getContext().countObjects(UserNotification.class);
 	}
 	
 	public Integer getGymCount() throws GeneralException {

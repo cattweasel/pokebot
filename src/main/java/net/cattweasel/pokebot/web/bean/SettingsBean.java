@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.faces.bean.RequestScoped;
-import javax.inject.Named;
-
 import org.apache.log4j.Logger;
 
 import net.cattweasel.pokebot.object.Attributes;
@@ -18,8 +15,6 @@ import net.cattweasel.pokebot.object.User;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 
-@Named
-@RequestScoped
 public class SettingsBean extends BaseBean {
 
 	private User user;

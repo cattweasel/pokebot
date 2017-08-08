@@ -105,13 +105,18 @@ public class GomapRefreshTask implements TaskExecutor {
 	}
 	
 	private void processSpawn(PokeContext context, JSONObject spawn) throws GeneralException {
-		Spawn result = new Spawn();
-		result.setDisappearTime(new Date(Util.atol(Util.otos(spawn.get(ARG_DISAPPEAR_TIME))) * 1000L));
-		result.setName(Util.otos(spawn.get(ARG_EID)));
-		result.setLatitude(Util.atod(Util.otos(spawn.get(ARG_LATITUDE))));
-		result.setLongitude(Util.atod(Util.otos(spawn.get(ARG_LONGITUDE))));
-		result.setPokemon(resolvePokemon(context, Util.otoi(spawn.get(ARG_POKEMON_ID))));
-		saveSpawn(context, result);
+		String name = Util.otos(spawn.get(ARG_EID));
+		Date disappearTime = new Date(Util.atol(Util.otos(spawn.get(ARG_DISAPPEAR_TIME))) * 1000L);
+		if (disappearTime.getTime() > new Date().getTime()
+				&& context.getObjectByName(Spawn.class, name) != null) {
+			Spawn result = new Spawn();
+			result.setDisappearTime(disappearTime);
+			result.setName(name);
+			result.setLatitude(Util.atod(Util.otos(spawn.get(ARG_LATITUDE))));
+			result.setLongitude(Util.atod(Util.otos(spawn.get(ARG_LONGITUDE))));
+			result.setPokemon(resolvePokemon(context, Util.otoi(spawn.get(ARG_POKEMON_ID))));
+			context.saveObject(result);
+		}
 	}
 	
 	private void processGyms(PokeContext context, JSONArray gyms) {
@@ -178,12 +183,5 @@ public class GomapRefreshTask implements TaskExecutor {
 		result.setTeam(current.getTeam());
 		result.setTimeOcuppied(current.getTimeOcuppied());
 		return result;
-	}
-	
-	private void saveSpawn(PokeContext context, Spawn spawn) throws GeneralException {
-		if (spawn.getDisappearTime().getTime() > new Date().getTime()
-				&& context.getObjectByName(Spawn.class, spawn.getName()) == null) {
-			context.saveObject(spawn);
-		}
 	}
 }
