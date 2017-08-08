@@ -3,10 +3,6 @@ package net.cattweasel.pokebot.task;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
-import java.sql.Connection;
-import java.sql.PreparedStatement;
-import java.sql.ResultSet;
-import java.sql.SQLException;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -110,7 +106,7 @@ public class GomapRefreshTask implements TaskExecutor {
 	
 	private void processSpawn(PokeContext context, JSONObject spawn) throws GeneralException {
 		
-		// TODO !!!
+		// TODO: Fix productive DB related issues - working fine on dev!
 		
 		/*String name = Util.otos(spawn.get(ARG_EID));
 		Date disappearTime = new Date(Util.atol(Util.otos(spawn.get(ARG_DISAPPEAR_TIME))) * 1000L);
@@ -124,6 +120,7 @@ public class GomapRefreshTask implements TaskExecutor {
 			result.setPokemon(resolvePokemon(context, Util.otoi(spawn.get(ARG_POKEMON_ID))));
 			context.saveObject(result);
 		}*/
+		
 	}
 	
 	private void processGyms(PokeContext context, JSONArray gyms) {

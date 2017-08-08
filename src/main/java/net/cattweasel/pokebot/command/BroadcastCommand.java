@@ -42,7 +42,8 @@ public class BroadcastCommand extends AbstractCommand {
 					sendMessage(sender, chat, "Du bist nicht dazu berechtigt, diesen Befehl auszuführen!");
 				} else {
 					int count = sendBroadcast(context, sender, msg, chat);
-					sendMessage(sender, chat, String.format("Broadcast erfolgreich an %s Benutzer verschickt!", count));
+					sendMessage(sender, chat, String.format("Broadcast erfolgreich an %s Benutzer verschickt!",
+							Util.separateNumber(count)));
 				}
 			} catch (GeneralException ex) {
 				LOG.error("Error executing Broadcast command: " + ex.getMessage(), ex);

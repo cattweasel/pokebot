@@ -124,7 +124,7 @@ public class UserNotificationTask implements TaskExecutor {
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		String txt = String.format("RAID: %s [ Level: %s, CP: %s, Arena: %s ] %sStart: %s Uhr - Ende: %s Uhr",
-				gym.getRaidPokemon().getName(), gym.getRaidLevel(), gym.getRaidCp(),
+				gym.getRaidPokemon().getName(), gym.getRaidLevel(), Util.separateNumber(gym.getRaidCp()),
 				gym.getDisplayName(), calculateDistance(session, gym.getLatitude(), gym.getLongitude()),
 				sdf.format(gym.getRaidStart()), sdf.format(gym.getRaidEnd()));
 		SendMessage msg = new SendMessage();
@@ -145,7 +145,7 @@ public class UserNotificationTask implements TaskExecutor {
 			Double lat = Util.atod(Util.otos(session.get(ARG_LATITUDE)));
 			Double lon = Util.atod(Util.otos(session.get(ARG_LONGITUDE)));
 			Double distance = loc.distanceTo(GeoLocation.fromDegrees(lat, lon));
-			sb.append(String.format("Entfernung: %sm - ", Math.round(distance)));
+			sb.append(String.format("Entfernung: %sm - ", Util.separateNumber(Math.round(distance))));
 		}
 		return sb.toString();
 	}

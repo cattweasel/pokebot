@@ -16,6 +16,7 @@ import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.UserNotification;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.Util;
 
 public class StatusCommand extends AbstractCommand {
 
@@ -42,8 +43,9 @@ public class StatusCommand extends AbstractCommand {
 			String lastMessage = msgs == null || msgs.isEmpty() ? null : sdf.format(msgs.get(0).getCreated()) + " Uhr";
 			sendMessage(sender, chat, String.format("Benutzer insgesamt: %s (Davon aktiv: %s)"
 					+ "\nArenen: %s (Davon Raids: %s)\nLetzte Mitteilung: %s",
-					context.countObjects(net.cattweasel.pokebot.object.User.class),
-					context.countObjects(BotSession.class), context.countObjects(Gym.class), raids, lastMessage));
+					Util.separateNumber(context.countObjects(net.cattweasel.pokebot.object.User.class)),
+					Util.separateNumber(context.countObjects(BotSession.class)),
+					Util.separateNumber(context.countObjects(Gym.class), raids, lastMessage)));
 		} catch (GeneralException ex) {
 			LOG.error("Error executing status command: " + ex.getMessage(), ex);
 		} finally {
