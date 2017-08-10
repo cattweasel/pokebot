@@ -21,17 +21,17 @@
                 				<tr>
                 					<td>Arena-Meldungen aktivieren:</td>
                 					<td>&nbsp;</td>
-                					<td><h:selectBooleanCheckbox value="#{settings.gymEnabled}" /></td>
+                					<td><h:selectBooleanCheckbox value="#{settings.gymEnabled}" disabled="true" /></td>
                 				</tr>
                 				<tr>
                 					<td>Arena Mindestlevel:</td>
                 					<td>&nbsp;</td>
-                					<td><h:inputText value="#{settings.gymLevel}" /></td>
+                					<td><h:inputText value="#{settings.gymLevel}" disabled="true" /></td>
                 				</tr>
                 				<tr>
                 					<td>Arena Reichweite (Meter):</td>
                 					<td>&nbsp;</td>
-                					<td><h:inputText value="#{settings.gymRange}" /></td>
+                					<td><h:inputText value="#{settings.gymRange}" disabled="true" /></td>
                 				</tr>
                 			</table>
                 			<h3>Pokemon Einstellungen</h3>
@@ -51,9 +51,9 @@
 		                				<td>&nbsp;</td>
 		                				<td><h:outputText value="#{setting.pokemonName}" /></td>
 		                				<td>&nbsp;</td>
-		                				<td><h:selectBooleanCheckbox value="#{setting.enabled}" /></td>
+		                				<td><h:selectBooleanCheckbox value="#{setting.enabled}" disabled="true" /></td>
 		                				<td>&nbsp;</td>
-		                				<td><h:inputText value="#{setting.range}" /></td>
+		                				<td><h:inputText value="#{setting.range}" disabled="true" /></td>
 		                			</tr>
 		                		</ui:repeat>
 		                	</table>

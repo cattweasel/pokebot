@@ -24,30 +24,30 @@ public class BaseBean {
 	
 	private static final Logger LOG = Logger.getLogger(BaseBean.class);
 	
-	public Integer getUserCount() throws GeneralException {
-		return getContext().countObjects(User.class);
+	public String getUserCount() throws GeneralException {
+		return Util.separateNumber(getContext().countObjects(User.class));
 	}
 	
-	public Integer getSessionCount() throws GeneralException {
-		return getContext().countObjects(BotSession.class);
+	public String getSessionCount() throws GeneralException {
+		return Util.separateNumber(getContext().countObjects(BotSession.class));
 	}
 	
-	public Integer getNotificationCount() throws GeneralException {
-		return getContext().countObjects(UserNotification.class);
+	public String getNotificationCount() throws GeneralException {
+		return Util.separateNumber(getContext().countObjects(UserNotification.class));
 	}
 	
-	public Integer getGymCount() throws GeneralException {
-		return getContext().countObjects(Gym.class);
+	public String getGymCount() throws GeneralException {
+		return Util.separateNumber(getContext().countObjects(Gym.class));
 	}
 	
-	public Integer getRaidCount() throws GeneralException {
+	public String getRaidCount() throws GeneralException {
 		QueryOptions qo = new QueryOptions();
-		qo.addFilter(Filter.notnull("raidPokemon"));
-		return getContext().countObjects(Gym.class, qo);
+		qo.addFilter(Filter.gt("confirmations", 4));
+		return Util.separateNumber(getContext().countObjects(Gym.class, qo));
 	}
 	
-	public Integer getSpawnCount() throws GeneralException {
-		return getContext().countObjects(Spawn.class);
+	public String getSpawnCount() throws GeneralException {
+		return Util.separateNumber(getContext().countObjects(Spawn.class));
 	}
 	
 	protected User getLoggedInUser() {

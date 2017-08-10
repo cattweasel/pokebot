@@ -172,6 +172,12 @@ public class GomapRefreshTask implements TaskExecutor {
 		if (existing != null) {
 			gym = mergeGym(existing, gym);
 		}
+		if (gym.getRaidStart() == null) {
+			gym.setConfirmations(null);
+		} else {
+			int confirmations = Util.otoi(gym.getConfirmations());
+			gym.setConfirmations(confirmations + 1);
+		}
 		context.saveObject(gym);
 	}
 	

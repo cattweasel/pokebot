@@ -39,6 +39,7 @@ public class UserNotificationTask implements TaskExecutor {
 	private static final String ARG_RAID_LEVEL = "raidLevel";
 	private static final String ARG_RAID_END = "raidEnd";
 	private static final String ARG_RANGE = "range";
+	private static final String ARG_CONFIRMATIONS = "confirmations";
 	
 	private boolean running = true;
 	
@@ -76,6 +77,7 @@ public class UserNotificationTask implements TaskExecutor {
 		BoundingCoordinates coords = loc.boundingCoordinates(range);
 		QueryOptions qo = new QueryOptions();
 		qo.addFilter(Filter.or(Filter.eq(ARG_RAID_LEVEL, 4), Filter.eq(ARG_RAID_LEVEL, 5)));
+		qo.addFilter(Filter.and(Filter.notnull(ARG_CONFIRMATIONS), Filter.gt(ARG_CONFIRMATIONS, 4)));
 		qo.addFilter(Filter.gt(ARG_RAID_END, new Date(new Date().getTime() + 1800000L)));
 		qo.addFilter(Filter.gt(ARG_LATITUDE, coords.getX().getLatitudeInDegrees()));
 		qo.addFilter(Filter.gt(ARG_LONGITUDE, coords.getX().getLongitudeInDegrees()));

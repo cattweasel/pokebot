@@ -32,15 +32,14 @@ public class StatusCommand extends AbstractCommand {
 		try {
 			context = PokeFactory.createContext(getClass().getSimpleName());
 			QueryOptions qo = new QueryOptions();
-			qo.addFilter(Filter.notnull("raidLevel"));
-			qo.addFilter(Filter.gt("raidLevel", 0));
+			qo.addFilter(Filter.gt("confirmations", 4));
 			int raids = context.countObjects(Gym.class, qo);
 			qo = new QueryOptions();
 			qo.setLimit(1);
 			qo.setOrder("created", "DESC");
 			List<UserNotification> msgs = context.getObjects(UserNotification.class, qo);
 			SimpleDateFormat sdf = new SimpleDateFormat("dd.MM.yyyy - HH:mm");
-			String lastMessage = msgs == null || msgs.isEmpty() ? null : sdf.format(msgs.get(0).getCreated()) + " Uhr";
+			String lastMessage = msgs == null || msgs.isEmpty() ? "n/a" : sdf.format(msgs.get(0).getCreated()) + " Uhr";
 			sendMessage(sender, chat, String.format("Benutzer insgesamt: %s (Davon aktiv: %s)"
 					+ "\nArenen: %s (Davon Raids: %s)\nLetzte Mitteilung: %s",
 					Util.separateNumber(context.countObjects(net.cattweasel.pokebot.object.User.class)),

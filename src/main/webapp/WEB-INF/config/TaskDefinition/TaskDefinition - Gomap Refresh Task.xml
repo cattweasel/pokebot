@@ -3,7 +3,7 @@
 	<attributes>
 		<entry>
             <key>gomapUrl</key>
-            <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">https://mapdata2.gomap.eu/mnew.php?mid=33047879&amp;gid=1502180885</value>
+            <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">https://mapdata2.gomap.eu/mnew.php?mid=28654666&amp;gid=1502339989</value>
         </entry>
     </attributes>
 </TaskDefinition>
