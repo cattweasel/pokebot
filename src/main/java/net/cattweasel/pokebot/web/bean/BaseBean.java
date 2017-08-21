@@ -12,7 +12,6 @@ import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.QueryOptions;
-import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.User;
 import net.cattweasel.pokebot.object.UserNotification;
 import net.cattweasel.pokebot.tools.GeneralException;
@@ -44,10 +43,6 @@ public class BaseBean {
 		QueryOptions qo = new QueryOptions();
 		qo.addFilter(Filter.notnull("raidPokemon"));
 		return Util.separateNumber(getContext().countObjects(Gym.class, qo));
-	}
-	
-	public String getSpawnCount() throws GeneralException {
-		return Util.separateNumber(getContext().countObjects(Spawn.class));
 	}
 	
 	protected User getLoggedInUser() {
