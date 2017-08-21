@@ -47,17 +47,6 @@
 		<url-pattern>*.jsf</url-pattern>
 	</servlet-mapping>
 	
-	<!--<servlet>
-		<servlet-name>REST Servlet</servlet-name>
-		<servlet-class>com.sun.jersey.spi.container.servlet.ServletContainer</servlet-class>
-		<load-on-startup>1</load-on-startup>
-	</servlet>
-	
-	<servlet-mapping>
-		<servlet-name>REST Servlet</servlet-name>
-		<url-pattern>/rest/*</url-pattern>
-	</servlet-mapping>-->
-	
 	<welcome-file-list>
 		<welcome-file>dashboard.jsf</welcome-file>
 	</welcome-file-list>

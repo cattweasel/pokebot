@@ -4,9 +4,6 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
-import javax.faces.bean.ManagedBean;
-import javax.faces.bean.RequestScoped;
-
 import org.apache.log4j.Logger;
 
 import net.cattweasel.pokebot.object.Attributes;
@@ -18,8 +15,6 @@ import net.cattweasel.pokebot.object.User;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 
-@ManagedBean(name = "settings")
-@RequestScoped
 public class SettingsBean extends BaseBean {
 
 	private User user;
@@ -65,6 +60,12 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	public void setGymLevel(Integer gymLevel) {
+		if (gymLevel != null && gymLevel < 1) {
+			gymLevel = 1;
+		}
+		if (gymLevel != null && gymLevel > 5) {
+			gymLevel = 5;
+		}
 		this.gymLevel = gymLevel;
 	}
 	
@@ -77,13 +78,35 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	public void setGymRange(Integer gymRange) {
+		if (gymRange != null && gymRange < 500) {
+			gymRange = 500;
+		}
+		if (gymRange != null && gymRange > 20000) {
+			gymRange = 20000;
+		}
 		this.gymRange = gymRange;
 	}
 	
-	public void save() {
-		
-		System.out.println("\n\n***** SAVE *****\n"); // TODO
-		
+	public void save() throws GeneralException {
+		User user = getUser();
+		Attributes<String, Object> settings = user.getSettings();
+		settings = settings == null ? new Attributes<String, Object>() : settings;
+		settings.put("gymEnabled", getGymEnabled());
+		settings.put("gymLevel", getGymLevel());
+		settings.put("gymRange", getGymRange());
+		for (PokemonSetting s : getPokemonSettings()) {
+			if (s.getRange() != null && s.getRange() < 500) {
+				s.setRange(500);
+			}
+			if (s.getRange() != null && s.getRange() > 20000) {
+				s.setRange(20000);
+			}
+			settings.put(String.format("%s-enabled", s.getPokemonId()), s.getEnabled());
+			settings.put(String.format("%s-range", s.getPokemonId()), s.getRange());
+		}
+		user.setSettings(settings);
+		getContext().saveObject(user);
+		getContext().commitTransaction();
 	}
 	
 	private List<PokemonSetting> createPokemonSettings() {
@@ -115,11 +138,11 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	private Boolean isEnabled(Pokemon pokemon) {
-		return Util.otob(getSetting(String.format("%s-enabled", pokemon.getId())));
+		return Util.otob(getSetting(String.format("%s-enabled", pokemon.getPokemonId())));
 	}
 	
 	private Integer getRange(Pokemon pokemon) {
-		int range = Util.otoi(getSetting(String.format("%s-range", pokemon.getId())));
+		int range = Util.otoi(getSetting(String.format("%s-range", pokemon.getPokemonId())));
 		if (range == 0) {
 			range = 3000;
 		}
@@ -127,7 +150,7 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	private Object getSetting(String key) {
-		Attributes<String, Object> attrs = user.getSettings();
+		Attributes<String, Object> attrs = getUser().getSettings();
 		return attrs == null ? null : attrs.get(key);
 	}
 }

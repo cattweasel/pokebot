@@ -16,7 +16,9 @@ import net.cattweasel.pokebot.object.Attributes;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
+import net.cattweasel.pokebot.object.Pokemon;
 import net.cattweasel.pokebot.object.QueryOptions;
+import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
 import net.cattweasel.pokebot.object.UserNotification;
@@ -38,8 +40,9 @@ public class UserNotificationTask implements TaskExecutor {
 	private static final String ARG_LONGITUDE = "longitude";
 	private static final String ARG_RAID_LEVEL = "raidLevel";
 	private static final String ARG_RAID_END = "raidEnd";
-	private static final String ARG_RANGE = "range";
-	private static final String ARG_CONFIRMATIONS = "confirmations";
+	private static final String ARG_GYM_RANGE = "gymRange";
+	private static final String ARG_GYM_LEVEL = "gymLevel";
+	private static final String ARG_GYM_ENABLED = "gymEnabled";
 	
 	private boolean running = true;
 	
@@ -72,12 +75,21 @@ public class UserNotificationTask implements TaskExecutor {
 	}
 	
 	private void handleSession(PokeContext context, BotSession session, GeoLocation loc) {
-		Double range = Util.atod(Util.otos(session.get(ARG_RANGE)));
+		if (session.getUser().getSettings().get(ARG_GYM_ENABLED) == null
+				|| Util.otob(session.getUser().getSettings().get(ARG_GYM_ENABLED))) {
+			handleGyms(context, session, loc);
+		}
+		handleSpawns(context, session, loc);
+	}
+	
+	private void handleGyms(PokeContext context, BotSession session, GeoLocation loc) {
+		Double range = Util.atod(Util.otos(session.getUser().getSettings().get(ARG_GYM_RANGE)));
 		range = range == null || range == 0D ? 3000D : range;
-		BoundingCoordinates coords = loc.boundingCoordinates(range);
+		Integer minLevel = Util.otoi(session.getUser().getSettings().get(ARG_GYM_LEVEL));
+		minLevel = minLevel == null || minLevel == 0 ? 4 : minLevel;
 		QueryOptions qo = new QueryOptions();
-		qo.addFilter(Filter.or(Filter.eq(ARG_RAID_LEVEL, 4), Filter.eq(ARG_RAID_LEVEL, 5)));
-		qo.addFilter(Filter.and(Filter.notnull(ARG_CONFIRMATIONS), Filter.gt(ARG_CONFIRMATIONS, 4)));
+		BoundingCoordinates coords = loc.boundingCoordinates(range);
+		qo.addFilter(Filter.gt(ARG_RAID_LEVEL, (minLevel - 1)));
 		qo.addFilter(Filter.gt(ARG_RAID_END, new Date(new Date().getTime() + 1800000L)));
 		qo.addFilter(Filter.gt(ARG_LATITUDE, coords.getX().getLatitudeInDegrees()));
 		qo.addFilter(Filter.gt(ARG_LONGITUDE, coords.getX().getLongitudeInDegrees()));
@@ -92,12 +104,85 @@ public class UserNotificationTask implements TaskExecutor {
 					handleGym(context, session, gym);
 				}
 			}
-			
-			// TODO: SPAWNS !!!
-			
 		} catch (GeneralException ex) {
 			LOG.error("Error handling Session: " + ex.getMessage(), ex);
 		}
+	}
+	
+	private void handleSpawns(PokeContext context, BotSession session, GeoLocation loc) {
+		Attributes<String, Object> attrs = session.getUser().getSettings();
+		if (attrs != null) {
+			for (String key : attrs.keySet()) {
+				if (key.endsWith("-enabled") && Util.otob(attrs.get(key))) {
+					Integer pokemonId = Util.atoi(key.split("-")[0]);
+					Double range = Util.atod(attrs.getString(String.format("%s-range", pokemonId)));
+					handleSpawns(context, session, loc, pokemonId, range);
+				}
+			}
+		}
+	}
+	
+	private void handleSpawns(PokeContext context, BotSession session,
+			GeoLocation loc, Integer pokemonId, Double distance) {
+		try {
+			Pokemon pokemon = context.getUniqueObject(Pokemon.class, Filter.eq("pokemonId", pokemonId));
+			BoundingCoordinates coords = loc.boundingCoordinates(distance);
+			QueryOptions qo = new QueryOptions();
+			qo.addFilter(Filter.eq("pokemon", pokemon));
+			qo.addFilter(Filter.gt("disappearTime", new Date()));
+			qo.addFilter(Filter.gt(ARG_LATITUDE, coords.getX().getLatitudeInDegrees()));
+			qo.addFilter(Filter.gt(ARG_LONGITUDE, coords.getX().getLongitudeInDegrees()));
+			qo.addFilter(Filter.lt(ARG_LATITUDE, coords.getY().getLatitudeInDegrees()));
+			qo.addFilter(Filter.lt(ARG_LONGITUDE, coords.getY().getLongitudeInDegrees()));
+			Iterator<String> it = context.search(Spawn.class, qo);
+			if (it != null) {
+				while (it.hasNext()) {
+					Spawn spawn = context.getObjectById(Spawn.class, it.next());
+					handleSpawn(context, session, spawn);
+				}
+			}
+		} catch (GeneralException ex) {
+			LOG.error("Error handling Session: " + ex.getMessage(), ex);
+		}
+	}
+	
+	private void handleSpawn(PokeContext context, BotSession session, Spawn spawn) {
+		String name = String.format("%s:%s:%s", session.getUser().getName(),
+				spawn.getClass().getSimpleName(), spawn.getName());
+		try {
+			if (context.getObjectByName(UserNotification.class, name) == null) {
+				try {
+					announceSpawn(session, spawn);
+				} catch (TelegramApiException ex) {
+					LOG.error("Error announcing Spawn: " + ex.getMessage(), ex);
+				}
+				UserNotification n = new UserNotification();
+				n.setName(name);
+				n.setExpiration(spawn.getDisappearTime());
+				context.saveObject(n);
+				context.commitTransaction();
+			}
+		} catch (GeneralException ex) {
+			LOG.error("Error handling Spawn: " + ex.getMessage(), ex);
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void announceSpawn(BotSession session, Spawn spawn) throws TelegramApiException {
+		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
+		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
+		String txt = String.format("PKM: %s - %sEnde: %s Uhr", spawn.getPokemon().getName(),
+				calculateDistance(session, spawn.getLatitude(), spawn.getLongitude()),
+				sdf.format(spawn.getDisappearTime()));
+		SendMessage msg = new SendMessage();
+		msg.setChatId(session.getChatId());
+		msg.setText(txt);
+		bot.sendMessage(msg);
+		SendLocation loc = new SendLocation();
+		loc.setChatId(session.getChatId());
+		loc.setLatitude(Util.atof(Util.otos(spawn.getLatitude())));
+		loc.setLongitude(Util.atof(Util.otos(spawn.getLongitude())));
+		bot.sendLocation(loc);
 	}
 	
 	private void handleGym(PokeContext context, BotSession session, Gym gym) {

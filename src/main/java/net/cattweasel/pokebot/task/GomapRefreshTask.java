@@ -105,10 +105,7 @@ public class GomapRefreshTask implements TaskExecutor {
 	}
 	
 	private void processSpawn(PokeContext context, JSONObject spawn) throws GeneralException {
-		
-		// TODO: Fix productive DB related issues - working fine on dev!
-		
-		/*String name = Util.otos(spawn.get(ARG_EID));
+		String name = Util.otos(spawn.get(ARG_EID));
 		Date disappearTime = new Date(Util.atol(Util.otos(spawn.get(ARG_DISAPPEAR_TIME))) * 1000L);
 		if (disappearTime.getTime() > new Date().getTime()
 				&& context.getObjectByName(Spawn.class, name) == null) {
@@ -119,8 +116,7 @@ public class GomapRefreshTask implements TaskExecutor {
 			result.setLongitude(Util.atod(Util.otos(spawn.get(ARG_LONGITUDE))));
 			result.setPokemon(resolvePokemon(context, Util.otoi(spawn.get(ARG_POKEMON_ID))));
 			context.saveObject(result);
-		}*/
-		
+		}
 	}
 	
 	private void processGyms(PokeContext context, JSONArray gyms) {
@@ -171,12 +167,6 @@ public class GomapRefreshTask implements TaskExecutor {
 		Gym existing = context.getObjectByName(Gym.class, gym.getName());
 		if (existing != null) {
 			gym = mergeGym(existing, gym);
-		}
-		if (gym.getRaidStart() == null) {
-			gym.setConfirmations(null);
-		} else {
-			int confirmations = Util.otoi(gym.getConfirmations());
-			gym.setConfirmations(confirmations + 1);
 		}
 		context.saveObject(gym);
 	}

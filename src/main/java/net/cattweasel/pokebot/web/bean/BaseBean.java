@@ -42,7 +42,7 @@ public class BaseBean {
 	
 	public String getRaidCount() throws GeneralException {
 		QueryOptions qo = new QueryOptions();
-		qo.addFilter(Filter.gt("confirmations", 4));
+		qo.addFilter(Filter.notnull("raidPokemon"));
 		return Util.separateNumber(getContext().countObjects(Gym.class, qo));
 	}
 	

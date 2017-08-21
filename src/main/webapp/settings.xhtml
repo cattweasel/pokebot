@@ -14,49 +14,60 @@
                 		<p>Bitte vergewissere dich, dass du die korrekte URL angegeben hast.</p>
                 </ui:fragment>
                 <ui:fragment rendered="#{settings.user ne null}">
-                		<p><b>Achtung:</b> Diese Seite befindet sich aktuell noch im Aufbau. Das Speichern funktioniert noch nicht, wird aber schon bald funktionieren!</p>
                 		<h:form id="settings-form">
                 			<h3>Arena Einstellungen</h3>
                 			<table>
                 				<tr>
                 					<td>Arena-Meldungen aktivieren:</td>
                 					<td>&nbsp;</td>
-                					<td><h:selectBooleanCheckbox value="#{settings.gymEnabled}" disabled="true" /></td>
+                					<td><h:selectBooleanCheckbox value="#{settings.gymEnabled}" /></td>
                 				</tr>
                 				<tr>
                 					<td>Arena Mindestlevel:</td>
                 					<td>&nbsp;</td>
-                					<td><h:inputText value="#{settings.gymLevel}" disabled="true" /></td>
+                					<td><h:inputText value="#{settings.gymLevel}" /></td>
                 				</tr>
                 				<tr>
                 					<td>Arena Reichweite (Meter):</td>
                 					<td>&nbsp;</td>
-                					<td><h:inputText value="#{settings.gymRange}" disabled="true" /></td>
+                					<td><h:inputText value="#{settings.gymRange}" /></td>
+                				</tr>
+                				<tr>
+                					<td>&nbsp;</td>
+                				</tr>
+                				<tr>
+                					<td>Einstellungen speichern:</td>
+                					<td>&nbsp;</td>
+                					<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
                 				</tr>
                 			</table>
                 			<h3>Pokemon Einstellungen</h3>
-                			<table>
-                				<tr>
-                					<td>ID</td>
-                					<td>&nbsp;</td>
-                					<td>Pokemon</td>
-                					<td>&nbsp;</td>
-                					<td>Aktiviert</td>
-                					<td>&nbsp;</td>
-                					<td>Entfernung (Meter)</td>
-                				</tr>
-	                			<ui:repeat var="setting" value="#{settings.pokemonSettings}">
-		                			<tr>
-		                				<td><h:outputText value="#{setting.pokemonId}" /></td>
-		                				<td>&nbsp;</td>
-		                				<td><h:outputText value="#{setting.pokemonName}" /></td>
-		                				<td>&nbsp;</td>
-		                				<td><h:selectBooleanCheckbox value="#{setting.enabled}" disabled="true" /></td>
-		                				<td>&nbsp;</td>
-		                				<td><h:inputText value="#{setting.range}" disabled="true" /></td>
-		                			</tr>
-		                		</ui:repeat>
-		                	</table>
+                    		<table>
+                         	<tr>
+								<td>ID</td>
+								<td>&nbsp;</td>
+								<td>Pokemon</td>
+								<td>&nbsp;</td>
+								<td>Aktiviert</td>
+								<td>&nbsp;</td>
+								<td>Entfernung (Meter)</td>
+								<td>&nbsp;</td>
+								<td>Aktion</td>
+							</tr>
+							<ui:repeat var="setting" value="#{settings.pokemonSettings}">
+                            		<tr>
+									<td><h:outputText value="#{setting.pokemonId}" /></td>
+									<td>&nbsp;</td>
+                                     <td><h:outputText value="#{setting.pokemonName}" /></td>
+									<td>&nbsp;</td>
+									<td><h:selectBooleanCheckbox value="#{setting.enabled}" /></td>
+									<td>&nbsp;</td>
+									<td><h:inputText value="#{setting.range}" /></td>
+									<td>&nbsp;</td>
+									<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+								</tr>
+							</ui:repeat>
+                        </table>
 		                	<br />
                 		</h:form>
                 </ui:fragment>

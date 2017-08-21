@@ -35,7 +35,6 @@ public class Gym extends PokeObject {
 	private Integer raidLevel;
 	private Pokemon raidPokemon;
 	private Integer raidCp;
-	private Integer confirmations;
 	
 	@Column(unique = false, nullable = false)
 	@XmlAttribute
@@ -161,15 +160,5 @@ public class Gym extends PokeObject {
 
 	public void setRaidCp(Integer raidCp) {
 		this.raidCp = raidCp;
-	}
-	
-	@Column(unique = false, nullable = true)
-	@XmlAttribute
-	public Integer getConfirmations() {
-		return confirmations;
-	}
-	
-	public void setConfirmations(Integer confirmations) {
-		this.confirmations = confirmations;
 	}
 }
