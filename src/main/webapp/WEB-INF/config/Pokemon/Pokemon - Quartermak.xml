@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Pokemon pokemonId="766" name="Quartermak"/>
+<Pokemon enabled="false" pokemonId="766" name="Quartermak"/>

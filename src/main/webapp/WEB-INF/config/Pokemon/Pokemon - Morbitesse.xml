@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Pokemon pokemonId="576" name="Morbitesse"/>
+<Pokemon enabled="false" pokemonId="576" name="Morbitesse"/>

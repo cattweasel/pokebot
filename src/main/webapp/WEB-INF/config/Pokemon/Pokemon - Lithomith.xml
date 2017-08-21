@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Pokemon pokemonId="557" name="Lithomith"/>
+<Pokemon enabled="false" pokemonId="557" name="Lithomith"/>

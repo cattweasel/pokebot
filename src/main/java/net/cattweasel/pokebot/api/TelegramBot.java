@@ -10,7 +10,6 @@ import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.command.BroadcastCommand;
-import net.cattweasel.pokebot.command.LocationCommand;
 import net.cattweasel.pokebot.command.SettingsCommand;
 import net.cattweasel.pokebot.command.StartCommand;
 import net.cattweasel.pokebot.command.StatusCommand;
@@ -27,7 +26,6 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 	public TelegramBot(String botUsername) {
 		super(botUsername);
 		register(new BroadcastCommand());
-		register(new LocationCommand());
 		register(new SettingsCommand());
 		register(new StartCommand());
 		register(new StatusCommand());

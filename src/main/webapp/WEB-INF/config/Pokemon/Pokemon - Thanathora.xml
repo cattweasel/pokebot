@@ -1,2 +1,2 @@
 <?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<Pokemon pokemonId="689" name="Thanathora"/>
+<Pokemon enabled="false" pokemonId="689" name="Thanathora"/>
