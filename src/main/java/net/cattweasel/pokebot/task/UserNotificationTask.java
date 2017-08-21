@@ -75,7 +75,8 @@ public class UserNotificationTask implements TaskExecutor {
 	}
 	
 	private void handleSession(PokeContext context, BotSession session, GeoLocation loc) {
-		if (session.getUser().getSettings().get(ARG_GYM_ENABLED) == null
+		if (session.getUser().getSettings() == null
+				|| session.getUser().getSettings().get(ARG_GYM_ENABLED) == null
 				|| Util.otob(session.getUser().getSettings().get(ARG_GYM_ENABLED))) {
 			handleGyms(context, session, loc);
 		}
@@ -83,9 +84,11 @@ public class UserNotificationTask implements TaskExecutor {
 	}
 	
 	private void handleGyms(PokeContext context, BotSession session, GeoLocation loc) {
-		Double range = Util.atod(Util.otos(session.getUser().getSettings().get(ARG_GYM_RANGE)));
+		Double range = session.getUser().getSettings() == null
+				? null : Util.atod(Util.otos(session.getUser().getSettings().get(ARG_GYM_RANGE)));
 		range = range == null || range == 0D ? 3000D : range;
-		Integer minLevel = Util.otoi(session.getUser().getSettings().get(ARG_GYM_LEVEL));
+		Integer minLevel = session.getUser().getSettings() == null
+				? null : Util.otoi(session.getUser().getSettings().get(ARG_GYM_LEVEL));
 		minLevel = minLevel == null || minLevel == 0 ? 4 : minLevel;
 		QueryOptions qo = new QueryOptions();
 		BoundingCoordinates coords = loc.boundingCoordinates(range);

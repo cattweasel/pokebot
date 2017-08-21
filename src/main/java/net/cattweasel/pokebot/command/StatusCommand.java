@@ -33,7 +33,7 @@ public class StatusCommand extends AbstractCommand {
 		try {
 			context = PokeFactory.createContext(getClass().getSimpleName());
 			QueryOptions qo = new QueryOptions();
-			qo.addFilter(Filter.gt("confirmations", 4));
+			qo.addFilter(Filter.notnull("raidPokemon"));
 			int raids = context.countObjects(Gym.class, qo);
 			qo = new QueryOptions();
 			qo.setLimit(1);
