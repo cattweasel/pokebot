@@ -20,6 +20,7 @@ public class AuditAction extends PokeObject {
 	public static final String START_BOT_SESSION = "StartBotSession";
 	public static final String STOP_BOT_SESSION = "StopBotSession";
 	public static final String UPDATE_LOCATION = "UpdateLocation";
+	public static final String UPDATE_SETTINGS = "UpdateSettings";
 	
 	private static final long serialVersionUID = 8876481600343758120L;
 	

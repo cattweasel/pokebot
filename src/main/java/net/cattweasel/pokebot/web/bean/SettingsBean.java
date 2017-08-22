@@ -7,11 +7,13 @@ import java.util.List;
 import org.apache.log4j.Logger;
 
 import net.cattweasel.pokebot.object.Attributes;
+import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Pokemon;
 import net.cattweasel.pokebot.object.PokemonSetting;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.User;
+import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 
@@ -106,6 +108,8 @@ public class SettingsBean extends BaseBean {
 		}
 		user.setSettings(settings);
 		getContext().saveObject(user);
+		Auditor auditor = new Auditor(getContext());
+		auditor.log(user.getName(), AuditAction.UPDATE_SETTINGS, "null");
 		getContext().commitTransaction();
 	}
 	

@@ -12,6 +12,7 @@
 		<ImportAction location="AuditAction/AuditAction - StartBotSession.xml" />
 		<ImportAction location="AuditAction/AuditAction - StopBotSession.xml" />
 		<ImportAction location="AuditAction/AuditAction - UpdateLocation.xml" />
+		<ImportAction location="AuditAction/AuditAction - UpdateSettings.xml" />
 		
 		<!-- DEFAULT CAPABILITIES -->
 		<ImportAction location="Capability/Capability - SystemAdministrator.xml" />
