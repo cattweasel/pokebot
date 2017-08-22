@@ -1,0 +1,82 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+	
+<ui:fragment>
+	<script type="text/javascript">
+	
+	var navigationItems = [];
+	
+	navigationItems.push({
+		text: 'Startseite',
+		iconCls: 'icon-dashboard',
+		handler: function() {
+			document.location = '#{request.contextPath}/';
+		}
+	});
+	
+	navigationItems.push("->");
+	
+	</script>
+</ui:fragment>
+
+<ui:fragment rendered="#{base.loggedInUser eq null}">
+	<script type="text/javascript">
+	
+	navigationItems.push({
+		text: 'Anmelden',
+		iconCls: 'icon-login',
+		handler: function() {
+			document.location = '#{request.contextPath}/login.jsf';
+		}
+	});
+	
+	</script>
+</ui:fragment>
+
+<ui:fragment rendered="#{base.loggedInUser ne null}">
+	<script type="text/javascript">
+	
+	navigationItems.push({
+		text: 'Einstellungen',
+		iconCls: 'icon-settings',
+		handler: function() {
+			document.location = '#{request.contextPath}/settings.jsf';
+		}
+	});
+	
+	navigationItems.push({
+		text: 'Abmelden',
+		iconCls: 'icon-logout',
+		handler: function() {
+			document.getElementById('logout-form:logout-button').click();
+		}
+	});
+	
+	</script>
+</ui:fragment>
+
+<ui:fragment>
+	<script type="text/javascript">
+	
+	Ext.onReady(function() {
+		
+		Ext.create("Ext.toolbar.Toolbar", {
+  			renderTo: Ext.get('navigation'),
+  			items: navigationItems
+		});
+		
+	});
+	
+	</script>
+</ui:fragment>
+
+<ui:fragment rendered="#{base.loggedInUser ne null}">
+	<h:form id="logout-form">
+		<h:commandButton id="logout-button" action="#{base.logout}" style="display:none" />
+	</h:form>
+</ui:fragment>
+
+</html>

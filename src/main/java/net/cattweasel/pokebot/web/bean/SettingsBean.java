@@ -19,20 +19,12 @@ import net.cattweasel.pokebot.tools.Util;
 
 public class SettingsBean extends BaseBean {
 
-	private User user;
 	private List<PokemonSetting> pokemonSettings;
 	private Boolean gymEnabled;
 	private Integer gymLevel;
 	private Integer gymRange;
 	
 	private static final Logger LOG = Logger.getLogger(SettingsBean.class);
-	
-	public User getUser() {
-		if (user == null) {
-			user = getLoggedInUser();
-		}
-		return user;
-	}
 	
 	public List<PokemonSetting> getPokemonSettings() {
 		if (pokemonSettings == null) {
@@ -90,7 +82,7 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	public void save() throws GeneralException {
-		User user = getUser();
+		User user = getLoggedInUser();
 		Attributes<String, Object> settings = user.getSettings();
 		settings = settings == null ? new Attributes<String, Object>() : settings;
 		settings.put("gymEnabled", getGymEnabled());
@@ -154,7 +146,7 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	private Object getSetting(String key) {
-		Attributes<String, Object> attrs = getUser().getSettings();
+		Attributes<String, Object> attrs = getLoggedInUser().getSettings();
 		return attrs == null ? null : attrs.get(key);
 	}
 }

@@ -1,76 +1,75 @@
 <?xml version='1.0' encoding='UTF-8' ?>
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
-      xmlns:ui="http://java.sun.com/jsf/facelets"
-      xmlns:h="http://java.sun.com/jsf/html"
-      xmlns:c="http://java.sun.com/jsp/jstl/core"
-      xmlns:f="http://java.sun.com/jsf/core">
-    <body>
-        <ui:composition template="template.xhtml">
-            <ui:define name="title">Not Yet Another Pokemon Go Bot</ui:define>
-            <ui:define name="content">
-                <ui:fragment rendered="#{settings.user eq null}">
-                		<p>Der angegebene Benutzer konnte nicht gefunden werden!</p>
-                		<p>Bitte vergewissere dich, dass du die korrekte URL angegeben hast.</p>
-                </ui:fragment>
-                <ui:fragment rendered="#{settings.user ne null}">
-                		<h:form id="settings-form">
-                			<h3>Arena Einstellungen</h3>
-                			<table>
-                				<tr>
-                					<td>Arena-Meldungen aktivieren:</td>
-                					<td>&nbsp;</td>
-                					<td><h:selectBooleanCheckbox value="#{settings.gymEnabled}" /></td>
-                				</tr>
-                				<tr>
-                					<td>Arena Mindestlevel:</td>
-                					<td>&nbsp;</td>
-                					<td><h:inputText value="#{settings.gymLevel}" /></td>
-                				</tr>
-                				<tr>
-                					<td>Arena Reichweite (Meter):</td>
-                					<td>&nbsp;</td>
-                					<td><h:inputText value="#{settings.gymRange}" /></td>
-                				</tr>
-                				<tr>
-                					<td>&nbsp;</td>
-                				</tr>
-                				<tr>
-                					<td>Einstellungen speichern:</td>
-                					<td>&nbsp;</td>
-                					<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
-                				</tr>
-                			</table>
-                			<h3>Pokemon Einstellungen</h3>
-                    		<table>
-                         	<tr>
-								<td>ID</td>
-								<td>&nbsp;</td>
-								<td>Pokemon</td>
-								<td>&nbsp;</td>
-								<td>Aktiviert</td>
-								<td>&nbsp;</td>
-								<td>Reichweite (Meter)</td>
-								<td>&nbsp;</td>
-								<td>Aktion</td>
-							</tr>
-							<ui:repeat var="setting" value="#{settings.pokemonSettings}">
-                            		<tr>
-									<td><h:outputText value="#{setting.pokemonId}" /></td>
-									<td>&nbsp;</td>
-                                     <td><h:outputText value="#{setting.pokemonName}" /></td>
-									<td>&nbsp;</td>
-									<td><h:selectBooleanCheckbox value="#{setting.enabled}" /></td>
-									<td>&nbsp;</td>
-									<td><h:inputText value="#{setting.range}" /></td>
-									<td>&nbsp;</td>
-									<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
-								</tr>
-							</ui:repeat>
-                        </table>
-                		</h:form>
-                </ui:fragment>
-            </ui:define>
-        </ui:composition>
-    </body>
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core"
+	xmlns:f="http://java.sun.com/jsf/core">
+<ui:composition template="template.xhtml">
+	<ui:define name="title">Not Yet Another Pokemon Go Bot</ui:define>
+	<ui:define name="content">
+		<ui:fragment rendered="#{base.loggedInUser eq null}">
+			<p>Deine Einstellungen konnten nicht geladen werden, da du nicht angemeldet bist!</p>
+			<p>Sende hierfür einfach <i>/settings</i> an <a href="https://web.telegram.org/#/im?p=%40nyapgbot">@nyapgbot</a> und du erhälst deinen persönlichen Link.</p>
+			<p><b>Wichtig:</b> Teile diesen Link mit niemandem, da dieser sonst Zugriff auf deinen Account erhält!</p>
+		</ui:fragment>
+		<ui:fragment rendered="#{base.loggedInUser ne null}">
+			<h:form id="settings-form">
+				<h3>Arena Einstellungen</h3>
+				<table>
+					<tr>
+						<td>Arena-Meldungen aktivieren:</td>
+						<td>&nbsp;</td>
+						<td><h:selectBooleanCheckbox value="#{settings.gymEnabled}" /></td>
+					</tr>
+					<tr>
+						<td>Arena Mindestlevel:</td>
+						<td>&nbsp;</td>
+						<td><h:inputText value="#{settings.gymLevel}" /></td>
+					</tr>
+					<tr>
+						<td>Arena Reichweite (Meter):</td>
+						<td>&nbsp;</td>
+						<td><h:inputText value="#{settings.gymRange}" /></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<td>Einstellungen speichern:</td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+					</tr>
+				</table>
+				<h3>Pokemon Einstellungen</h3>
+				<table>
+					<tr>
+						<td>ID</td>
+						<td>&nbsp;</td>
+						<td>Pokemon</td>
+						<td>&nbsp;</td>
+						<td>Aktiviert</td>
+						<td>&nbsp;</td>
+						<td>Reichweite (Meter)</td>
+						<td>&nbsp;</td>
+						<td>Aktion</td>
+					</tr>
+					<ui:repeat var="setting" value="#{settings.pokemonSettings}">
+						<tr>
+							<td><h:outputText value="#{setting.pokemonId}" /></td>
+							<td>&nbsp;</td>
+							<td><h:outputText value="#{setting.pokemonName}" /></td>
+							<td>&nbsp;</td>
+							<td><h:selectBooleanCheckbox value="#{setting.enabled}" /></td>
+							<td>&nbsp;</td>
+							<td><h:inputText value="#{setting.range}" /></td>
+							<td>&nbsp;</td>
+							<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+						</tr>
+					</ui:repeat>
+				</table>
+			</h:form>
+		</ui:fragment>
+	</ui:define>
+</ui:composition>
 </html>

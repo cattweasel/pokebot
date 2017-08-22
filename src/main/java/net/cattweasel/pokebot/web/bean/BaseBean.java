@@ -3,6 +3,7 @@ package net.cattweasel.pokebot.web.bean;
 import java.util.Map;
 
 import javax.faces.context.FacesContext;
+import javax.servlet.http.HttpSession;
 
 import org.apache.log4j.Logger;
 
@@ -20,6 +21,7 @@ import net.cattweasel.pokebot.tools.Util;
 public class BaseBean {
 
 	private PokeContext context;
+	private User user;
 	
 	private static final Logger LOG = Logger.getLogger(BaseBean.class);
 	
@@ -45,17 +47,26 @@ public class BaseBean {
 		return Util.separateNumber(getContext().countObjects(Gym.class, qo));
 	}
 	
-	protected User getLoggedInUser() {
-		User user = null;
-		String userId = getRequestScope().get("id");
-		if (Util.isNotNullOrEmpty(userId)) {
-			try {
-				user = getContext().getObjectById(User.class, userId);
-			} catch (GeneralException ex) {
-				LOG.error(ex);
+	public User getLoggedInUser() {
+		if (user == null) {
+			String userId = getRequestScope().get("id");
+			if (Util.isNotNullOrEmpty(userId)) {
+				try {
+					user = getContext().getObjectById(User.class, userId);
+				} catch (GeneralException ex) {
+					LOG.error(ex);
+				}
 			}
 		}
 		return user;
+	}
+	
+	public void logout() {
+		HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
+				.getExternalContext().getSession(false);
+		if (session != null) {
+			session.invalidate();
+		}
 	}
 	
 	protected PokeContext getContext() throws GeneralException {
