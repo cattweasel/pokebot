@@ -1,5 +1,5 @@
 body {
-	margin: 10px;
+	margin: 0;
 	padding: 0;
 }
 
@@ -12,9 +12,24 @@ body {
 }
 
 #content {
-	
+	margin: 10px;
 }
 
 #footer {
 	
+}
+
+#content #about-box {
+	width: 670px;
+	height: 300px;
+	margin: 5% auto 0 auto;
+	text-align: center;
+}
+
+#content #about-box #about-logo {
+	margin: 0 0 0 15px;
+}
+
+#content #about-box #about-header {
+	font-weight: bold;
 }
