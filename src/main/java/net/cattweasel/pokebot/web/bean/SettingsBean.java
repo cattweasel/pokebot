@@ -109,7 +109,7 @@ public class SettingsBean extends BaseBean {
 		user.setSettings(settings);
 		getContext().saveObject(user);
 		Auditor auditor = new Auditor(getContext());
-		auditor.log(user.getName(), AuditAction.UPDATE_SETTINGS, "null");
+		auditor.log(user.getName(), AuditAction.UPDATE_SETTINGS, user.getName());
 		getContext().commitTransaction();
 	}
 	

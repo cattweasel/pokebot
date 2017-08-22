@@ -49,6 +49,7 @@ public class StatusCommand extends AbstractCommand {
 					Util.separateNumber(context.countObjects(Gym.class)), Util.separateNumber(raids), lastMessage));
 			Auditor auditor = new Auditor(context);
 			auditor.log(Util.otos(user.getId()), AuditAction.GET_BOT_STATUS, Util.otos(chat.getId()));
+			context.commitTransaction();
 		} catch (GeneralException ex) {
 			LOG.error("Error executing status command: " + ex.getMessage(), ex);
 		} finally {
