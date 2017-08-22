@@ -17,6 +17,40 @@
 		}
 	});
 	
+	</script>
+</ui:fragment>
+
+<ui:fragment rendered="#{base.loggedInUser ne null and base.loggedInUser.hasCapability('SystemAdministrator')}">
+	<script type="text/javascript">
+	
+	navigationItems.push({
+		xtype: 'splitbutton',
+		text: 'Überwachung',
+		iconCls: 'icon-monitor',
+		handler: function () {
+	        this.showMenu();
+	    },
+	    menu: [{
+	    		text: 'User-Map',
+	    		iconCls: 'icon-map',
+	    		handler: function() {
+	    			document.location = '#{request.contextPath}/monitor/map.jsf';
+	    		}
+	    }, {
+	    		text: 'Audit-Log',
+	    		iconCls: 'icon-audit',
+	    		handler: function() {
+	    			document.location = '#{request.contextPath}/monitor/audit.jsf';
+	    		}
+	    }]
+	});
+	
+	</script>
+</ui:fragment>
+
+<ui:fragment>
+	<script type="text/javascript">
+	
 	navigationItems.push("->");
 	
 	</script>

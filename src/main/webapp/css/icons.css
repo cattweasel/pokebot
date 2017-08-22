@@ -1,0 +1,27 @@
+.icon-dashboard {
+	background-image: url(../img/icons/dashboard.png) !important;
+}
+
+.icon-settings {
+	background-image: url(../img/icons/settings.png) !important;
+}
+
+.icon-login {
+	background-image: url(../img/icons/login.png) !important;
+}
+
+.icon-logout {
+	background-image: url(../img/icons/logout.png) !important;
+}
+
+.icon-monitor {
+	background-image: url(../img/icons/monitor.png) !important;
+}
+
+.icon-map {
+	background-image: url(../img/icons/map.png) !important;
+}
+
+.icon-audit {
+	background-image: url(../img/icons/audit.png) !important;
+}

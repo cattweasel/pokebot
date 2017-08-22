@@ -107,4 +107,17 @@ public class User extends PokeObject {
 	public void setCapabilities(List<Capability> capabilities) {
 		this.capabilities = capabilities;
 	}
+	
+	public boolean hasCapability(String name) {
+		boolean result = false;
+		if (name != null && capabilities != null && !capabilities.isEmpty()) {
+			for (Capability c : capabilities) {
+				if (name.equals(c.getName())) {
+					result = true;
+					break;
+				}
+			}
+		}
+		return result;
+	}
 }
