@@ -7,7 +7,10 @@ import org.telegram.telegrambots.bots.AbsSender;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
+import net.cattweasel.pokebot.object.AuditAction;
+import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.Util;
 
 public class SettingsCommand extends AbstractCommand {
 	
@@ -23,8 +26,11 @@ public class SettingsCommand extends AbstractCommand {
 		try {
 			context = PokeFactory.createContext(getClass().getSimpleName());
 			net.cattweasel.pokebot.object.User usr = resolveUser(context, user);
-			sendMessage(sender, chat, String.format("Deine persönlichen Einstellungen:"
-					+ " https://www.nyapgbot.net/settings.jsf?id=%s", usr.getId()));
+			String link = String.format("https://www.nyapgbot.net/settings.jsf?id=%s", usr.getId());
+			sendMessage(sender, chat, String.format("Deine persönlichen Einstellungen: %s", link));
+			Auditor auditor = new Auditor(context);
+			auditor.log(Util.otos(user.getId()), AuditAction.GET_SETTINGS_LINK, link);
+			context.commitTransaction();
 		} catch (GeneralException ex) {
 			LOG.error("Error executing SettingsCommand: " + ex.getMessage(), ex);
 		} finally {

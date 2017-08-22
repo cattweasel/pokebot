@@ -13,6 +13,7 @@ import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.TaskExecutor;
 import net.cattweasel.pokebot.api.TelegramBot;
 import net.cattweasel.pokebot.object.Attributes;
+import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
@@ -22,6 +23,7 @@ import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
 import net.cattweasel.pokebot.object.UserNotification;
+import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.server.Environment;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.GeoLocation;
@@ -163,6 +165,8 @@ public class UserNotificationTask implements TaskExecutor {
 				n.setName(name);
 				n.setExpiration(spawn.getDisappearTime());
 				context.saveObject(n);
+				Auditor auditor = new Auditor(context);
+				auditor.log("System", AuditAction.SEND_SPAWN_NOTIFICATION, session.getUser().getName());
 				context.commitTransaction();
 			}
 		} catch (GeneralException ex) {
@@ -202,6 +206,8 @@ public class UserNotificationTask implements TaskExecutor {
 				n.setName(name);
 				n.setExpiration(gym.getRaidEnd());
 				context.saveObject(n);
+				Auditor auditor = new Auditor(context);
+				auditor.log("System", AuditAction.SEND_RAID_NOTIFICATION, session.getUser().getName());
 				context.commitTransaction();
 			}
 		} catch (GeneralException ex) {

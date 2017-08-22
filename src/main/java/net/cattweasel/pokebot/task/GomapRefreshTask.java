@@ -92,16 +92,10 @@ public class GomapRefreshTask implements TaskExecutor {
 	
 	private void processSpawns(PokeContext context, JSONArray spawns) {
 		if (spawns != null && !spawns.isEmpty()) {
-			int counter = 0;
 			for (int i=0; i<spawns.size(); i++) {
 				if (running) {
 					try {
-						if (processSpawn(context, (JSONObject) spawns.get(i))) {
-							counter++;
-							if (counter % 1000 == 0) {
-								context.commitTransaction();
-							}
-						}
+						processSpawn(context, (JSONObject) spawns.get(i));
 					} catch (GeneralException ex) {
 						LOG.error("Error processing spawn: " + spawns.get(i), ex);
 					}
@@ -110,7 +104,7 @@ public class GomapRefreshTask implements TaskExecutor {
 		}
 	}
 	
-	private boolean processSpawn(PokeContext context, JSONObject spawn) throws GeneralException {
+	private void processSpawn(PokeContext context, JSONObject spawn) throws GeneralException {
 		String name = Util.otos(spawn.get(ARG_EID));
 		Date disappearTime = new Date(Util.atol(Util.otos(spawn.get(ARG_DISAPPEAR_TIME))) * 1000L);
 		if (disappearTime.getTime() > new Date().getTime()
@@ -122,9 +116,7 @@ public class GomapRefreshTask implements TaskExecutor {
 			result.setLongitude(Util.atod(Util.otos(spawn.get(ARG_LONGITUDE))));
 			result.setPokemon(resolvePokemon(context, Util.otoi(spawn.get(ARG_POKEMON_ID))));
 			context.saveObject(result);
-			return true;
 		}
-		return false;
 	}
 	
 	private void processGyms(PokeContext context, JSONArray gyms) {

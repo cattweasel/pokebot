@@ -2,6 +2,17 @@
 <ImportContainer>
 	<ImportActions>
 		
+		<!-- DEFAULT AUDIT ACTIONS -->
+		<ImportAction location="AuditAction/AuditAction - CreateUser.xml" />
+		<ImportAction location="AuditAction/AuditAction - GetBotStatus.xml" />
+		<ImportAction location="AuditAction/AuditAction - GetSettingsLink.xml" />
+		<ImportAction location="AuditAction/AuditAction - SendBroadcast.xml" />
+		<ImportAction location="AuditAction/AuditAction - SendRaidNotification.xml" />
+		<ImportAction location="AuditAction/AuditAction - SendSpawnNotification.xml" />
+		<ImportAction location="AuditAction/AuditAction - StartBotSession.xml" />
+		<ImportAction location="AuditAction/AuditAction - StopBotSession.xml" />
+		<ImportAction location="AuditAction/AuditAction - UpdateLocation.xml" />
+		
 		<!-- DEFAULT CAPABILITIES -->
 		<ImportAction location="Capability/Capability - SystemAdministrator.xml" />
 		<ImportAction location="Capability/Capability - BroadcastAdministrator.xml" />

@@ -9,6 +9,8 @@ import org.telegram.telegrambots.bots.commandbot.commands.BotCommand;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PokeContext;
+import net.cattweasel.pokebot.object.AuditAction;
+import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 
@@ -44,6 +46,8 @@ public abstract class AbstractCommand extends BotCommand {
 				result.setName(Util.otos(user.getId()));
 				result.setUsername(user.getUserName());
 				context.saveObject(result);
+				Auditor auditor = new Auditor(context);
+				auditor.log("System", AuditAction.CREATE_USER, result.getName());
 				context.commitTransaction();
 			}
 		} catch (GeneralException ex) {

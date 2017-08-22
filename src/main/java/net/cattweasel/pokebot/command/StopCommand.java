@@ -7,7 +7,9 @@ import org.telegram.telegrambots.bots.AbsSender;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
+import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
+import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.GeneralException;
 
 public class StopCommand extends AbstractCommand {
@@ -28,6 +30,8 @@ public class StopCommand extends AbstractCommand {
 			session = context.getObjectByName(BotSession.class, name);
 			if (session != null) {
 				LOG.debug("Destroying BotSession: " + session);
+				Auditor auditor = new Auditor(context);
+				auditor.log(session.getUser().getName(), AuditAction.STOP_BOT_SESSION, session.getName());
 				context.removeObject(session);
 				context.commitTransaction();
 				sendMessage(sender, chat, String.format("Alles klar, mach's gut, bis demnächst!"));

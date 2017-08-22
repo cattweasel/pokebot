@@ -10,11 +10,13 @@ import org.telegram.telegrambots.bots.AbsSender;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
+import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.UserNotification;
+import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 
@@ -45,6 +47,8 @@ public class StatusCommand extends AbstractCommand {
 					Util.separateNumber(context.countObjects(net.cattweasel.pokebot.object.User.class)),
 					Util.separateNumber(context.countObjects(BotSession.class)),
 					Util.separateNumber(context.countObjects(Gym.class)), Util.separateNumber(raids), lastMessage));
+			Auditor auditor = new Auditor(context);
+			auditor.log(Util.otos(user.getId()), AuditAction.GET_BOT_STATUS, Util.otos(chat.getId()));
 		} catch (GeneralException ex) {
 			LOG.error("Error executing status command: " + ex.getMessage(), ex);
 		} finally {

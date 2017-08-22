@@ -7,7 +7,9 @@ import org.telegram.telegrambots.bots.AbsSender;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
+import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
+import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.GeneralException;
 
 public class StartCommand extends AbstractCommand {
@@ -35,6 +37,8 @@ public class StartCommand extends AbstractCommand {
 				LOG.debug("Creating new BotSession: " + session);
 				sendMessage(sender, chat, String.format("Hey, schön dich zu sehen."
 						+ " Vergiss bitte nicht, deine Position zu updaten!"));
+				Auditor auditor = new Auditor(context);
+				auditor.log(session.getUser().getName(), AuditAction.START_BOT_SESSION, session.getName());
 			} else {
 				LOG.debug("Re-allocating BotSession: " + session);
 				sendMessage(sender, chat, String.format("Ich bin noch immer für dich am arbeiten."
