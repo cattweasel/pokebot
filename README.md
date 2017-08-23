@@ -4,3 +4,5 @@
 Dieser Bot informiert dich über Raids und Pokemon in deiner Nähe, je nachdem wie du ihn konfigurierst.
 
 Fragen, Hilfe, Anregungen, etc. findest du hier: https://t.me/joinchat/D-SrUkOc983TqFuCOv0QdA
+
+Offizielle Website: https://www.nyapgbot.net/
