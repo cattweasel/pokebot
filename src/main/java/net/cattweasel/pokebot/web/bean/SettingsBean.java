@@ -25,6 +25,7 @@ public class SettingsBean extends BaseBean {
 	private List<PokemonSetting> pokemonSettings;
 	private String language;
 	private Boolean deleteExpired;
+	private Boolean shareLocation;
 	private Boolean gymEnabled;
 	private Integer gymLevel;
 	private Integer gymRange;
@@ -70,6 +71,18 @@ public class SettingsBean extends BaseBean {
 	
 	public void setDeleteExpired(Boolean deleteExpired) {
 		this.deleteExpired = deleteExpired;
+	}
+	
+	public Boolean getShareLocation() {
+		if (shareLocation == null) {
+			shareLocation = getSetting("shareLocation") != null
+					? Util.otob(getSetting("shareLocation")) : false;
+		}
+		return shareLocation;
+	}
+	
+	public void setShareLocation(Boolean shareLocation) {
+		this.shareLocation = shareLocation;
 	}
 	
 	public Integer getGymLevel() {

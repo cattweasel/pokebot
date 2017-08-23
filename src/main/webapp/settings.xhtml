@@ -16,7 +16,7 @@
 			<h:form id="settings-form">
 				<table>
 					<tr>
-						<th colspan="5"><h:outputText value="#{msgs.settings_global_settings}" /></th>
+						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_global_settings}" /></th>
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
@@ -56,10 +56,19 @@
 						<td><h:outputText value="#{msgs.settings_user_language_desc}" /></td>
 					</tr>
 					<tr>
+						<td colspan="3"><h:outputText value="#{msgs.settings_share_location}" />:</td>
+						<td>&nbsp;</td>
+						<td colspan="3"><h:selectBooleanCheckbox value="#{settings.shareLocation}" disabled="true" /></td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" disabled="true" /></td>
+						<td>&nbsp;</td>
+						<td><h:outputText value="#{msgs.settings_share_location_desc}" /></td>
+					</tr>
+					<tr>
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
-						<th colspan="5"><h:outputText value="#{msgs.settings_gym_settings}" /></th>
+						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_raid_settings}" /></th>
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
@@ -74,37 +83,37 @@
 						<th><h:outputText value="#{msgs.description}" /></th>
 					</tr>
 					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_enable_gym_notifications}" />:</td>
+						<td colspan="3"><h:outputText value="#{msgs.settings_enable_raid_notifications}" />:</td>
 						<td>&nbsp;</td>
 						<td colspan="3"><h:selectBooleanCheckbox value="#{settings.gymEnabled}" /></td>
 						<td>&nbsp;</td>
 						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_enable_gym_notifications_desc}" /></td>
+						<td><h:outputText value="#{msgs.settings_enable_raid_notifications_desc}" /></td>
 					</tr>
 					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_gym_min_level}" />:</td>
+						<td colspan="3"><h:outputText value="#{msgs.settings_raid_min_level}" />:</td>
 						<td>&nbsp;</td>
 						<td colspan="3"><h:inputText value="#{settings.gymLevel}" /></td>
 						<td>&nbsp;</td>
 						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_gym_min_level_desc}" /></td>
+						<td><h:outputText value="#{msgs.settings_raid_min_level_desc}" /></td>
 					</tr>
 					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_gym_range}" />:</td>
+						<td colspan="3"><h:outputText value="#{msgs.settings_raid_range}" />:</td>
 						<td>&nbsp;</td>
 						<td colspan="3"><h:inputText value="#{settings.gymRange}" /></td>
 						<td>&nbsp;</td>
 						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_gym_range_desc}" /></td>
+						<td><h:outputText value="#{msgs.settings_raid_range_desc}" /></td>
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
-						<th colspan="5"><h:outputText value="#{msgs.settings_pokemon_settings}" /></th>
+						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_pokemon_settings}" /></th>
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
