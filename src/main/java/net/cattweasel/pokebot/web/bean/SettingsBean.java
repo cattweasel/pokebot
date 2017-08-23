@@ -20,6 +20,8 @@ import net.cattweasel.pokebot.tools.Util;
 public class SettingsBean extends BaseBean {
 
 	private List<PokemonSetting> pokemonSettings;
+	private String language;
+	private Boolean deleteExpired;
 	private Boolean gymEnabled;
 	private Integer gymLevel;
 	private Integer gymRange;
@@ -33,6 +35,18 @@ public class SettingsBean extends BaseBean {
 		return pokemonSettings;
 	}
 	
+	public String getLanguage() {
+		if (language == null) {
+			language = getSetting("language") != null
+					? Util.otos(getSetting("language")) : "de";
+		}
+		return language;
+	}
+	
+	public void setLanguage(String language) {
+		this.language = language;
+	}
+	
 	public Boolean getGymEnabled() {
 		if (gymEnabled == null) {
 			gymEnabled = getSetting("gymEnabled") != null
@@ -43,6 +57,18 @@ public class SettingsBean extends BaseBean {
 	
 	public void setGymEnabled(Boolean gymEnabled) {
 		this.gymEnabled = gymEnabled;
+	}
+	
+	public Boolean getDeleteExpired() {
+		if (deleteExpired == null) {
+			deleteExpired = getSetting("deleteExpired") != null
+					? Util.otob(getSetting("deleteExpired")) : true;
+		}
+		return deleteExpired;
+	}
+	
+	public void setDeleteExpired(Boolean deleteExpired) {
+		this.deleteExpired = deleteExpired;
 	}
 	
 	public Integer getGymLevel() {

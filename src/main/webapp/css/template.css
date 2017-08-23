@@ -19,6 +19,10 @@ body {
 	
 }
 
+table tr {
+	text-align: left;
+}
+
 #content #about-box {
 	width: 670px;
 	height: 300px;

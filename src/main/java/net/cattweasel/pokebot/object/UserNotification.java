@@ -19,6 +19,7 @@ public class UserNotification extends PokeObject {
 	private static final long serialVersionUID = 3736536634487658349L;
 	
 	private Date expiration;
+	private String messageId;
 
 	@Column(unique = false, nullable = false)
 	@XmlAttribute
@@ -29,5 +30,15 @@ public class UserNotification extends PokeObject {
 
 	public void setExpiration(Date expiration) {
 		this.expiration = expiration;
+	}
+	
+	@Column(unique = true, nullable = false)
+	@XmlAttribute
+	public String getMessageId() {
+		return messageId;
+	}
+	
+	public void setMessageId(String messageId) {
+		this.messageId = messageId;
 	}
 }

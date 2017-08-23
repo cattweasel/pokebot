@@ -14,44 +14,111 @@
 		</ui:fragment>
 		<ui:fragment rendered="#{base.loggedInUser ne null}">
 			<h:form id="settings-form">
-				<h3>Arena Einstellungen</h3>
 				<table>
 					<tr>
-						<td>Arena-Meldungen aktivieren:</td>
-						<td>&nbsp;</td>
-						<td><h:selectBooleanCheckbox value="#{settings.gymEnabled}" /></td>
-					</tr>
-					<tr>
-						<td>Arena Mindestlevel:</td>
-						<td>&nbsp;</td>
-						<td><h:inputText value="#{settings.gymLevel}" /></td>
-					</tr>
-					<tr>
-						<td>Arena Reichweite (Meter):</td>
-						<td>&nbsp;</td>
-						<td><h:inputText value="#{settings.gymRange}" /></td>
+						<th colspan="5">Globale Einstellungen</th>
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
-						<td>Einstellungen speichern:</td>
+						<th colspan="3">Einstellung</th>
+						<th>&nbsp;</th>
+						<th colspan="3">Wert</th>
+						<th>&nbsp;</th>
+						<th>&nbsp;Aktion</th>
+						<th>&nbsp;</th>
+						<th>Beschreibung</th>
+					</tr>
+					<tr>
+						<td colspan="3">Alte Meldungen löschen:</td>
+						<td>&nbsp;</td>
+						<td colspan="3">&nbsp;<h:selectBooleanCheckbox value="#{settings.deleteExpired}" disabled="true" /></td>
 						<td>&nbsp;</td>
 						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+						<td>&nbsp;</td>
+						<td>Entfernt Meldungen von abgelaufenen Raids / Pokemon</td>
 					</tr>
-				</table>
-				<h3>Pokemon Einstellungen</h3>
-				<table>
 					<tr>
-						<td>ID</td>
+						<td colspan="3">Benutzer Sprache:</td>
 						<td>&nbsp;</td>
-						<td>Pokemon</td>
+						<td colspan="3">
+							<h:selectOneRadio value="#{settings.language}" disabled="true"> 
+   								<f:selectItem itemValue="de" itemLabel="deutsch" /> 
+   								<f:selectItem itemValue="en" itemLabel="englisch" />
+							</h:selectOneRadio>
+						</td>
 						<td>&nbsp;</td>
-						<td>Aktiviert</td>
+						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
 						<td>&nbsp;</td>
-						<td>Reichweite (Meter)</td>
+						<td>Setzt die gewünschte Sprache für die Website und den Bot</td>
+					</tr>
+					<tr>
 						<td>&nbsp;</td>
-						<td>Aktion</td>
+					</tr>
+					<tr>
+						<th colspan="5">Arena Einstellungen</th>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<th colspan="3">Einstellung</th>
+						<th>&nbsp;</th>
+						<th colspan="3">Wert</th>
+						<th>&nbsp;</th>
+						<th>&nbsp;Aktion</th>
+						<th>&nbsp;</th>
+						<th>Beschreibung</th>
+					</tr>
+					<tr>
+						<td colspan="3">Arena-Meldungen aktivieren:</td>
+						<td>&nbsp;</td>
+						<td colspan="3"><h:selectBooleanCheckbox value="#{settings.gymEnabled}" /></td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+						<td>&nbsp;</td>
+						<td>Aktiviert / deaktiviert sämtliche Raid Meldungen</td>
+					</tr>
+					<tr>
+						<td colspan="3">Arena Mindestlevel:</td>
+						<td>&nbsp;</td>
+						<td colspan="3"><h:inputText value="#{settings.gymLevel}" /></td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+						<td>&nbsp;</td>
+						<td>Bestimmt das Mindestlevel für Raids</td>
+					</tr>
+					<tr>
+						<td colspan="3">Arena Reichweite (Meter):</td>
+						<td>&nbsp;</td>
+						<td colspan="3"><h:inputText value="#{settings.gymRange}" /></td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+						<td>&nbsp;</td>
+						<td>Bestimmt die maximale Reichweite für Raids</td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<th colspan="5">Pokemon Einstellungen</th>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<th>ID</th>
+						<th>&nbsp;</th>
+						<th>Pokemon</th>
+						<th>&nbsp;</th>
+						<th>Aktiviert</th>
+						<th>&nbsp;</th>
+						<th>Reichweite (Meter)</th>
+						<th>&nbsp;</th>
+						<th>&nbsp;Aktion</th>
+						<th>&nbsp;</th>
+						<th>Beschreibung</th>
 					</tr>
 					<ui:repeat var="setting" value="#{settings.pokemonSettings}">
 						<tr>
@@ -64,6 +131,8 @@
 							<td><h:inputText value="#{setting.range}" /></td>
 							<td>&nbsp;</td>
 							<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+							<td>&nbsp;</td>
+							<td>Bestimmt die Einstellungen für das Pokemon <h:outputText value="#{setting.pokemonName}" /></td>
 						</tr>
 					</ui:repeat>
 				</table>

@@ -4,9 +4,12 @@ import java.util.Date;
 import java.util.Iterator;
 
 import org.apache.log4j.Logger;
+import org.telegram.telegrambots.api.methods.updatingmessages.DeleteMessage;
+import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.TaskExecutor;
+import net.cattweasel.pokebot.api.TelegramBot;
 import net.cattweasel.pokebot.object.Attributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
@@ -15,7 +18,9 @@ import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
 import net.cattweasel.pokebot.object.UserNotification;
+import net.cattweasel.pokebot.server.Environment;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.Util;
 
 /**
  * This task is used to perform several system related background processes.
@@ -63,12 +68,31 @@ public class PerformMaintenanceTask implements TaskExecutor {
 					UserNotification notif = context.getObjectById(UserNotification.class, it.next());
 					if (notif != null) {
 						LOG.debug("Removing notification: " + notif);
+						if (Util.isNotNullOrEmpty(notif.getMessageId())) {
+							deleteUserMessages(notif.getMessageId());
+						}
 						context.removeObject(notif);
 					}
 				}
 			}
 		} catch (GeneralException ex) {
 			LOG.error("Error removing orphan notifications: " + ex.getMessage(), ex);
+		}
+	}
+	
+	@SuppressWarnings("deprecation")
+	private void deleteUserMessages(String messageId) {
+		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
+		String[] parts = messageId.split("-");
+		for (int i=0; i<parts.length; i++) {
+			DeleteMessage m = new DeleteMessage();
+			m.setChatId(parts[i].split(":")[0]);
+			m.setMessageId(Util.otoi(parts[i].split(":")[1]));
+			try {
+				bot.deleteMessage(m);
+			} catch (TelegramApiException | IndexOutOfBoundsException ex) {
+				LOG.error("Error deleting message: " + ex.getMessage(), ex);
+			}
 		}
 	}
 	

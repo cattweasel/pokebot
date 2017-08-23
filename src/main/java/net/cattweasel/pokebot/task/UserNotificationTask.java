@@ -7,6 +7,7 @@ import java.util.Iterator;
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.methods.send.SendLocation;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
+import org.telegram.telegrambots.api.objects.Message;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PokeContext;
@@ -156,18 +157,22 @@ public class UserNotificationTask implements TaskExecutor {
 				spawn.getClass().getSimpleName(), spawn.getName());
 		try {
 			if (context.getObjectByName(UserNotification.class, name) == null) {
+				String messageId = null;
 				try {
-					announceSpawn(session, spawn);
+					messageId = announceSpawn(session, spawn);
 				} catch (TelegramApiException ex) {
 					LOG.error("Error announcing Spawn: " + ex.getMessage(), ex);
 				}
-				UserNotification n = new UserNotification();
-				n.setName(name);
-				n.setExpiration(spawn.getDisappearTime());
-				context.saveObject(n);
-				Auditor auditor = new Auditor(context);
-				auditor.log("System", AuditAction.SEND_SPAWN_NOTIFICATION, session.getUser().getName());
-				context.commitTransaction();
+				if (messageId != null) {
+					UserNotification n = new UserNotification();
+					n.setName(name);
+					n.setExpiration(spawn.getDisappearTime());
+					n.setMessageId(messageId);
+					context.saveObject(n);
+					Auditor auditor = new Auditor(context);
+					auditor.log("System", AuditAction.SEND_SPAWN_NOTIFICATION, session.getUser().getName());
+					context.commitTransaction();
+				}
 			}
 		} catch (GeneralException ex) {
 			LOG.error("Error handling Spawn: " + ex.getMessage(), ex);
@@ -175,7 +180,7 @@ public class UserNotificationTask implements TaskExecutor {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private void announceSpawn(BotSession session, Spawn spawn) throws TelegramApiException {
+	private String announceSpawn(BotSession session, Spawn spawn) throws TelegramApiException {
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		String txt = String.format("PKM: %s - %sEnde: %s Uhr", spawn.getPokemon().getName(),
@@ -184,12 +189,14 @@ public class UserNotificationTask implements TaskExecutor {
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
 		msg.setText(txt);
-		bot.sendMessage(msg);
+		Message m = bot.sendMessage(msg);
+		String messageId = session.getChatId() + ":" + m.getMessageId();
 		SendLocation loc = new SendLocation();
 		loc.setChatId(session.getChatId());
 		loc.setLatitude(Util.atof(Util.otos(spawn.getLatitude())));
 		loc.setLongitude(Util.atof(Util.otos(spawn.getLongitude())));
-		bot.sendLocation(loc);
+		m = bot.sendLocation(loc);
+		return messageId + "-" + session.getChatId() + ":" + m.getMessageId();
 	}
 	
 	private void handleGym(PokeContext context, BotSession session, Gym gym) {
@@ -197,18 +204,22 @@ public class UserNotificationTask implements TaskExecutor {
 				gym.getClass().getSimpleName(), gym.getName());
 		try {
 			if (context.getObjectByName(UserNotification.class, name) == null) {
+				String messageId = null;
 				try {
-					announceGym(session, gym);
+					messageId = announceGym(session, gym);
 				} catch (TelegramApiException ex) {
 					LOG.error("Error announcing Gym: " + ex.getMessage(), ex);
 				}
-				UserNotification n = new UserNotification();
-				n.setName(name);
-				n.setExpiration(gym.getRaidEnd());
-				context.saveObject(n);
-				Auditor auditor = new Auditor(context);
-				auditor.log("System", AuditAction.SEND_RAID_NOTIFICATION, session.getUser().getName());
-				context.commitTransaction();
+				if (messageId != null) {
+					UserNotification n = new UserNotification();
+					n.setName(name);
+					n.setExpiration(gym.getRaidEnd());
+					n.setMessageId(messageId);
+					context.saveObject(n);
+					Auditor auditor = new Auditor(context);
+					auditor.log("System", AuditAction.SEND_RAID_NOTIFICATION, session.getUser().getName());
+					context.commitTransaction();
+				}
 			}
 		} catch (GeneralException ex) {
 			LOG.error("Error handling Gym: " + ex.getMessage(), ex);
@@ -216,7 +227,7 @@ public class UserNotificationTask implements TaskExecutor {
 	}
 
 	@SuppressWarnings("deprecation")
-	private void announceGym(BotSession session, Gym gym) throws TelegramApiException {
+	private String announceGym(BotSession session, Gym gym) throws TelegramApiException {
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
 		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
 		String txt = String.format("RAID: %s [ Level: %s, CP: %s, Arena: %s ] %sStart: %s Uhr - Ende: %s Uhr",
@@ -226,12 +237,14 @@ public class UserNotificationTask implements TaskExecutor {
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
 		msg.setText(txt);
-		bot.sendMessage(msg);
+		Message m = bot.sendMessage(msg);
+		String messageId = session.getChatId() + ":" + m.getMessageId();
 		SendLocation loc = new SendLocation();
 		loc.setChatId(session.getChatId());
 		loc.setLatitude(Util.atof(Util.otos(gym.getLatitude())));
 		loc.setLongitude(Util.atof(Util.otos(gym.getLongitude())));
-		bot.sendLocation(loc);
+		m = bot.sendLocation(loc);
+		return messageId + "-" + session.getChatId() + ":" + m.getMessageId();
 	}
 	
 	private String calculateDistance(BotSession session, Double latitude, Double longitude) {
