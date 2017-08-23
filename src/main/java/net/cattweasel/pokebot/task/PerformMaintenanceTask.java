@@ -17,6 +17,7 @@ import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
+import net.cattweasel.pokebot.object.User;
 import net.cattweasel.pokebot.object.UserNotification;
 import net.cattweasel.pokebot.server.Environment;
 import net.cattweasel.pokebot.tools.GeneralException;
@@ -69,7 +70,14 @@ public class PerformMaintenanceTask implements TaskExecutor {
 					if (notif != null) {
 						LOG.debug("Removing notification: " + notif);
 						if (Util.isNotNullOrEmpty(notif.getMessageId())) {
-							deleteUserMessages(notif.getMessageId());
+							User user = context.getObjectByName(User.class, notif.getName().split(":")[0]);
+							if (user != null) {
+								if (user.getSettings() == null || user.getSettings().get("deleteExpired") == null) {
+									deleteUserMessages(notif.getMessageId());
+								} else if (user.getSettings() != null && Util.otob(user.getSettings().get("deleteExpired"))) {
+									deleteUserMessages(notif.getMessageId());
+								}
+							}
 						}
 						context.removeObject(notif);
 					}

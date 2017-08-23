@@ -33,7 +33,7 @@
 					<tr>
 						<td colspan="3">Alte Meldungen löschen:</td>
 						<td>&nbsp;</td>
-						<td colspan="3">&nbsp;<h:selectBooleanCheckbox value="#{settings.deleteExpired}" disabled="true" /></td>
+						<td colspan="3">&nbsp;<h:selectBooleanCheckbox value="#{settings.deleteExpired}" /></td>
 						<td>&nbsp;</td>
 						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
 						<td>&nbsp;</td>
@@ -43,10 +43,12 @@
 						<td colspan="3">Benutzer Sprache:</td>
 						<td>&nbsp;</td>
 						<td colspan="3">
-							<h:selectOneRadio value="#{settings.language}" disabled="true"> 
-   								<f:selectItem itemValue="de" itemLabel="deutsch" /> 
-   								<f:selectItem itemValue="en" itemLabel="englisch" />
-							</h:selectOneRadio>
+							<h:selectOneMenu value="#{settings.language}">
+								<f:selectItem itemValue="de" itemLabel="#{msgs.language_de}" />
+								<f:selectItem itemValue="en" itemLabel="#{msgs.language_en}" />
+								<f:selectItem itemValue="es" itemLabel="#{msgs.language_es}" />
+								<f:selectItem itemValue="fr" itemLabel="#{msgs.language_fr}" />
+							</h:selectOneMenu>
 						</td>
 						<td>&nbsp;</td>
 						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>

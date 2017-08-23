@@ -3,6 +3,9 @@ package net.cattweasel.pokebot.web.bean;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
+
+import javax.faces.context.FacesContext;
 
 import org.apache.log4j.Logger;
 
@@ -36,10 +39,8 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	public String getLanguage() {
-		if (language == null) {
-			language = getSetting("language") != null
-					? Util.otos(getSetting("language")) : "de";
-		}
+		language = getSetting("language") != null ? Util.otos(getSetting("language"))
+				: FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
 		return language;
 	}
 	
@@ -111,6 +112,9 @@ public class SettingsBean extends BaseBean {
 		User user = getLoggedInUser();
 		Attributes<String, Object> settings = user.getSettings();
 		settings = settings == null ? new Attributes<String, Object>() : settings;
+		settings.put("language", language);
+		FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(language));
+		settings.put("deleteExpired", getDeleteExpired());
 		settings.put("gymEnabled", getGymEnabled());
 		settings.put("gymLevel", getGymLevel());
 		settings.put("gymRange", getGymRange());
@@ -172,7 +176,8 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	private Object getSetting(String key) {
-		Attributes<String, Object> attrs = getLoggedInUser().getSettings();
+		Attributes<String, Object> attrs = getLoggedInUser() == null
+				? null : getLoggedInUser().getSettings();
 		return attrs == null ? null : attrs.get(key);
 	}
 }

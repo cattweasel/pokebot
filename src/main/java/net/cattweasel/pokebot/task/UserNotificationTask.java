@@ -181,11 +181,14 @@ public class UserNotificationTask implements TaskExecutor {
 	
 	@SuppressWarnings("deprecation")
 	private String announceSpawn(BotSession session, Spawn spawn) throws TelegramApiException {
+		String lang = session.getUser().getSettings() == null || session.getUser().getSettings().get("language") == null
+				? "de" : session.getUser().getSettings().getString("language");
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-		String txt = String.format("PKM: %s - %sEnde: %s Uhr", spawn.getPokemon().getName(),
+		SimpleDateFormat sdf = "en".equals(lang) ? new SimpleDateFormat("hh:mm a") : new SimpleDateFormat("HH:mm");
+		String txt = String.format("PKM: %s - %s%s: %s%s", spawn.getPokemon().getName(),
 				calculateDistance(session, spawn.getLatitude(), spawn.getLongitude()),
-				sdf.format(spawn.getDisappearTime()));
+				"en".equals(lang) ? "End" : "Ende", sdf.format(spawn.getDisappearTime()),
+				"en".equals(lang) ? "" : " Uhr");
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
 		msg.setText(txt);
@@ -228,12 +231,15 @@ public class UserNotificationTask implements TaskExecutor {
 
 	@SuppressWarnings("deprecation")
 	private String announceGym(BotSession session, Gym gym) throws TelegramApiException {
+		String lang = session.getUser().getSettings() == null || session.getUser().getSettings().get("language") == null
+				? "de" : session.getUser().getSettings().getString("language");
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
-		SimpleDateFormat sdf = new SimpleDateFormat("HH:mm");
-		String txt = String.format("RAID: %s [ Level: %s, CP: %s, Arena: %s ] %sStart: %s Uhr - Ende: %s Uhr",
+		SimpleDateFormat sdf = "en".equals(lang) ? new SimpleDateFormat("hh:mm a") : new SimpleDateFormat("HH:mm");
+		String txt = String.format("RAID: %s [ Level: %s, CP: %s, %s: %s ] %s%s: %s%s",
 				gym.getRaidPokemon().getName(), gym.getRaidLevel(), Util.separateNumber(gym.getRaidCp()),
-				gym.getDisplayName(), calculateDistance(session, gym.getLatitude(), gym.getLongitude()),
-				sdf.format(gym.getRaidStart()), sdf.format(gym.getRaidEnd()));
+				"en".equals(lang) ? "Gym" : "Arena", gym.getDisplayName(),
+				calculateDistance(session, gym.getLatitude(),gym.getLongitude()),
+				"en".equals(lang) ? "End" : "Ende", sdf.format(gym.getRaidEnd()), "en".equals(lang) ? "" : " Uhr");
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
 		msg.setText(txt);
@@ -250,11 +256,14 @@ public class UserNotificationTask implements TaskExecutor {
 	private String calculateDistance(BotSession session, Double latitude, Double longitude) {
 		StringBuilder sb = new StringBuilder();
 		if (session != null && session.get(ARG_LATITUDE) != null && session.get(ARG_LONGITUDE) != null) {
+			String lang = session.getUser().getSettings() == null || session.getUser().getSettings().get("language") == null
+					? "de" : session.getUser().getSettings().getString("language");
 			GeoLocation loc = GeoLocation.fromDegrees(latitude, longitude);
 			Double lat = Util.atod(Util.otos(session.get(ARG_LATITUDE)));
 			Double lon = Util.atod(Util.otos(session.get(ARG_LONGITUDE)));
 			Double distance = loc.distanceTo(GeoLocation.fromDegrees(lat, lon));
-			sb.append(String.format("Entfernung: %sm - ", Util.separateNumber(Math.round(distance))));
+			sb.append(String.format("%s: %sm - ", "en".equals(lang) ? "Distance" : "Entfernung",
+					Util.separateNumber(Math.round(distance))));
 		}
 		return sb.toString();
 	}

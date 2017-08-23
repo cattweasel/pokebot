@@ -10,7 +10,7 @@
 	var navigationItems = [];
 	
 	navigationItems.push({
-		text: 'Startseite',
+		text: '#{msgs.navigation_dashboard}',
 		iconCls: 'icon-dashboard',
 		handler: function() {
 			document.location = '#{request.contextPath}/';
@@ -25,19 +25,19 @@
 	
 	navigationItems.push({
 		xtype: 'splitbutton',
-		text: 'Überwachung',
+		text: '#{msgs.navigation_monitor}',
 		iconCls: 'icon-monitor',
 		handler: function () {
 	        this.showMenu();
 	    },
 	    menu: [{
-	    		text: 'User-Map',
+	    		text: '#{msgs.monitor_user_map}',
 	    		iconCls: 'icon-map',
 	    		handler: function() {
 	    			document.location = '#{request.contextPath}/monitor/map.jsf';
 	    		}
 	    }, {
-	    		text: 'Audit-Log',
+	    		text: '#{msgs.monitor_audit_log}',
 	    		iconCls: 'icon-audit',
 	    		handler: function() {
 	    			document.location = '#{request.contextPath}/monitor/audit.jsf';
@@ -60,7 +60,7 @@
 	<script type="text/javascript">
 	
 	navigationItems.push({
-		text: 'Anmelden',
+		text: '#{msgs.navigation_login}',
 		iconCls: 'icon-login',
 		handler: function() {
 			document.location = '#{request.contextPath}/login.jsf';
@@ -74,7 +74,7 @@
 	<script type="text/javascript">
 	
 	navigationItems.push({
-		text: 'Einstellungen',
+		text: '#{msgs.navigation_settings}',
 		iconCls: 'icon-settings',
 		handler: function() {
 			document.location = '#{request.contextPath}/settings.jsf';
@@ -82,7 +82,7 @@
 	});
 	
 	navigationItems.push({
-		text: 'Abmelden',
+		text: '#{msgs.navigation_logout}',
 		iconCls: 'icon-logout',
 		handler: function() {
 			document.getElementById('logout-form:logout-button').click();
