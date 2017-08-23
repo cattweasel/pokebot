@@ -22,7 +22,8 @@
     				
     				markers.push({
     					lat: #{location.x},
-    					lng: #{location.y}
+    					lng: #{location.y},
+    					notifications: '#{location.notifications}'
     				});
     				
     				</script>
@@ -47,7 +48,8 @@
               				lat: markers[i].lat,
               				lng: markers[i].lng
               			},
-              			map: userMap
+              			map: userMap,
+              			label: markers[i].notifications
             			});
         			}
         			
