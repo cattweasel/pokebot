@@ -16,31 +16,31 @@
 			<h:form id="settings-form">
 				<table>
 					<tr>
-						<th colspan="5">Globale Einstellungen</th>
+						<th colspan="5"><h:outputText value="#{msgs.settings_global_settings}" /></th>
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
-						<th colspan="3">Einstellung</th>
+						<th colspan="3"><h:outputText value="#{msgs.setting}" /></th>
 						<th>&nbsp;</th>
-						<th colspan="3">Wert</th>
+						<th colspan="3"><h:outputText value="#{msgs.value}" /></th>
 						<th>&nbsp;</th>
-						<th>&nbsp;Aktion</th>
+						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
 						<th>&nbsp;</th>
-						<th>Beschreibung</th>
+						<th><h:outputText value="#{msgs.description}" /></th>
 					</tr>
 					<tr>
-						<td colspan="3">Alte Meldungen löschen:</td>
+						<td colspan="3"><h:outputText value="#{msgs.settings_delete_expired_messages}" />:</td>
 						<td>&nbsp;</td>
 						<td colspan="3">&nbsp;<h:selectBooleanCheckbox value="#{settings.deleteExpired}" /></td>
 						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 						<td>&nbsp;</td>
-						<td>Entfernt Meldungen von abgelaufenen Raids / Pokemon</td>
+						<td><h:outputText value="#{msgs.settings_delete_expired_messages_desc}" /></td>
 					</tr>
 					<tr>
-						<td colspan="3">Benutzer Sprache:</td>
+						<td colspan="3"><h:outputText value="#{msgs.settings_user_language}" />:</td>
 						<td>&nbsp;</td>
 						<td colspan="3">
 							<h:selectOneMenu value="#{settings.language}">
@@ -51,76 +51,76 @@
 							</h:selectOneMenu>
 						</td>
 						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 						<td>&nbsp;</td>
-						<td>Setzt die gewünschte Sprache für die Website und den Bot</td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<th colspan="5">Arena Einstellungen</th>
+						<td><h:outputText value="#{msgs.settings_user_language_desc}" /></td>
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
-						<th colspan="3">Einstellung</th>
-						<th>&nbsp;</th>
-						<th colspan="3">Wert</th>
-						<th>&nbsp;</th>
-						<th>&nbsp;Aktion</th>
-						<th>&nbsp;</th>
-						<th>Beschreibung</th>
+						<th colspan="5"><h:outputText value="#{msgs.settings_gym_settings}" /></th>
 					</tr>
 					<tr>
-						<td colspan="3">Arena-Meldungen aktivieren:</td>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<th colspan="3"><h:outputText value="#{msgs.setting}" /></th>
+						<th>&nbsp;</th>
+						<th colspan="3"><h:outputText value="#{msgs.value}" /></th>
+						<th>&nbsp;</th>
+						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
+						<th>&nbsp;</th>
+						<th><h:outputText value="#{msgs.description}" /></th>
+					</tr>
+					<tr>
+						<td colspan="3"><h:outputText value="#{msgs.settings_enable_gym_notifications}" />:</td>
 						<td>&nbsp;</td>
 						<td colspan="3"><h:selectBooleanCheckbox value="#{settings.gymEnabled}" /></td>
 						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 						<td>&nbsp;</td>
-						<td>Aktiviert / deaktiviert sämtliche Raid Meldungen</td>
+						<td><h:outputText value="#{msgs.settings_enable_gym_notifications_desc}" /></td>
 					</tr>
 					<tr>
-						<td colspan="3">Arena Mindestlevel:</td>
+						<td colspan="3"><h:outputText value="#{msgs.settings_gym_min_level}" />:</td>
 						<td>&nbsp;</td>
 						<td colspan="3"><h:inputText value="#{settings.gymLevel}" /></td>
 						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 						<td>&nbsp;</td>
-						<td>Bestimmt das Mindestlevel für Raids</td>
+						<td><h:outputText value="#{msgs.settings_gym_min_level_desc}" /></td>
 					</tr>
 					<tr>
-						<td colspan="3">Arena Reichweite (Meter):</td>
+						<td colspan="3"><h:outputText value="#{msgs.settings_gym_range}" />:</td>
 						<td>&nbsp;</td>
 						<td colspan="3"><h:inputText value="#{settings.gymRange}" /></td>
 						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 						<td>&nbsp;</td>
-						<td>Bestimmt die maximale Reichweite für Raids</td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<th colspan="5">Pokemon Einstellungen</th>
+						<td><h:outputText value="#{msgs.settings_gym_range_desc}" /></td>
 					</tr>
 					<tr>
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
-						<th>ID</th>
+						<th colspan="5"><h:outputText value="#{msgs.settings_pokemon_settings}" /></th>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<th><h:outputText value="#{msgs.id}" /></th>
 						<th>&nbsp;</th>
-						<th>Pokemon</th>
+						<th><h:outputText value="#{msgs.pokemon}" /></th>
 						<th>&nbsp;</th>
-						<th>Aktiviert</th>
+						<th><h:outputText value="#{msgs.activated}" /></th>
 						<th>&nbsp;</th>
-						<th>Reichweite (Meter)</th>
+						<th><h:outputText value="#{msgs.settings_pokemon_range}" /></th>
 						<th>&nbsp;</th>
-						<th>&nbsp;Aktion</th>
+						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
 						<th>&nbsp;</th>
-						<th>Beschreibung</th>
+						<th><h:outputText value="#{msgs.description}" /></th>
 					</tr>
 					<ui:repeat var="setting" value="#{settings.pokemonSettings}">
 						<tr>
@@ -132,9 +132,9 @@
 							<td>&nbsp;</td>
 							<td><h:inputText value="#{setting.range}" /></td>
 							<td>&nbsp;</td>
-							<td><h:commandButton action="#{settings.save}" value="speichern" /></td>
+							<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 							<td>&nbsp;</td>
-							<td>Bestimmt die Einstellungen für das Pokemon <h:outputText value="#{setting.pokemonName}" /></td>
+							<td><h:outputText value="#{msgs.settings_pokemon_desc}" />&nbsp;<h:outputText value="#{setting.pokemonName}" /></td>
 						</tr>
 					</ui:repeat>
 				</table>

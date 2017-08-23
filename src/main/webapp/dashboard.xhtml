@@ -18,10 +18,10 @@
 				<p>Fragen, Hilfe, Anregungen, etc. findest du hier: <a href="tg://join?invite=D-SrUkOc983TqFuCOv0QdA">https://t.me/joinchat/D-SrUkOc983TqFuCOv0QdA</a></p>
 			</div>
 			<div id="about-stats">
-				<p>User insgesamt: <h:outputText value="#{base.userCount}" /> - Aktive Sessions: <h:outputText value="#{base.sessionCount}" /> - Arenen: <h:outputText value="#{base.gymCount}" /> - Raids: <h:outputText value="#{base.raidCount}" /></p>
+				<p><h:outputText value="#{msgs.dashboard_total_users}" />: <h:outputText value="#{base.userCount}" /> - <h:outputText value="#{msgs.dashboard_active_sessions}" />: <h:outputText value="#{base.sessionCount}" /> - <h:outputText value="#{msgs.gyms}" />: <h:outputText value="#{base.gymCount}" /> - <h:outputText value="#{msgs.raids}" />: <h:outputText value="#{base.raidCount}" /></p>
 			</div>
 			<div id="about-partner">
-				<p>Partner: <a href="http://www.pgoffm.de/" target="_blank">PGOFFM</a></p>
+				<p><h:outputText value="#{msgs.partners}" />: <a href="http://www.pgoffm.de/" target="_blank">PGOFFM</a></p>
 			</div>
 		</div>
 	</ui:define>

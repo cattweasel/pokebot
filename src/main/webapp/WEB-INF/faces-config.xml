@@ -33,7 +33,7 @@
 		</locale-config>
 		
 		<resource-bundle>
-    			<base-name>net.cattweasel.pokebot.web.messages.pokebot</base-name>
+    			<base-name>net.cattweasel.pokebot.web.messages.PokeMessages</base-name>
     			<var>msgs</var>
 		</resource-bundle>
 		
