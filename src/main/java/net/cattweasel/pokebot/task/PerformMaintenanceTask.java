@@ -9,7 +9,6 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.TaskExecutor;
-import net.cattweasel.pokebot.api.TelegramBot;
 import net.cattweasel.pokebot.object.Attributes;
 import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
@@ -21,6 +20,7 @@ import net.cattweasel.pokebot.object.TaskSchedule;
 import net.cattweasel.pokebot.object.User;
 import net.cattweasel.pokebot.object.UserNotification;
 import net.cattweasel.pokebot.server.Environment;
+import net.cattweasel.pokebot.server.TelegramBot;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 

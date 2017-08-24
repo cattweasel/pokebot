@@ -8,6 +8,8 @@ import net.cattweasel.pokebot.tools.Util;
 
 public class Auditor {
 	
+	public static final String SYSTEM = "System";
+	
 	private final PokeContext context;
 	
 	public Auditor(PokeContext context) {

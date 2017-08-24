@@ -11,12 +11,12 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
-import net.cattweasel.pokebot.api.TelegramBot;
 import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.object.Capability;
 import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.server.Environment;
+import net.cattweasel.pokebot.server.TelegramBot;
 import net.cattweasel.pokebot.tools.CapabilityManager;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;

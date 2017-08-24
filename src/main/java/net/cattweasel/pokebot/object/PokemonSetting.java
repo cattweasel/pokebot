@@ -48,4 +48,9 @@ public class PokemonSetting  extends AbstractXmlObject {
 	public void setRange(Integer range) {
 		this.range = range;
 	}
+	
+	@XmlAttribute
+	public String getMessageKey() {
+		return String.format("pokemon_%s", getPokemonId());
+	}
 }

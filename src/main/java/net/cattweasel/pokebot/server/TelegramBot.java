@@ -1,4 +1,4 @@
-package net.cattweasel.pokebot.api;
+package net.cattweasel.pokebot.server;
 
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
@@ -9,6 +9,8 @@ import org.telegram.telegrambots.api.objects.User;
 import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
+import net.cattweasel.pokebot.api.PokeContext;
+import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.command.BroadcastCommand;
 import net.cattweasel.pokebot.command.SettingsCommand;
 import net.cattweasel.pokebot.command.StartCommand;
@@ -16,7 +18,7 @@ import net.cattweasel.pokebot.command.StatusCommand;
 import net.cattweasel.pokebot.command.StopCommand;
 import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
-import net.cattweasel.pokebot.server.Auditor;
+import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.tools.GeneralException;
 
 public class TelegramBot extends TelegramLongPollingCommandBot {
@@ -60,8 +62,8 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 					String.format("%s:%s", chat.getId(), user.getId()));
 			if (session != null) {
 				LOG.debug("Updating Location: " + user + " -> " + location);
-				session.put("latitude", location.getLatitude());
-				session.put("longitude", location.getLongitude());
+				session.put(ExtendedAttributes.BOT_SESSION_LATITUDE, location.getLatitude());
+				session.put(ExtendedAttributes.BOT_SESSION_LONGITUDE, location.getLongitude());
 				context.saveObject(session);
 				Auditor auditor = new Auditor(context);
 				auditor.log(session.getUser().getName(), AuditAction.UPDATE_LOCATION,

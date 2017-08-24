@@ -28,8 +28,6 @@
 			<default-locale>de</default-locale>
 			<supported-locale>de</supported-locale>
 			<supported-locale>en</supported-locale>
-			<supported-locale>es</supported-locale>
-			<supported-locale>fr</supported-locale>
 		</locale-config>
 		
 		<resource-bundle>

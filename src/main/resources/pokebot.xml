@@ -121,7 +121,7 @@
     		<property name="staticMethod" value="org.telegram.telegrambots.ApiContextInitializer.init"/>
     </bean>
     
-    <bean id="telegramBot" class="net.cattweasel.pokebot.api.TelegramBot" depends-on="telegramFactory">
+    <bean id="telegramBot" class="net.cattweasel.pokebot.server.TelegramBot" depends-on="telegramFactory">
     		<constructor-arg value='${bot.username}' />
     		<property name='botToken' value='${bot.token}' />
     </bean>

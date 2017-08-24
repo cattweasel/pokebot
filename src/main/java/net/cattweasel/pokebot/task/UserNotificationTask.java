@@ -1,6 +1,5 @@
 package net.cattweasel.pokebot.task;
 
-import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 
@@ -12,7 +11,6 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.TaskExecutor;
-import net.cattweasel.pokebot.api.TelegramBot;
 import net.cattweasel.pokebot.object.Attributes;
 import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
@@ -27,9 +25,11 @@ import net.cattweasel.pokebot.object.TaskSchedule;
 import net.cattweasel.pokebot.object.UserNotification;
 import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.server.Environment;
+import net.cattweasel.pokebot.server.TelegramBot;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.GeoLocation;
 import net.cattweasel.pokebot.tools.GeoLocation.BoundingCoordinates;
+import net.cattweasel.pokebot.tools.UserNotificationFormater;
 import net.cattweasel.pokebot.tools.Util;
 
 /**
@@ -98,7 +98,7 @@ public class UserNotificationTask implements TaskExecutor {
 		try {
 			it = context.search(Gym.class, qo);
 			if (it != null) {
-				while (it.hasNext()) {
+				while (running && it.hasNext()) {
 					Gym gym = context.getObjectById(Gym.class, it.next());
 					handleGym(context, session, gym);
 				}
@@ -136,7 +136,7 @@ public class UserNotificationTask implements TaskExecutor {
 			qo.addFilter(Filter.lt(ExtendedAttributes.SPAWN_LONGITUDE, coords.getY().getLongitudeInDegrees()));
 			Iterator<String> it = context.search(Spawn.class, qo);
 			if (it != null) {
-				while (it.hasNext()) {
+				while (running && it.hasNext()) {
 					Spawn spawn = context.getObjectById(Spawn.class, it.next());
 					handleSpawn(context, session, spawn);
 				}
@@ -164,7 +164,7 @@ public class UserNotificationTask implements TaskExecutor {
 					n.setMessageId(messageId);
 					context.saveObject(n);
 					Auditor auditor = new Auditor(context);
-					auditor.log("System", AuditAction.SEND_SPAWN_NOTIFICATION, session.getUser().getName());
+					auditor.log(Auditor.SYSTEM, AuditAction.SEND_SPAWN_NOTIFICATION, session.getUser().getName());
 					context.commitTransaction();
 				}
 			}
@@ -175,17 +175,12 @@ public class UserNotificationTask implements TaskExecutor {
 	
 	@SuppressWarnings("deprecation")
 	private String announceSpawn(BotSession session, Spawn spawn) throws TelegramApiException {
-		String lang = session.getUser().getSettings() == null || session.getUser().getSettings().get("language") == null
-				? "de" : session.getUser().getSettings().getString("language");
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
-		SimpleDateFormat sdf = "en".equals(lang) ? new SimpleDateFormat("hh:mm a") : new SimpleDateFormat("HH:mm");
-		String txt = String.format("PKM: %s - %s%s: %s%s", spawn.getPokemon().getName(),
-				calculateDistance(session, spawn.getLatitude(), spawn.getLongitude()),
-				"en".equals(lang) ? "End" : "Ende", sdf.format(spawn.getDisappearTime()),
-				"en".equals(lang) ? "" : " Uhr"); // TODO
+		UserNotificationFormater formater = new UserNotificationFormater(
+				session.getUser().getSettings(), session.getAttributes());
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
-		msg.setText(txt);
+		msg.setText(formater.formatSpawn(spawn));
 		Message m = bot.sendMessage(msg);
 		String messageId = session.getChatId() + ":" + m.getMessageId();
 		SendLocation loc = new SendLocation();
@@ -214,7 +209,7 @@ public class UserNotificationTask implements TaskExecutor {
 					n.setMessageId(messageId);
 					context.saveObject(n);
 					Auditor auditor = new Auditor(context);
-					auditor.log("System", AuditAction.SEND_RAID_NOTIFICATION, session.getUser().getName());
+					auditor.log(Auditor.SYSTEM, AuditAction.SEND_RAID_NOTIFICATION, session.getUser().getName());
 					context.commitTransaction();
 				}
 			}
@@ -225,18 +220,12 @@ public class UserNotificationTask implements TaskExecutor {
 
 	@SuppressWarnings("deprecation")
 	private String announceGym(BotSession session, Gym gym) throws TelegramApiException {
-		String lang = session.getUser().getSettings() == null || session.getUser().getSettings().get("language") == null
-				? "de" : session.getUser().getSettings().getString("language");
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
-		SimpleDateFormat sdf = "en".equals(lang) ? new SimpleDateFormat("hh:mm a") : new SimpleDateFormat("HH:mm");
-		String txt = String.format("RAID: %s [ Level: %s, CP: %s, %s: %s ] %s%s: %s%s",
-				gym.getRaidPokemon().getName(), gym.getRaidLevel(), Util.separateNumber(gym.getRaidCp()),
-				"en".equals(lang) ? "Gym" : "Arena", gym.getDisplayName(),
-				calculateDistance(session, gym.getLatitude(),gym.getLongitude()),
-				"en".equals(lang) ? "End" : "Ende", sdf.format(gym.getRaidEnd()), "en".equals(lang) ? "" : " Uhr"); // TODO
+		UserNotificationFormater formater = new UserNotificationFormater(
+				session.getUser().getSettings(), session.getAttributes());
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
-		msg.setText(txt);
+		msg.setText(formater.formatGym(gym));
 		Message m = bot.sendMessage(msg);
 		String messageId = session.getChatId() + ":" + m.getMessageId();
 		SendLocation loc = new SendLocation();
@@ -245,22 +234,5 @@ public class UserNotificationTask implements TaskExecutor {
 		loc.setLongitude(Util.atof(Util.otos(gym.getLongitude())));
 		m = bot.sendLocation(loc);
 		return messageId + "-" + session.getChatId() + ":" + m.getMessageId();
-	}
-	
-	private String calculateDistance(BotSession session, Double latitude, Double longitude) {
-		StringBuilder sb = new StringBuilder();
-		if (session != null && session.get(ExtendedAttributes.BOT_SESSION_LATITUDE) != null
-				&& session.get(ExtendedAttributes.BOT_SESSION_LONGITUDE) != null) {
-			String lang = session.getUser().getSettings() == null
-					|| session.getUser().getSettings().get(ExtendedAttributes.USER_SETTINGS_LANGUAGE) == null
-					? "de" : session.getUser().getSettings().getString("language");
-			GeoLocation loc = GeoLocation.fromDegrees(latitude, longitude);
-			Double lat = Util.atod(Util.otos(session.get(ExtendedAttributes.BOT_SESSION_LATITUDE)));
-			Double lon = Util.atod(Util.otos(session.get(ExtendedAttributes.BOT_SESSION_LONGITUDE)));
-			Double distance = loc.distanceTo(GeoLocation.fromDegrees(lat, lon));
-			sb.append(String.format("%s: %sm - ", "en".equals(lang) ? "Distance" : "Entfernung",
-					Util.separateNumber(Math.round(distance)))); // TODO
-		}
-		return sb.toString();
 	}
 }
