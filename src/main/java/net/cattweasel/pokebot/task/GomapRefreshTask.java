@@ -13,6 +13,7 @@ import org.json.simple.parser.JSONParser;
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.TaskExecutor;
 import net.cattweasel.pokebot.object.Attributes;
+import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.Pokemon;
@@ -156,11 +157,11 @@ public class GomapRefreshTask implements TaskExecutor {
 	}
 	
 	private Pokemon resolvePokemon(PokeContext context, Integer id) throws GeneralException {
-		return context.getUniqueObject(Pokemon.class, Filter.eq("pokemonId", id));
+		return context.getUniqueObject(Pokemon.class, Filter.eq(ExtendedAttributes.POKEMON_POKEMON_ID, id));
 	}
 	
 	private Team resolveTeam(PokeContext context, Integer id) throws GeneralException {
-		return context.getUniqueObject(Team.class, Filter.eq("teamId", id));
+		return context.getUniqueObject(Team.class, Filter.eq(ExtendedAttributes.TEAM_TEAM_ID, id));
 	}
 	
 	private void saveGym(PokeContext context, Gym gym) throws GeneralException {

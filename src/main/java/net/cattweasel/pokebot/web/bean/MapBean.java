@@ -5,6 +5,7 @@ import java.util.Iterator;
 import java.util.List;
 
 import net.cattweasel.pokebot.object.BotSession;
+import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.QueryOptions;
@@ -46,20 +47,17 @@ public class MapBean extends BaseBean {
 		}
 	}
 	
-	private static final String NAME = "name";
-	private static final String LATITUDE = "latitude";
-	private static final String LONGITUDE = "longitude";
-	
 	public List<Location> getUserLocations() throws GeneralException {
 		List<Location> result = new ArrayList<Location>();
 		Iterator<String> it = getContext().search(BotSession.class);
 		if (it != null) {
 			while (it.hasNext()) {
 				BotSession session = getContext().getObjectById(BotSession.class, it.next());
-				if (session.get(LATITUDE) != null && session.get(LONGITUDE) != null) {
+				if (session.get(ExtendedAttributes.BOT_SESSION_LATITUDE) != null
+						&& session.get(ExtendedAttributes.BOT_SESSION_LONGITUDE) != null) {
 					Location l = new Location();
-					l.setX(Util.atod(Util.otos(session.get(LATITUDE))));
-					l.setY(Util.atod(Util.otos(session.get(LONGITUDE))));
+					l.setX(Util.atod(Util.otos(session.get(ExtendedAttributes.BOT_SESSION_LATITUDE))));
+					l.setY(Util.atod(Util.otos(session.get(ExtendedAttributes.BOT_SESSION_LONGITUDE))));
 					l.setNotifications(calculateNotifications(session));
 					result.add(l);
 				}
@@ -71,8 +69,10 @@ public class MapBean extends BaseBean {
 	private Integer calculateNotifications(BotSession session) throws GeneralException {
 		QueryOptions qo = new QueryOptions();
 		qo.addFilter(Filter.or(
-				Filter.like(NAME, String.format("%s:%s", session.getUser().getName(), Spawn.class.getSimpleName())),
-				Filter.like(NAME, String.format("%s:%s", session.getUser().getName(), Gym.class.getSimpleName()))));
+				Filter.like(ExtendedAttributes.POKE_OBJECT_NAME,String.format("%s:%s",
+						session.getUser().getName(), Spawn.class.getSimpleName())),
+				Filter.like(ExtendedAttributes.POKE_OBJECT_NAME, String.format("%s:%s",
+						session.getUser().getName(), Gym.class.getSimpleName()))));
 		return getContext().countObjects(UserNotification.class, qo);
 	}
 }

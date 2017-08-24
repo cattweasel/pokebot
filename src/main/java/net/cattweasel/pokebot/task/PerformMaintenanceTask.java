@@ -11,6 +11,7 @@ import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.TaskExecutor;
 import net.cattweasel.pokebot.api.TelegramBot;
 import net.cattweasel.pokebot.object.Attributes;
+import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.QueryOptions;
@@ -60,7 +61,7 @@ public class PerformMaintenanceTask implements TaskExecutor {
 	
 	private void removeOrphanUserNotifications(PokeContext context) {
 		QueryOptions qo = new QueryOptions();
-		qo.addFilter(Filter.lt("expiration", new Date()));
+		qo.addFilter(Filter.lt(ExtendedAttributes.USER_NOTIFICATION_EXPIRATION, new Date()));
 		Iterator<String> it = null;
 		try {
 			it = context.search(UserNotification.class, qo);
@@ -72,9 +73,11 @@ public class PerformMaintenanceTask implements TaskExecutor {
 						if (Util.isNotNullOrEmpty(notif.getMessageId())) {
 							User user = context.getObjectByName(User.class, notif.getName().split(":")[0]);
 							if (user != null) {
-								if (user.getSettings() == null || user.getSettings().get("deleteExpired") == null) {
+								if (user.getSettings() == null || user.getSettings().get(
+										ExtendedAttributes.USER_SETTINGS_DELETE_EXPIRED) == null) {
 									deleteUserMessages(notif.getMessageId());
-								} else if (user.getSettings() != null && Util.otob(user.getSettings().get("deleteExpired"))) {
+								} else if (user.getSettings() != null && Util.otob(user.getSettings().get(
+										ExtendedAttributes.USER_SETTINGS_DELETE_EXPIRED))) {
 									deleteUserMessages(notif.getMessageId());
 								}
 							}
@@ -106,7 +109,7 @@ public class PerformMaintenanceTask implements TaskExecutor {
 	
 	private void removeOrphanSpawns(PokeContext context) {
 		QueryOptions qo = new QueryOptions();
-		qo.addFilter(Filter.lt("disappearTime", new Date()));
+		qo.addFilter(Filter.lt(ExtendedAttributes.SPAWN_DISAPPEAR_TIME, new Date()));
 		Iterator<String> it = null;
 		try {
 			it = context.search(Spawn.class, qo);
@@ -126,7 +129,8 @@ public class PerformMaintenanceTask implements TaskExecutor {
 	
 	private void removeOrphanRaids(PokeContext context) {
 		QueryOptions qo = new QueryOptions();
-		qo.addFilter(Filter.and(Filter.notnull("raidEnd"), Filter.lt("raidEnd", new Date())));
+		qo.addFilter(Filter.and(Filter.notnull(ExtendedAttributes.GYM_RAID_END),
+				Filter.lt(ExtendedAttributes.GYM_RAID_END, new Date())));
 		Iterator<String> it = null;
 		try {
 			it = context.search(Gym.class, qo);

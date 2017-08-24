@@ -58,9 +58,9 @@
 					<tr>
 						<td colspan="3"><h:outputText value="#{msgs.settings_share_location}" />:</td>
 						<td>&nbsp;</td>
-						<td colspan="3"><h:selectBooleanCheckbox value="#{settings.shareLocation}" disabled="true" /></td>
+						<td colspan="3"><h:selectBooleanCheckbox value="#{settings.shareLocation}" /></td>
 						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" disabled="true" /></td>
+						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 						<td>&nbsp;</td>
 						<td><h:outputText value="#{msgs.settings_share_location_desc}" /></td>
 					</tr>
@@ -108,6 +108,15 @@
 						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 						<td>&nbsp;</td>
 						<td><h:outputText value="#{msgs.settings_raid_range_desc}" /></td>
+					</tr>
+					<tr>
+						<td colspan="3"><h:outputText value="#{msgs.settings_raid_group_invite}" />:</td>
+						<td>&nbsp;</td>
+						<td colspan="3"><h:selectBooleanCheckbox value="#{settings.gymInvite}" /></td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
+						<td>&nbsp;</td>
+						<td><h:outputText value="#{msgs.settings_raid_group_invite_desc}" /></td>
 					</tr>
 					<tr>
 						<td>&nbsp;</td>

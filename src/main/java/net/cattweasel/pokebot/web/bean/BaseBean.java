@@ -10,6 +10,7 @@ import org.apache.log4j.Logger;
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.object.BotSession;
+import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.QueryOptions;
@@ -43,7 +44,7 @@ public class BaseBean {
 	
 	public String getRaidCount() throws GeneralException {
 		QueryOptions qo = new QueryOptions();
-		qo.addFilter(Filter.notnull("raidPokemon"));
+		qo.addFilter(Filter.notnull(ExtendedAttributes.GYM_RAID_POKEMON));
 		return Util.separateNumber(getContext().countObjects(Gym.class, qo));
 	}
 	
