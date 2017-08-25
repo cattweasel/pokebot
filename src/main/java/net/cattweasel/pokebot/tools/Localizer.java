@@ -53,13 +53,11 @@ public class Localizer {
 	}
 	
 	private static Locale resolveLocale(User user) {
-		Locale locale = null;
+		Locale locale = Locale.GERMAN;
 		if (user != null && user.getSettings() != null
 				&& user.getSettings().get(ExtendedAttributes.USER_SETTINGS_LANGUAGE) != null) {
 			if ("en".equalsIgnoreCase(user.getSettings().getString(ExtendedAttributes.USER_SETTINGS_LANGUAGE))) {
 				locale = Locale.ENGLISH;
-			} else {
-				locale = Locale.GERMAN;
 			}
 		}
 		return locale;
