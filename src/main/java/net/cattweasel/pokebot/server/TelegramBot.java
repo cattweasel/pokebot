@@ -12,6 +12,8 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.command.BroadcastCommand;
+import net.cattweasel.pokebot.command.HelpCommand;
+import net.cattweasel.pokebot.command.ResetCommand;
 import net.cattweasel.pokebot.command.SettingsCommand;
 import net.cattweasel.pokebot.command.StartCommand;
 import net.cattweasel.pokebot.command.StatusCommand;
@@ -19,7 +21,10 @@ import net.cattweasel.pokebot.command.StopCommand;
 import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.object.ExtendedAttributes;
+import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.Localizer;
+import net.cattweasel.pokebot.tools.Util;
 
 public class TelegramBot extends TelegramLongPollingCommandBot {
 
@@ -30,6 +35,8 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 	public TelegramBot(String botUsername) {
 		super(botUsername);
 		register(new BroadcastCommand());
+		register(new HelpCommand());
+		register(new ResetCommand());
 		register(new SettingsCommand());
 		register(new StartCommand());
 		register(new StatusCommand());
@@ -50,6 +57,8 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 		if (update.getMessage() != null && update.getMessage().getLocation() != null) {
 			handleLocationUpdate(update.getMessage().getChat(), update.getMessage().getFrom(),
 					update.getMessage().getLocation());
+		} else {
+			LOG.warn("Unknown bot command: " + update);
 		}
 	}
 	
@@ -68,11 +77,11 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 				Auditor auditor = new Auditor(context);
 				auditor.log(session.getUser().getName(), AuditAction.UPDATE_LOCATION,
 						String.format("%s:%s", location.getLatitude(), location.getLongitude()));
-				context.commitTransaction();
-				confirmLocation(chat, user, location);
+				confirmLocation(context, chat, user, location);
 			} else {
-				informNotWorking(chat, user, location);
+				informNotWorking(context, chat, user, location);
 			}
+			context.commitTransaction();
 		} catch (GeneralException ex) {
 			LOG.error("Error handling location update: " + ex.getMessage(), ex);
 		} finally {
@@ -87,10 +96,12 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private void confirmLocation(Chat chat, User user, Location location) {
+	private void confirmLocation(PokeContext context, Chat chat, User user, Location location) throws GeneralException {
+		net.cattweasel.pokebot.object.User usr = context.getUniqueObject(net.cattweasel.pokebot.object.User.class,
+				Filter.eq(ExtendedAttributes.POKE_OBJECT_NAME, Util.otos(user.getId())));
 		SendMessage message = new SendMessage();
 		message.setChatId(chat.getId());
-		message.setText(String.format("Alles klar, deine neue Position ist nun: %s / %s",
+		message.setText(String.format("%s: %s / %s", Localizer.localize(usr, "bot_location_success_message"),
 				location.getLatitude(), location.getLongitude()));
 		try {
 			sendMessage(message);
@@ -100,10 +111,12 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private void informNotWorking(Chat chat, User user, Location location) {
+	private void informNotWorking(PokeContext context, Chat chat, User user, Location location) throws GeneralException {
+		net.cattweasel.pokebot.object.User usr = context.getUniqueObject(net.cattweasel.pokebot.object.User.class,
+				Filter.eq(ExtendedAttributes.POKE_OBJECT_NAME, Util.otos(user.getId())));
 		SendMessage message = new SendMessage();
 		message.setChatId(chat.getId());
-		message.setText("Ich bin gerade nicht am arbeiten. Du musst mich zuerst aktivieren!");
+		message.setText(Localizer.localize(usr, "bot_location_failure_message"));
 		try {
 			sendMessage(message);
 		} catch (TelegramApiException ex) {

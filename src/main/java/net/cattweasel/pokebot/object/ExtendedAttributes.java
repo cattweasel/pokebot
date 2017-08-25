@@ -4,6 +4,7 @@ public class ExtendedAttributes {
 
 	public static final String BOT_SESSION_LATITUDE = "latitude";
 	public static final String BOT_SESSION_LONGITUDE = "longitude";
+	public static final String BOT_SESSION_USER = "user";
 	
 	public static final String GYM_DISPLAY_NAME = "displayName";
 	public static final String GYM_TEAM = "team";

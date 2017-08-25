@@ -19,6 +19,7 @@ import net.cattweasel.pokebot.server.Environment;
 import net.cattweasel.pokebot.server.TelegramBot;
 import net.cattweasel.pokebot.tools.CapabilityManager;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.Localizer;
 import net.cattweasel.pokebot.tools.Util;
 
 public class BroadcastCommand extends AbstractCommand {
@@ -26,39 +27,39 @@ public class BroadcastCommand extends AbstractCommand {
 	private static final Logger LOG = Logger.getLogger(BroadcastCommand.class);
 	
 	public BroadcastCommand() {
-		super("broadcast", "Sendet einen Broadcast an alle Benutzer");
+		super("broadcast", "Sendet eine Broadcast-Nachricht");
 	}
 	
 	@Override
 	public void execute(AbsSender sender, User user, Chat chat, String[] args) {
 		PokeContext context = null;
 		String msg = resolveMessage(args);
-		if (Util.isNullOrEmpty(msg)) {
-			sendMessage(sender, chat, "Du musst eine Broadcast-Nachricht angeben!");
-		} else {
-			try {
-				context = PokeFactory.createContext(getClass().getSimpleName());
-				net.cattweasel.pokebot.object.User usr = resolveUser(context, user);
+		try {
+			context = PokeFactory.createContext(getClass().getSimpleName());
+			net.cattweasel.pokebot.object.User usr = resolveUser(context, user);
+			if (Util.isNullOrEmpty(msg)) {
+				sendMessage(sender, chat, Localizer.localize(usr, "cmd_broadcast_missing_message"));
+			} else {
 				Capability cap = context.getObjectByName(Capability.class, Capability.BROADCAST_ADMINISTRATOR);
 				if (!CapabilityManager.hasCapability(usr, cap)) {
-					sendMessage(sender, chat, "Du bist nicht dazu berechtigt, diesen Befehl auszuführen!");
+					sendMessage(sender, chat, Localizer.localize(usr, "cmd_broadcast_not_authorized"));
 				} else {
 					int count = sendBroadcast(context, sender, msg, chat);
-					sendMessage(sender, chat, String.format("Broadcast erfolgreich an %s Benutzer verschickt!",
-							Util.separateNumber(count)));
+					sendMessage(sender, chat, String.format("%s: %s",
+							Localizer.localize(usr, "cmd_broadcast_success_message"), Util.separateNumber(count)));
 					Auditor auditor = new Auditor(context);
 					auditor.log(usr.getName(), AuditAction.SEND_BROADCAST, msg);
 					context.commitTransaction();
 				}
-			} catch (GeneralException ex) {
-				LOG.error("Error executing Broadcast command: " + ex.getMessage(), ex);
-			} finally {
-				if (context != null) {
-					try {
-						PokeFactory.releaseContext(context);
-					} catch (GeneralException ex) {
-						LOG.error("Error releasing context: " + ex.getMessage(), ex);
-					}
+			}
+		} catch (GeneralException ex) {
+			LOG.error("Error executing broadcast command: " + ex.getMessage(), ex);
+		} finally {
+			if (context != null) {
+				try {
+					PokeFactory.releaseContext(context);
+				} catch (GeneralException ex) {
+					LOG.error("Error releasing context: " + ex.getMessage(), ex);
 				}
 			}
 		}

@@ -47,7 +47,7 @@ public abstract class AbstractCommand extends BotCommand {
 				result.setUsername(user.getUserName());
 				context.saveObject(result);
 				Auditor auditor = new Auditor(context);
-				auditor.log("System", AuditAction.CREATE_USER, result.getName());
+				auditor.log(Auditor.SYSTEM, AuditAction.CREATE_USER, result.getName());
 				context.commitTransaction();
 			}
 		} catch (GeneralException ex) {

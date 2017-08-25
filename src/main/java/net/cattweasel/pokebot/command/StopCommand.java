@@ -7,10 +7,12 @@ import org.telegram.telegrambots.bots.AbsSender;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
+import net.cattweasel.pokebot.api.Terminator;
 import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.Localizer;
 
 public class StopCommand extends AbstractCommand {
 
@@ -28,18 +30,20 @@ public class StopCommand extends AbstractCommand {
 			context = PokeFactory.createContext(getClass().getSimpleName());
 			String name = String.format("%s:%s", chat.getId(), user.getId());
 			session = context.getObjectByName(BotSession.class, name);
+			net.cattweasel.pokebot.object.User usr = resolveUser(context, user);
 			if (session != null) {
 				LOG.debug("Destroying BotSession: " + session);
 				Auditor auditor = new Auditor(context);
 				auditor.log(session.getUser().getName(), AuditAction.STOP_BOT_SESSION, session.getName());
-				context.removeObject(session);
+				Terminator terminator = new Terminator(context);
+				terminator.deleteObject(session);
 				context.commitTransaction();
-				sendMessage(sender, chat, String.format("Alles klar, mach's gut, bis demnächst!"));
+				sendMessage(sender, chat, Localizer.localize(usr, "cmd_stop_success_message"));
 			} else {
-				sendMessage(sender, chat, String.format("Nicht nötig, ich arbeite doch gerade garnicht für dich!"));
+				sendMessage(sender, chat, Localizer.localize(usr, "cmd_stop_failure_message"));
 			}
 		} catch (GeneralException ex) {
-			LOG.error("Error executing StopCommand: " + ex.getMessage(), ex);
+			LOG.error("Error executing stop command: " + ex.getMessage(), ex);
 		} finally {
 			if (context != null) {
 				try {

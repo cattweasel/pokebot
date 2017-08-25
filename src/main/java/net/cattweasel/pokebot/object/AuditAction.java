@@ -14,6 +14,7 @@ public class AuditAction extends PokeObject {
 	public static final String CREATE_USER = "CreateUser";
 	public static final String GET_BOT_STATUS = "GetBotStatus";
 	public static final String GET_SETTINGS_LINK = "GetSettingsLink";
+	public static final String RESET_NOTIFICATIONS = "ResetNotifications";
 	public static final String SEND_BROADCAST = "SendBroadcast";
 	public static final String SEND_RAID_NOTIFICATION = "SendRaidNotification";
 	public static final String SEND_SPAWN_NOTIFICATION = "SendSpawnNotification";

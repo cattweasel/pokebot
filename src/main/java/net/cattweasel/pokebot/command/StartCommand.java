@@ -11,6 +11,7 @@ import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.Localizer;
 
 public class StartCommand extends AbstractCommand {
 
@@ -28,6 +29,7 @@ public class StartCommand extends AbstractCommand {
 			context = PokeFactory.createContext(getClass().getSimpleName());
 			String name = String.format("%s:%s", chat.getId(), user.getId());
 			session = context.getObjectByName(BotSession.class, name);
+			net.cattweasel.pokebot.object.User usr = resolveUser(context, user);
 			if (session == null) {
 				session = new BotSession();
 				session.setName(name);
@@ -35,19 +37,17 @@ public class StartCommand extends AbstractCommand {
 				session.setUser(resolveUser(context, user));
 				session.put("range", 3000);
 				LOG.debug("Creating new BotSession: " + session);
-				sendMessage(sender, chat, String.format("Hey, schön dich zu sehen."
-						+ " Vergiss bitte nicht, deine Position zu updaten!"));
+				sendMessage(sender, chat, Localizer.localize(usr, "cmd_start_success_message"));
 				Auditor auditor = new Auditor(context);
 				auditor.log(session.getUser().getName(), AuditAction.START_BOT_SESSION, session.getName());
 			} else {
 				LOG.debug("Re-allocating BotSession: " + session);
-				sendMessage(sender, chat, String.format("Ich bin noch immer für dich am arbeiten."
-						+ " Aber über eine neue Position freue ich mich natürlich immer!"));
+				sendMessage(sender, chat, Localizer.localize(usr, "cmd_start_failure_message"));
 			}
 			context.saveObject(session);
 			context.commitTransaction();
 		} catch (GeneralException ex) {
-			LOG.error("Error executing StartCommand: " + ex.getMessage(), ex);
+			LOG.error("Error executing start command: " + ex.getMessage(), ex);
 		} finally {
 			if (context != null) {
 				try {

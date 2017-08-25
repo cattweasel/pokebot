@@ -6,6 +6,7 @@
 		<ImportAction location="AuditAction/AuditAction - CreateUser.xml" />
 		<ImportAction location="AuditAction/AuditAction - GetBotStatus.xml" />
 		<ImportAction location="AuditAction/AuditAction - GetSettingsLink.xml" />
+		<ImportAction location="AuditAction/AuditAction - ResetNotifications.xml" />
 		<ImportAction location="AuditAction/AuditAction - SendBroadcast.xml" />
 		<ImportAction location="AuditAction/AuditAction - SendRaidNotification.xml" />
 		<ImportAction location="AuditAction/AuditAction - SendSpawnNotification.xml" />

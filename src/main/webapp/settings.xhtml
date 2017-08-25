@@ -8,9 +8,9 @@
 <ui:composition template="template.xhtml">
 	<ui:define name="content">
 		<ui:fragment rendered="#{base.loggedInUser eq null}">
-			<p>Deine Einstellungen konnten nicht geladen werden, da du nicht angemeldet bist!</p>
-			<p>Sende hierfür einfach <i>/settings</i> an <a href="https://web.telegram.org/#/im?p=%40nyapgbot">@nyapgbot</a> und du erhälst deinen persönlichen Link.</p>
-			<p><b>Wichtig:</b> Teile diesen Link mit niemandem, da dieser sonst Zugriff auf deinen Account erhält!</p>
+			<p><h:outputText value="#{msgs.settings_not_logged_in}" /></p>
+			<p><h:outputText escape="false" value="#{msgs.login_instructions}" /></p>
+			<p><b><h:outputText value="#{msgs.important}" />:</b>&nbsp;<h:outputText value="#{msgs.login_do_not_share_your_settings_link}" /></p>
 		</ui:fragment>
 		<ui:fragment rendered="#{base.loggedInUser ne null}">
 			<h:form id="settings-form">
@@ -150,7 +150,7 @@
 							<td>&nbsp;</td>
 							<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 							<td>&nbsp;</td>
-							<td><h:outputText value="#{msgs.settings_pokemon_desc}" />&nbsp;<h:outputText value="#{setting.pokemonName}" /></td>
+							<td><h:outputText value="#{msgs.settings_pokemon_desc}" />&nbsp;<h:outputText value="#{msgs[setting.messageKey]}" /></td>
 						</tr>
 					</ui:repeat>
 				</table>

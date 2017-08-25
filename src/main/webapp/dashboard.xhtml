@@ -11,11 +11,11 @@
 				<a href="#{request.contextPath}/"><img src="#{request.contextPath}/img/nyapgbot_logo.png" width="500" height="136" alt="@nyapgbot logo" /></a>
 			</div>
 			<div id="about-header">
-				<p><a href="https://web.telegram.org/#/im?p=%40nyapgbot">@nyapgbot</a> - Not Yet Another Pokemon Go Bot - Dein persönlicher Bot für Pokemon Go</p>
+				<p><h:outputText escape="false" value="#{msgs.dashboard_title}" /></p>
 			</div>
 			<div id="about-text">
-				<p>Dieser Telegram-Bot informiert dich über Raids und Pokemon in deiner Nähe, je nachdem wie du ihn konfigurierst.</p>
-				<p>Fragen, Hilfe, Anregungen, etc. findest du hier: <a href="tg://join?invite=D-SrUkOc983TqFuCOv0QdA">https://t.me/joinchat/D-SrUkOc983TqFuCOv0QdA</a></p>
+				<p><h:outputText value="#{msgs.dashboard_desc_a}" /></p>
+				<p><h:outputText escape="false" value="#{msgs.dashboard_desc_b}" /></p>
 			</div>
 			<div id="about-stats">
 				<p><h:outputText value="#{msgs.dashboard_total_users}" />: <h:outputText value="#{base.userCount}" /> - <h:outputText value="#{msgs.dashboard_active_sessions}" />: <h:outputText value="#{base.sessionCount}" /> - <h:outputText value="#{msgs.gyms}" />: <h:outputText value="#{base.gymCount}" /> - <h:outputText value="#{msgs.raids}" />: <h:outputText value="#{base.raidCount}" /></p>

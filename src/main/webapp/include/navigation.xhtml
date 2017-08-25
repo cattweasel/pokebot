@@ -31,12 +31,18 @@
 	        this.showMenu();
 	    },
 	    menu: [{
+	    		text: '#{msgs.navigation_monitor_user_list}',
+	    		iconCls: 'icon-list',
+	    		handler: function() {
+	    			document.location = '#{request.contextPath}/monitor/list.jsf';
+	    		}
+	    }, {
 	    		text: '#{msgs.navigation_monitor_user_map}',
 	    		iconCls: 'icon-map',
 	    		handler: function() {
 	    			document.location = '#{request.contextPath}/monitor/map.jsf';
 	    		}
-	    }, {
+    		}, {
 	    		text: '#{msgs.navigation_monitor_audit_log}',
 	    		iconCls: 'icon-audit',
 	    		handler: function() {

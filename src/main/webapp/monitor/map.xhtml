@@ -7,8 +7,8 @@
 <ui:composition template="../template.xhtml">
 	<ui:define name="content">
 		<ui:fragment rendered="#{base.loggedInUser eq null or !base.loggedInUser.hasCapability('SystemAdministrator')}">
-			<p><b>Fehler:</b> Du besitzt nicht die notwendigen Berechtigungen um diese Seite zu sehen!</p>
-			<p>Zurück zur <a href="#{request.contextPath}/">Startseite</a></p>
+			<p><b><h:outputText value="#{msgs.error}" />:</b>&nbsp;<h:outputText value="#{msgs.page_not_authorized}" /></p>
+			<p><h:outputText escape="false" value="#{msgs.back_to_dashboard}" /></p>
 		</ui:fragment>
 		<ui:fragment rendered="#{base.loggedInUser ne null and base.loggedInUser.hasCapability('SystemAdministrator')}">
 			<div id="user-map" />

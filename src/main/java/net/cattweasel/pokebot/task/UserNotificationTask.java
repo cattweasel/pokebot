@@ -28,8 +28,8 @@ import net.cattweasel.pokebot.server.Environment;
 import net.cattweasel.pokebot.server.TelegramBot;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.GeoLocation;
+import net.cattweasel.pokebot.tools.Localizer;
 import net.cattweasel.pokebot.tools.GeoLocation.BoundingCoordinates;
-import net.cattweasel.pokebot.tools.UserNotificationFormater;
 import net.cattweasel.pokebot.tools.Util;
 
 /**
@@ -155,7 +155,7 @@ public class UserNotificationTask implements TaskExecutor {
 				try {
 					messageId = announceSpawn(session, spawn);
 				} catch (TelegramApiException ex) {
-					LOG.error("Error announcing Spawn: " + ex.getMessage(), ex);
+					LOG.warn("Could not handle spawn: " + ex.getMessage(), ex);
 				}
 				if (messageId != null) {
 					UserNotification n = new UserNotification();
@@ -176,11 +176,9 @@ public class UserNotificationTask implements TaskExecutor {
 	@SuppressWarnings("deprecation")
 	private String announceSpawn(BotSession session, Spawn spawn) throws TelegramApiException {
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
-		UserNotificationFormater formater = new UserNotificationFormater(
-				session.getUser().getSettings(), session.getAttributes());
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
-		msg.setText(formater.formatSpawn(spawn));
+		msg.setText(formatSpawn(session, spawn));
 		Message m = bot.sendMessage(msg);
 		String messageId = session.getChatId() + ":" + m.getMessageId();
 		SendLocation loc = new SendLocation();
@@ -200,7 +198,7 @@ public class UserNotificationTask implements TaskExecutor {
 				try {
 					messageId = announceGym(session, gym);
 				} catch (TelegramApiException ex) {
-					LOG.error("Error announcing Gym: " + ex.getMessage(), ex);
+					LOG.warn("Could not handle gym: " + ex.getMessage(), ex);
 				}
 				if (messageId != null) {
 					UserNotification n = new UserNotification();
@@ -221,11 +219,9 @@ public class UserNotificationTask implements TaskExecutor {
 	@SuppressWarnings("deprecation")
 	private String announceGym(BotSession session, Gym gym) throws TelegramApiException {
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
-		UserNotificationFormater formater = new UserNotificationFormater(
-				session.getUser().getSettings(), session.getAttributes());
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
-		msg.setText(formater.formatGym(gym));
+		msg.setText(formatGym(session, gym));
 		Message m = bot.sendMessage(msg);
 		String messageId = session.getChatId() + ":" + m.getMessageId();
 		SendLocation loc = new SendLocation();
@@ -234,5 +230,33 @@ public class UserNotificationTask implements TaskExecutor {
 		loc.setLongitude(Util.atof(Util.otos(gym.getLongitude())));
 		m = bot.sendLocation(loc);
 		return messageId + "-" + session.getChatId() + ":" + m.getMessageId();
+	}
+	
+	private String formatGym(BotSession session, Gym gym) {
+		return String.format("RAID: %s [ Level: %s, CP: %s, %s: %s ] %s: %sm - %s: %s",
+				Localizer.localize(session.getUser(), String.format("pokemon_%s", gym.getRaidPokemon().getPokemonId())),
+				Util.separateNumber(gym.getRaidLevel()), Util.separateNumber(gym.getRaidCp()),
+				Localizer.localize(session.getUser(), "gym"), gym.getDisplayName(), Localizer.localize(session.getUser(), "distance"),
+				Util.separateNumber(Math.round(calculateDistance(session, gym.getLatitude(), gym.getLongitude()))),
+				Localizer.localize(session.getUser(), "end"), Localizer.localize(session.getUser(), gym.getRaidEnd()));
+	}
+	
+	private String formatSpawn(BotSession session, Spawn spawn) {
+		return String.format("PKM: %s - %s: %sm - %s: %s", Localizer.localize(session.getUser(),
+				String.format("pokemon_%s", spawn.getPokemon().getPokemonId())), Localizer.localize(session.getUser(), "distance"),
+				Util.separateNumber(Math.round(calculateDistance(session, spawn.getLatitude(), spawn.getLongitude()))),
+				Localizer.localize(session.getUser(), "end"), Localizer.localize(session.getUser(), spawn.getDisappearTime()));
+	}
+	
+	private Double calculateDistance(BotSession session, Double lat, Double lng) {
+		Double distance = 0D;
+		if (session != null && session.get(ExtendedAttributes.BOT_SESSION_LATITUDE) != null
+				&& session.get(ExtendedAttributes.BOT_SESSION_LONGITUDE) != null) {
+			GeoLocation loc = GeoLocation.fromDegrees(lat, lng);
+			Double la = Util.atod(Util.otos(session.get(ExtendedAttributes.BOT_SESSION_LATITUDE)));
+			Double lo = Util.atod(Util.otos(session.get(ExtendedAttributes.BOT_SESSION_LONGITUDE)));
+			distance = loc.distanceTo(GeoLocation.fromDegrees(la, lo));
+		}
+		return distance;
 	}
 }

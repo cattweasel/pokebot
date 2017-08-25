@@ -5,6 +5,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.charset.StandardCharsets;
 import java.util.Enumeration;
 import java.util.Locale;
 import java.util.PropertyResourceBundle;
@@ -47,7 +48,7 @@ public class PokeMessages extends ResourceBundle {
 	
 	private static final String BUNDLE_NAME = "net.cattweasel.pokebot.web.messages.pokebot";
 	private static final String BUNDLE_EXTENSION = "properties";
-	private static final String CHARSET = "UTF-8";
+	private static final String CHARSET = StandardCharsets.UTF_8.name();
 	private static final Control UTF8_CONTROL = new UTF8Control();
 	
 	public PokeMessages() {
