@@ -67,6 +67,14 @@
 	
 	navigationItems.push("->");
 	
+	navigationItems.push({
+		text: '#{msgs.navigation_donate}',
+		iconCls: 'icon-donate',
+		handler: function() {
+			document.getElementById("donate-form").submit();
+		}
+	});
+	
 	</script>
 </ui:fragment>
 
@@ -125,6 +133,13 @@
 	<h:form id="logout-form">
 		<h:commandButton id="logout-button" action="#{base.logout}" style="display:none" />
 	</h:form>
+</ui:fragment>
+
+<ui:fragment>
+	<form id="donate-form" action="https://www.paypal.com/cgi-bin/webscr" method="post" target="_top">
+		<input type="hidden" name="cmd" value="_s-xclick" />
+		<input type="hidden" name="hosted_button_id" value="Y9NNRSURV5VCL" />
+	</form>
 </ui:fragment>
 
 </html>
