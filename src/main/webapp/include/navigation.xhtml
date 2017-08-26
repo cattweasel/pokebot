@@ -17,6 +17,14 @@
 		}
 	});
 	
+	navigationItems.push({
+		text: '#{msgs.navigation_help}',
+		iconCls: 'icon-help',
+		handler: function() {
+			document.location = '#{request.contextPath}/help.jsf';
+		}
+	});
+	
 	</script>
 </ui:fragment>
 
