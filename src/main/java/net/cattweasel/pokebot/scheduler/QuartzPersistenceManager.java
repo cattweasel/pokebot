@@ -439,7 +439,7 @@ public class QuartzPersistenceManager extends AbstractPersistenceManager {
 	public <T extends PokeObject> List<T> getObjects(Class<T> cls,
 			QueryOptions options) throws GeneralException {
 		List<TaskSchedule> schedules = (List<TaskSchedule>) getObjects(cls);
-		if (schedules != null && options != null) {
+		if (options != null) {
 			schedules = filterSchedules(schedules);
 			
 			/*List orderings = options.getOrderings();

@@ -44,11 +44,11 @@ public class Spawn extends PokeObject {
 	@XmlAttribute
 	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getDisappearTime() {
-		return disappearTime;
+		return disappearTime == null ? null : new Date(disappearTime.getTime());
 	}
 
 	public void setDisappearTime(Date disappearTime) {
-		this.disappearTime = disappearTime;
+		this.disappearTime = disappearTime == null ? null : new Date(disappearTime.getTime());
 	}
 
 	@Column(unique = false, nullable = false)

@@ -45,7 +45,6 @@ public class BSFManagerFactory extends BaseKeyedPoolableObjectFactory<Object, Ob
 		if (obj != null && obj instanceof BSFManager) {
 			BSFManager manager = (BSFManager) obj;
 			manager.terminate();
-			manager = null;
 		}
 	}
 

@@ -83,7 +83,6 @@ public class PokeFactory {
 			} catch (GeneralException ex) {
 				LOG.error("Could not close context from stack: " + ex.getMessage(), ex);
 			}
-			context = null;
 		}
 		contexts.set(prev);
 	}
@@ -118,7 +117,6 @@ public class PokeFactory {
 			} catch (GeneralException ex) {
 				LOG.error("Could not close private context: " + ex.getMessage(), ex);
 			}
-			context = null;
 		}
 	}
 
@@ -144,7 +142,6 @@ public class PokeFactory {
 			} catch (GeneralException ex) {
 				LOG.error("Could not close context: " + ex.getMessage(), ex);
 			}
-			context = null;
 		}
 		contexts.set(null);
 	}

@@ -72,7 +72,7 @@ public class BroadcastCommand extends AbstractCommand {
 		if (it != null) {
 			while (it.hasNext()) {
 				BotSession session = context.getObjectById(BotSession.class, it.next());
-				if (session.getChatId() != chat.getId()) {
+				if (!session.getChatId().equals(chat.getId())) {
 					TelegramBot bot = Environment.getEnvironment().getTelegramBot();
 					GetChat getChat = new GetChat();
 					getChat.setChatId(session.getChatId());

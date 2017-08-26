@@ -25,11 +25,11 @@ public class UserNotification extends PokeObject {
 	@XmlAttribute
 	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getExpiration() {
-		return expiration;
+		return expiration == null ? null : new Date(expiration.getTime());
 	}
 
 	public void setExpiration(Date expiration) {
-		this.expiration = expiration;
+		this.expiration = expiration == null ? null : new Date(expiration.getTime());
 	}
 	
 	@Column(unique = true, nullable = false)

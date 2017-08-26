@@ -112,22 +112,22 @@ public class Gym extends PokeObject {
 	@XmlAttribute
 	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getRaidStart() {
-		return raidStart;
+		return raidStart == null ? null : new Date(raidStart.getTime());
 	}
 
 	public void setRaidStart(Date raidStart) {
-		this.raidStart = raidStart;
+		this.raidStart = raidStart == null ? null : new Date(raidStart.getTime());
 	}
 
 	@Column(unique = false, nullable = true)
 	@XmlAttribute
 	@XmlJavaTypeAdapter(DateAdapter.class)
 	public Date getRaidEnd() {
-		return raidEnd;
+		return raidEnd == null ? null : new Date(raidEnd.getTime());
 	}
 
 	public void setRaidEnd(Date raidEnd) {
-		this.raidEnd = raidEnd;
+		this.raidEnd = raidEnd == null ? null : new Date(raidEnd.getTime());
 	}
 
 	@Column(unique = false, nullable = true)

@@ -16,7 +16,7 @@ import net.cattweasel.pokebot.tools.Util;
 
 public class MapBean extends BaseBean {
 
-	public class Location {
+	public static class Location {
 		
 		private Double x;
 		private Double y;

@@ -182,30 +182,28 @@ public class TaskManager {
 	public TaskResult runSync(TaskSchedule schedule) throws GeneralException {
 		TaskDefinition def = getTaskDefinition(schedule);
 		TaskResult result = createResult(schedule, def, true);
-		if (result != null) {
+		try {
+			executor = getTaskExecutor(def);
+			context.commitTransaction();
+			schedule.setDefinition(def.getName());
+			Attributes<String, Object> attrs = def.getAttributes() == null
+					? new Attributes<String, Object>() : def.getAttributes();
+			executor.execute(context, schedule, result, attrs);
+		} catch (Throwable t) {
+			String message = t.getMessage();
+			if (message == null) {
+				message = t.toString();
+			}
+			LOG.error("Exception: [" + message + "]", t);
+		} finally {
 			try {
-				executor = getTaskExecutor(def);
+				context.reconnect();
+				result.setCompleted(new Date());
+				result.setCompletionStatus(TaskResult.CompletionStatus.SUCCESS);
+				context.saveObject(result);
 				context.commitTransaction();
-				schedule.setDefinition(def.getName());
-				Attributes<String, Object> attrs = def.getAttributes() == null
-						? new Attributes<String, Object>() : def.getAttributes();
-				executor.execute(context, schedule, result, attrs);
 			} catch (Throwable t) {
-				String message = t.getMessage();
-				if (message == null) {
-					message = t.toString();
-				}
-				LOG.error("Exception: [" + message + "]", t);
-			} finally {
-				try {
-					context.reconnect();
-					result.setCompleted(new Date());
-					result.setCompletionStatus(TaskResult.CompletionStatus.SUCCESS);
-					context.saveObject(result);
-					context.commitTransaction();
-				} catch (Throwable t) {
-					LOG.error("Exception during final Save of Task Result", t);
-				}
+				LOG.error("Exception during final Save of Task Result", t);
 			}
 		}
 		executor = null;
@@ -258,7 +256,6 @@ public class TaskManager {
 		TaskResult existing = context.getObjectByName(TaskResult.class, name);
 		if (existing != null) {
 			if (existing.getCompleted() == null) {
-				temp = null;
 				throw new GeneralException("Task already running: " + def.getName());
 			} else {
 				TaskDefinition.ResultAction action = def.getResultAction();
@@ -272,7 +269,6 @@ public class TaskManager {
 					saveQualifiedResult(existing, false);
 				} else {
 					if (action == TaskDefinition.ResultAction.CANCEL) {
-						temp = null;
 						String msg = "A Result for a previous Execution of Task '"
 								+ def.getName() + "' still exists.";
 						throw new TaskResultExistsException(msg);
@@ -283,12 +279,10 @@ public class TaskManager {
 				}
 			}
 		}
-		if (temp != null) {
-			saveQualifiedResult(temp, tryUnqualifiedName);
-			result = temp;
-			sched.setResult(temp.getName());
-			context.saveObject(sched);
-		}
+		saveQualifiedResult(temp, tryUnqualifiedName);
+		result = temp;
+		sched.setResult(temp.getName());
+		context.saveObject(sched);
 		return result;
 	}
 

@@ -2,6 +2,7 @@ package net.cattweasel.pokebot.task;
 
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.methods.send.SendLocation;
@@ -65,7 +66,7 @@ public class UserNotificationTask implements TaskExecutor {
 	private void handleSession(PokeContext context, BotSession session) {
 		Double lat = Util.atod(Util.otos(session.get(ExtendedAttributes.BOT_SESSION_LATITUDE)));
 		Double lon = Util.atod(Util.otos(session.get(ExtendedAttributes.BOT_SESSION_LONGITUDE)));
-		if (lat != null && lat != 0.0D && lon != null && lon != 0.0D) {
+		if (lat != 0.0D && lon != 0.0D) {
 			handleSession(context, session, GeoLocation.fromDegrees(lat, lon));
 		}
 	}
@@ -82,10 +83,14 @@ public class UserNotificationTask implements TaskExecutor {
 	private void handleGyms(PokeContext context, BotSession session, GeoLocation loc) {
 		Double range = session.getUser().getSettings() == null ? null : Util.atod(Util.otos(
 				session.getUser().getSettings().get(ExtendedAttributes.USER_SETTINGS_GYM_RANGE)));
-		range = range == null || range == 0D ? 3000D : range;
+		if (range == null || range == 0D) {
+			range = 3000D;
+		}
 		Integer minLevel = session.getUser().getSettings() == null ? null : Util.otoi(
 				session.getUser().getSettings().get(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL));
-		minLevel = minLevel == null || minLevel == 0 ? 4 : minLevel;
+		if (minLevel == null || minLevel == 0) {
+			minLevel = 4;
+		}
 		QueryOptions qo = new QueryOptions();
 		BoundingCoordinates coords = loc.boundingCoordinates(range);
 		qo.addFilter(Filter.gt(ExtendedAttributes.GYM_RAID_LEVEL, (minLevel - 1)));
@@ -111,9 +116,9 @@ public class UserNotificationTask implements TaskExecutor {
 	private void handleSpawns(PokeContext context, BotSession session, GeoLocation loc) {
 		Attributes<String, Object> attrs = session.getUser().getSettings();
 		if (attrs != null) {
-			for (String key : attrs.keySet()) {
-				if (key.endsWith("-enabled") && Util.otob(attrs.get(key))) {
-					Integer pokemonId = Util.atoi(key.split("-")[0]);
+			for (Entry<String, Object> entry : attrs.entrySet()) {
+				if (entry.getKey().endsWith("-enabled") && Util.otob(entry.getValue())) {
+					Integer pokemonId = Util.atoi(entry.getKey().split("-")[0]);
 					Double range = Util.atod(attrs.getString(String.format("%s-range", pokemonId)));
 					handleSpawns(context, session, loc, pokemonId, range);
 				}

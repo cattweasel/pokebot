@@ -173,10 +173,11 @@ public class SettingsBean extends BaseBean {
 		Iterator<String> it = null;
 		try {
 			it = getContext().search(Pokemon.class, qo);
-			if (it != null);
-			while (it.hasNext()) {
-				Pokemon pokemon = getContext().getObjectById(Pokemon.class, it.next());
-				settings.add(createPokemonSetting(pokemon));
+			if (it != null) {
+				while (it.hasNext()) {
+					Pokemon pokemon = getContext().getObjectById(Pokemon.class, it.next());
+					settings.add(createPokemonSetting(pokemon));
+				}
 			}
 		} catch (GeneralException ex) {
 			LOG.error(ex);

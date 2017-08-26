@@ -2,6 +2,30 @@ package net.cattweasel.pokebot.tools;
 
 public class GeoLocation {
 
+	public static class BoundingCoordinates {
+
+		private final GeoLocation x;
+		private final GeoLocation y;
+		
+		public BoundingCoordinates(GeoLocation x, GeoLocation y) {
+			this.x = x;
+			this.y = y;
+		}
+		
+		public GeoLocation getX() {
+			return x;
+		}
+		
+		public GeoLocation getY() {
+			return y;
+		}
+		
+		@Override
+		public String toString() {
+			return String.format("BoundingCoordinates[x: %s, y: %s]", x, y);
+		}
+	}
+	
 	private static final double MIN_LAT = Math.toRadians(-90d);
 	private static final double MAX_LAT = Math.toRadians(90d);
 	private static final double MIN_LON = Math.toRadians(-180d);
@@ -102,29 +126,5 @@ public class GeoLocation {
 	public String toString() {
 		return String.format("GeoLocation[radLat: %s, radLon: %s, degLat: %s, degLon: %s]",
 				radLat, radLon, degLat, degLon);
-	}
-	
-	public class BoundingCoordinates {
-		
-		private final GeoLocation x;
-		private final GeoLocation y;
-		
-		public BoundingCoordinates(GeoLocation x, GeoLocation y) {
-			this.x = x;
-			this.y = y;
-		}
-		
-		public GeoLocation getX() {
-			return x;
-		}
-		
-		public GeoLocation getY() {
-			return y;
-		}
-		
-		@Override
-		public String toString() {
-			return String.format("BoundingCoordinates[x: %s, y: %s]", x, y);
-		}
 	}
 }

@@ -675,7 +675,7 @@ public class Util {
 				}
 			}
 			csv = b.toString();
-			if (csv != null && csv.length() == 0) {
+			if (csv.length() == 0) {
 				csv = null;
 			}
 		}

@@ -35,8 +35,10 @@ public class ExtendedAnnotationFactoryBean extends LocalSessionFactoryBean {
 	public void afterPropertiesSet() throws IOException {
 		Collection<Class<?>> entities = new ArrayList<Class<?>>();
 		ClassPathScanningCandidateComponentProvider scanner = this.createScanner();
-		for (String basePackage : this.basePackages) {
-			this.findEntities(scanner, entities, basePackage);
+		if (this.basePackages != null) {
+			for (String basePackage : this.basePackages) {
+				this.findEntities(scanner, entities, basePackage);
+			}
 		}
 		this.setAnnotatedClasses(entities.toArray(new Class<?>[entities.size()]));
 		this.setAnnotatedPackages(this.basePackages);

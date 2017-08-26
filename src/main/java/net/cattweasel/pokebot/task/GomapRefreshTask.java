@@ -3,6 +3,7 @@ package net.cattweasel.pokebot.task;
 import java.io.BufferedReader;
 import java.io.InputStreamReader;
 import java.net.URL;
+import java.nio.charset.StandardCharsets;
 import java.util.Date;
 
 import org.apache.log4j.Logger;
@@ -64,7 +65,7 @@ public class GomapRefreshTask implements TaskExecutor {
 		URL url = new URL(attributes.getString(ARG_GOMAP_URL));
 		BufferedReader br = null;
 		try {
-			br = new BufferedReader(new InputStreamReader(url.openStream()));
+			br = new BufferedReader(new InputStreamReader(url.openStream(), StandardCharsets.UTF_8));
 			while (running && Util.isNotNullOrEmpty((line = br.readLine()))) {
 				sb.append(line);
 			}

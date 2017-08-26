@@ -23,12 +23,22 @@ public class Localizer {
 	
 	public static String localize(Locale locale, String key) {
 		Properties props = new Properties();
+		InputStreamReader istream = null;
 		try {
-			props.load(new InputStreamReader(Localizer.class.getResourceAsStream(String.format(
+			istream = new InputStreamReader(Localizer.class.getResourceAsStream(String.format(
 					"/net/cattweasel/pokebot/web/messages/pokebot_%s.properties",
-					locale.getLanguage().toLowerCase())), StandardCharsets.UTF_8));
+					locale.getLanguage().toLowerCase())), StandardCharsets.UTF_8);
+			props.load(istream);
 		} catch (IOException ex) {
 			LOG.error("Error loading properties: " + ex.getMessage(), ex);
+		} finally {
+			if (istream != null) {
+				try {
+					istream.close();
+				} catch (IOException ex) {
+					LOG.error(ex);
+				}
+			}
 		}
 		return props.getProperty(key);
 	}
