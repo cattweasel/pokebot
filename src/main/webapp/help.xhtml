@@ -7,9 +7,81 @@
 <ui:composition template="template.xhtml">
 	<ui:define name="content">
 		
-		<p><h:outputText value="#{msgs.page_under_development}" /></p>
+		<h3><h:outputText value="#{msgs.help_bot_commands}" /></h3>
+		<p><h:outputText value="#{msgs.help_bot_commands_desc}" /></p>
 		
-		<!-- TODO -->
+		<div id="botcommand">
+			<h3>/help</h3>
+			<p><h:outputText value="#{msgs.help_cmd_help_desc}" /></p>
+		</div>
+		
+		<div id="botcommand">
+			<h3>/start</h3>
+			<p><h:outputText value="#{msgs.help_cmd_start_desc}" /></p>
+		</div>
+		
+		<div id="botcommand">
+			<h3>/stop</h3>
+			<p><h:outputText value="#{msgs.help_cmd_stop_desc}" /></p>
+		</div>
+		
+		<div id="botcommand">
+			<h3>/settings</h3>
+			<p><h:outputText value="#{msgs.help_cmd_settings_desc}" /></p>
+		</div>
+		
+		<div id="botcommand">
+			<h3>/reset</h3>
+			<p><h:outputText value="#{msgs.help_cmd_reset_desc}" /></p>
+		</div>
+		
+		<div id="botcommand">
+			<h3>/status</h3>
+			<p><h:outputText value="#{msgs.help_cmd_status_desc}" /></p>
+		</div>
+		
+		<div id="botcommand">
+			<h3>/broadcast</h3>
+			<p><h:outputText value="#{msgs.help_cmd_broadcast_desc}" /></p>
+		</div>
+		
+		<h3><h:outputText value="#{msgs.help_settings_menu}" /></h3>
+		<p><h:outputText value="#{msgs.help_settings_menu_desc}" /></p>
+		
+		<div id="usersetting">
+			<h3><h:outputText value="#{msgs.settings_delete_expired_messages}" /></h3>
+			<p><h:outputText value="#{msgs.help_settings_delete_expired_messages_desc}" /></p>
+		</div>
+		
+		<div id="usersetting">
+			<h3><h:outputText value="#{msgs.settings_user_language}" /></h3>
+			<p><h:outputText value="#{msgs.help_settings_user_language_desc}" /></p>
+		</div>
+		
+		<div id="usersetting">
+			<h3><h:outputText value="#{msgs.settings_share_location}" /></h3>
+			<p><h:outputText value="#{msgs.help_settings_share_location_desc}" /></p>
+		</div>
+		
+		<div id="usersetting">
+			<h3><h:outputText value="#{msgs.settings_enable_raid_notifications}" /></h3>
+			<p><h:outputText value="#{msgs.help_settings_enable_raid_notifications_desc}" /></p>
+		</div>
+		
+		<div id="usersetting">
+			<h3><h:outputText value="#{msgs.settings_raid_min_level}" /></h3>
+			<p><h:outputText value="#{msgs.help_settings_raid_min_level_desc}" /></p>
+		</div>
+		
+		<div id="usersetting">
+			<h3><h:outputText value="#{msgs.settings_raid_range}" /></h3>
+			<p><h:outputText value="#{msgs.help_settings_raid_range_desc}" /></p>
+		</div>
+		
+		<div id="usersetting">
+			<h3><h:outputText value="#{msgs.settings_raid_group_invite}" /></h3>
+			<p><h:outputText value="#{msgs.help_settings_raid_group_invite_desc}" /></p>
+		</div>
 		
 	</ui:define>
 </ui:composition>
