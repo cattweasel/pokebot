@@ -11,6 +11,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.server.Auditor;
+import net.cattweasel.pokebot.tools.BotKeyboard;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 
@@ -27,6 +28,7 @@ public abstract class AbstractCommand extends BotCommand {
 		SendMessage msg = new SendMessage();
 		msg.setChatId(chat.getId());
 		msg.setText(message);
+		msg.setReplyMarkup(new BotKeyboard());
 		try {
 			sender.sendMessage(msg);
 		} catch (TelegramApiException ex) {

@@ -27,6 +27,8 @@ public class ExtendedAttributes {
 	public static final String POKE_OBJECT_CREATED = "created";
 	public static final String POKE_OBJECT_MODIFIED = "modified";
 	
+	public static final String RAID_GROUP_USERS = "users";
+	
 	public static final String SPAWN_POKEMON = "pokemon";
 	public static final String SPAWN_DISAPPEAR_TIME = "disappearTime";
 	public static final String SPAWN_LATITUDE = "latitude";

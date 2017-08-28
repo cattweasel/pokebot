@@ -1,5 +1,6 @@
 package net.cattweasel.pokebot.task;
 
+import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -8,6 +9,8 @@ import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.methods.send.SendLocation;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
+import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
+import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PokeContext;
@@ -20,6 +23,7 @@ import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.Pokemon;
 import net.cattweasel.pokebot.object.QueryOptions;
+import net.cattweasel.pokebot.object.RaidRegistration;
 import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
@@ -27,10 +31,11 @@ import net.cattweasel.pokebot.object.UserNotification;
 import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.server.Environment;
 import net.cattweasel.pokebot.server.TelegramBot;
+import net.cattweasel.pokebot.tools.BotKeyboard;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.GeoLocation;
-import net.cattweasel.pokebot.tools.Localizer;
 import net.cattweasel.pokebot.tools.GeoLocation.BoundingCoordinates;
+import net.cattweasel.pokebot.tools.Localizer;
 import net.cattweasel.pokebot.tools.Util;
 
 /**
@@ -156,21 +161,14 @@ public class UserNotificationTask implements TaskExecutor {
 				spawn.getClass().getSimpleName(), spawn.getName());
 		try {
 			if (context.getObjectByName(UserNotification.class, name) == null) {
-				String messageId = null;
 				try {
-					messageId = announceSpawn(session, spawn);
-				} catch (TelegramApiException ex) {
-					LOG.warn("Could not handle spawn: " + ex.getMessage(), ex);
-				}
-				if (messageId != null) {
-					UserNotification n = new UserNotification();
-					n.setName(name);
-					n.setExpiration(spawn.getDisappearTime());
-					n.setMessageId(messageId);
-					context.saveObject(n);
+					UserNotification notif = announceSpawn(session, spawn);
+					context.saveObject(notif);
 					Auditor auditor = new Auditor(context);
 					auditor.log(Auditor.SYSTEM, AuditAction.SEND_SPAWN_NOTIFICATION, session.getUser().getName());
 					context.commitTransaction();
+				} catch (TelegramApiException ex) {
+					LOG.warn("Could not handle spawn: " + ex.getMessage(), ex);
 				}
 			}
 		} catch (GeneralException ex) {
@@ -179,7 +177,7 @@ public class UserNotificationTask implements TaskExecutor {
 	}
 	
 	@SuppressWarnings("deprecation")
-	private String announceSpawn(BotSession session, Spawn spawn) throws TelegramApiException {
+	private UserNotification announceSpawn(BotSession session, Spawn spawn) throws TelegramApiException {
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
@@ -190,8 +188,14 @@ public class UserNotificationTask implements TaskExecutor {
 		loc.setChatId(session.getChatId());
 		loc.setLatitude(Util.atof(Util.otos(spawn.getLatitude())));
 		loc.setLongitude(Util.atof(Util.otos(spawn.getLongitude())));
+		loc.setReplyMarkup(new BotKeyboard());
 		m = bot.sendLocation(loc);
-		return messageId + "-" + session.getChatId() + ":" + m.getMessageId();
+		UserNotification n = new UserNotification();
+		n.setName(String.format("%s:%s:%s", session.getUser().getName(),
+				spawn.getClass().getSimpleName(), spawn.getName()));
+		n.setExpiration(spawn.getDisappearTime());
+		n.setMessageId(messageId + "-" + session.getChatId() + ":" + m.getMessageId());
+		return n;
 	}
 	
 	private void handleGym(PokeContext context, BotSession session, Gym gym) {
@@ -199,21 +203,14 @@ public class UserNotificationTask implements TaskExecutor {
 				gym.getClass().getSimpleName(), gym.getName());
 		try {
 			if (context.getObjectByName(UserNotification.class, name) == null) {
-				String messageId = null;
 				try {
-					messageId = announceGym(session, gym);
-				} catch (TelegramApiException ex) {
-					LOG.warn("Could not handle gym: " + ex.getMessage(), ex);
-				}
-				if (messageId != null) {
-					UserNotification n = new UserNotification();
-					n.setName(name);
-					n.setExpiration(gym.getRaidEnd());
-					n.setMessageId(messageId);
-					context.saveObject(n);
+					UserNotification notif = announceGym(context, session, gym);
+					context.saveObject(notif);
 					Auditor auditor = new Auditor(context);
 					auditor.log(Auditor.SYSTEM, AuditAction.SEND_RAID_NOTIFICATION, session.getUser().getName());
 					context.commitTransaction();
+				} catch (TelegramApiException ex) {
+					LOG.warn("Could not handle gym: " + ex.getMessage(), ex);
 				}
 			}
 		} catch (GeneralException ex) {
@@ -222,19 +219,50 @@ public class UserNotificationTask implements TaskExecutor {
 	}
 
 	@SuppressWarnings("deprecation")
-	private String announceGym(BotSession session, Gym gym) throws TelegramApiException {
+	private UserNotification announceGym(PokeContext context, BotSession session,
+			Gym gym) throws TelegramApiException, GeneralException {
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
 		msg.setText(formatGym(session, gym));
+		if (session.getUser().getSettings() == null
+				|| session.getUser().getSettings().get(ExtendedAttributes.USER_SETTINGS_GYM_INVITE) == null
+				|| session.getUser().getSettings().getBoolean(ExtendedAttributes.USER_SETTINGS_GYM_INVITE)) {
+			msg.setReplyMarkup(createReplyMarkup(context, session, gym));
+		}
 		Message m = bot.sendMessage(msg);
 		String messageId = session.getChatId() + ":" + m.getMessageId();
 		SendLocation loc = new SendLocation();
 		loc.setChatId(session.getChatId());
 		loc.setLatitude(Util.atof(Util.otos(gym.getLatitude())));
 		loc.setLongitude(Util.atof(Util.otos(gym.getLongitude())));
+		loc.setReplyMarkup(new BotKeyboard());
 		m = bot.sendLocation(loc);
-		return messageId + "-" + session.getChatId() + ":" + m.getMessageId();
+		UserNotification n = new UserNotification();
+		n.setName(String.format("%s:%s:%s", session.getUser().getName(),
+				gym.getClass().getSimpleName(), gym.getName()));
+		n.setExpiration(gym.getRaidEnd());
+		n.setMessageId(messageId + "-" + session.getChatId() + ":" + m.getMessageId());
+		return n;
+	}
+	
+	private InlineKeyboardMarkup createReplyMarkup(PokeContext context,
+			BotSession session, Gym gym) throws GeneralException {
+		RaidRegistration reg = context.getUniqueObject(RaidRegistration.class,
+				Filter.like(ExtendedAttributes.POKE_OBJECT_NAME, String.format("%s:%s:",
+						gym.getName(), session.getUser().getName()), Filter.MatchMode.START));
+		InlineKeyboardMarkup ikm = new InlineKeyboardMarkup();
+		InlineKeyboardButton ikb = new InlineKeyboardButton();
+		if (reg == null) {
+			ikb.setCallbackData(gym.getName());
+			ikb.setText(Localizer.localize(session.getUser(), "join_raid_group"));
+		} else {
+			ikb.setCallbackData(reg.getName());
+			ikb.setText(String.format("%s: %s", Localizer.localize(session.getUser(), "registration"),
+					Localizer.localize(session.getUser(), new Date(Util.atol(reg.getName().split(":")[2])))));
+		}
+		ikm.setKeyboard(Arrays.asList(Arrays.asList(ikb)));
+		return ikm;
 	}
 	
 	private String formatGym(BotSession session, Gym gym) {

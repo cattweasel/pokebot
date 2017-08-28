@@ -13,11 +13,13 @@ import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.QueryOptions;
+import net.cattweasel.pokebot.object.RaidRegistration;
 import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
 import net.cattweasel.pokebot.object.UserNotification;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.Util;
 
 /**
  * This task is used to perform several system related background processes.
@@ -44,6 +46,10 @@ public class PerformMaintenanceTask implements TaskExecutor {
 		}
 		if (running) {
 			removeOrphanRaids(context);
+			context.commitTransaction();
+		}
+		if (running) {
+			removeOrphanRaidRegistrations(context);
 			context.commitTransaction();
 		}
 	}
@@ -119,6 +125,28 @@ public class PerformMaintenanceTask implements TaskExecutor {
 			}
 		} catch (GeneralException ex) {
 			LOG.error("Error removing orphan raids: " + ex.getMessage(), ex);
+		}
+	}
+	
+	private void removeOrphanRaidRegistrations(PokeContext context) {
+		Iterator<String> it = null;
+		try {
+			it = context.search(RaidRegistration.class);
+			if (it != null) {
+				while (running && it.hasNext()) {
+					RaidRegistration reg = context.getObjectById(RaidRegistration.class, it.next());
+					if (reg != null) {
+						Terminator terminator = new Terminator(context);
+						String[] parts = reg.getName().split(":");
+						if (new Date(Util.atol(parts[2])).getTime() < new Date().getTime()) {
+							terminator.deleteObject(reg);
+						}
+					}
+				}
+				context.commitTransaction();
+			}
+		} catch (GeneralException ex) {
+			LOG.error("Error removing orphan raid registrations: " + ex.getMessage(), ex);
 		}
 	}
 }
