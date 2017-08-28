@@ -31,6 +31,7 @@ public class User extends PokeObject {
 	private String languageCode;
 	private Attributes<String, Object> settings;
 	private List<Capability> capabilities;
+	private Boolean banned;
 	
 	@Column(unique = false, nullable = true)
 	@XmlAttribute
@@ -119,5 +120,15 @@ public class User extends PokeObject {
 			}
 		}
 		return result;
+	}
+	
+	@Column(unique = false, nullable = true)
+	@XmlAttribute
+	public Boolean isBanned() {
+		return banned;
+	}
+	
+	public void setBanned(Boolean banned) {
+		this.banned = banned;
 	}
 }

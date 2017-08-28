@@ -57,7 +57,9 @@ public class UserNotificationTask implements TaskExecutor {
 		if (it != null) {
 			while (running && it.hasNext()) {
 				BotSession session = context.getObjectById(BotSession.class, it.next());
-				handleSession(context, session);
+				if (session.getUser().isBanned() == null || session.getUser().isBanned() == false) {
+					handleSession(context, session);
+				}
 			}
 		}
 	}

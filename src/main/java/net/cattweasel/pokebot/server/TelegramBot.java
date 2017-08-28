@@ -21,6 +21,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.api.Terminator;
+import net.cattweasel.pokebot.command.BanCommand;
 import net.cattweasel.pokebot.command.BroadcastCommand;
 import net.cattweasel.pokebot.command.HelpCommand;
 import net.cattweasel.pokebot.command.ResetCommand;
@@ -28,6 +29,7 @@ import net.cattweasel.pokebot.command.SettingsCommand;
 import net.cattweasel.pokebot.command.StartCommand;
 import net.cattweasel.pokebot.command.StatusCommand;
 import net.cattweasel.pokebot.command.StopCommand;
+import net.cattweasel.pokebot.command.UnbanCommand;
 import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.object.ExtendedAttributes;
@@ -46,6 +48,7 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 	
 	public TelegramBot(String botUsername) {
 		super(botUsername);
+		register(new BanCommand());
 		register(new BroadcastCommand());
 		register(new HelpCommand());
 		register(new ResetCommand());
@@ -53,6 +56,7 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 		register(new StartCommand());
 		register(new StatusCommand());
 		register(new StopCommand());
+		register(new UnbanCommand());
 	}
 	
 	@Override
