@@ -1,6 +1,5 @@
 package net.cattweasel.pokebot.task;
 
-import java.util.Arrays;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.Map.Entry;
@@ -9,8 +8,6 @@ import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.methods.send.SendLocation;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
 import org.telegram.telegrambots.api.objects.Message;
-import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PokeContext;
@@ -23,7 +20,6 @@ import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.Pokemon;
 import net.cattweasel.pokebot.object.QueryOptions;
-import net.cattweasel.pokebot.object.RaidRegistration;
 import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
@@ -227,11 +223,11 @@ public class UserNotificationTask implements TaskExecutor {
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
 		msg.setText(formatGym(session, gym));
-		if (session.getUser().getSettings() == null
+		/*if (session.getUser().getSettings() == null
 				|| session.getUser().getSettings().get(ExtendedAttributes.USER_SETTINGS_GYM_INVITE) == null
 				|| session.getUser().getSettings().getBoolean(ExtendedAttributes.USER_SETTINGS_GYM_INVITE)) {
 			msg.setReplyMarkup(createReplyMarkup(context, session, gym));
-		}
+		}*/
 		Message m = bot.sendMessage(msg);
 		String messageId = session.getChatId() + ":" + m.getMessageId();
 		SendLocation loc = new SendLocation();
@@ -248,7 +244,7 @@ public class UserNotificationTask implements TaskExecutor {
 		return n;
 	}
 	
-	private InlineKeyboardMarkup createReplyMarkup(PokeContext context,
+	/*private InlineKeyboardMarkup createReplyMarkup(PokeContext context,
 			BotSession session, Gym gym) throws GeneralException {
 		RaidRegistration reg = context.getUniqueObject(RaidRegistration.class,
 				Filter.like(ExtendedAttributes.POKE_OBJECT_NAME, String.format("%s:%s:",
@@ -265,7 +261,7 @@ public class UserNotificationTask implements TaskExecutor {
 		}
 		ikm.setKeyboard(Arrays.asList(Arrays.asList(ikb)));
 		return ikm;
-	}
+	}*/
 	
 	private String formatGym(BotSession session, Gym gym) {
 		return String.format("RAID: %s [ Level: %s, CP: %s, %s: %s ] %s: %sm - %s: %s",

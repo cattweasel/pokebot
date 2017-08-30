@@ -1,26 +1,16 @@
 package net.cattweasel.pokebot.server;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-
 import org.apache.log4j.Logger;
 import org.telegram.telegrambots.api.methods.send.SendMessage;
-import org.telegram.telegrambots.api.methods.updatingmessages.EditMessageReplyMarkup;
-import org.telegram.telegrambots.api.objects.CallbackQuery;
 import org.telegram.telegrambots.api.objects.Chat;
 import org.telegram.telegrambots.api.objects.Location;
 import org.telegram.telegrambots.api.objects.Update;
 import org.telegram.telegrambots.api.objects.User;
-import org.telegram.telegrambots.api.objects.replykeyboard.InlineKeyboardMarkup;
-import org.telegram.telegrambots.api.objects.replykeyboard.buttons.InlineKeyboardButton;
 import org.telegram.telegrambots.bots.commandbot.TelegramLongPollingCommandBot;
 import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
-import net.cattweasel.pokebot.api.Terminator;
 import net.cattweasel.pokebot.command.BanCommand;
 import net.cattweasel.pokebot.command.BroadcastCommand;
 import net.cattweasel.pokebot.command.HelpCommand;
@@ -34,8 +24,6 @@ import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
-import net.cattweasel.pokebot.object.Gym;
-import net.cattweasel.pokebot.object.RaidRegistration;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Localizer;
 import net.cattweasel.pokebot.tools.Util;
@@ -73,14 +61,14 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 		if (update.getMessage() != null && update.getMessage().getLocation() != null) {
 			handleLocationUpdate(update.getMessage().getChat(), update.getMessage().getFrom(),
 					update.getMessage().getLocation());
-		} else if (update.getCallbackQuery() != null) {
+		/*} else if (update.getCallbackQuery() != null) {
 			handleCallbackQuery(update.getCallbackQuery());
-		} else {
+		*/} else {
 			LOG.warn("Unknown bot command: " + update);
 		}
 	}
 	
-	private void handleCallbackQuery(CallbackQuery query) {
+	/*private void handleCallbackQuery(CallbackQuery query) {
 		PokeContext context = null;
 		try {
 			context = PokeFactory.createContext(getClass().getSimpleName());
@@ -106,9 +94,9 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 				}
 			}
 		}
-	}
+	}*/
 
-	@SuppressWarnings("deprecation")
+	/*@SuppressWarnings("deprecation")
 	private void handleRaidJoin(PokeContext context, Gym gym, BotSession session,
 			CallbackQuery query) throws GeneralException {
 		EditMessageReplyMarkup emrm = new EditMessageReplyMarkup();
@@ -120,9 +108,9 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 		} catch (TelegramApiException ex) {
 			LOG.error(ex);
 		}
-	}
+	}*/
 	
-	@SuppressWarnings("deprecation")
+	/*@SuppressWarnings("deprecation")
 	private void handleRaidUpdate(PokeContext context, Gym gym,
 			BotSession session, CallbackQuery query) throws GeneralException {
 		String[] parts = query.getData().split(":");
@@ -146,9 +134,9 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 		} catch (TelegramApiException ex) {
 			LOG.error(ex);
 		}
-	}
+	}*/
 	
-	private InlineKeyboardMarkup createReplyMarkup(PokeContext context, BotSession session,
+	/*private InlineKeyboardMarkup createReplyMarkup(PokeContext context, BotSession session,
 			Gym gym) throws GeneralException {
 		InlineKeyboardMarkup ikm = new InlineKeyboardMarkup();
 		List<InlineKeyboardButton> buttons = new ArrayList<InlineKeyboardButton>();
@@ -171,9 +159,9 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 		}
 		ikm.setKeyboard(Arrays.asList(buttons));
 		return ikm;
-	}
+	}*/
 	
-	private List<Date> calculateRaidDates(Date origin) {
+	/*private List<Date> calculateRaidDates(Date origin) {
 		List<Date> dates = new ArrayList<Date>();
 		Date date = new Date(origin.getTime() - 1200000L);
 		int counter = 1;
@@ -183,7 +171,7 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 			counter++;
 		}
 		return dates;
-	}
+	}*/
 	
 	private void handleLocationUpdate(Chat chat, User user, Location location) {
 		BotSession session = null;
