@@ -223,11 +223,6 @@ public class UserNotificationTask implements TaskExecutor {
 		SendMessage msg = new SendMessage();
 		msg.setChatId(session.getChatId());
 		msg.setText(formatGym(session, gym));
-		/*if (session.getUser().getSettings() == null
-				|| session.getUser().getSettings().get(ExtendedAttributes.USER_SETTINGS_GYM_INVITE) == null
-				|| session.getUser().getSettings().getBoolean(ExtendedAttributes.USER_SETTINGS_GYM_INVITE)) {
-			msg.setReplyMarkup(createReplyMarkup(context, session, gym));
-		}*/
 		Message m = bot.sendMessage(msg);
 		String messageId = session.getChatId() + ":" + m.getMessageId();
 		SendLocation loc = new SendLocation();
@@ -244,30 +239,13 @@ public class UserNotificationTask implements TaskExecutor {
 		return n;
 	}
 	
-	/*private InlineKeyboardMarkup createReplyMarkup(PokeContext context,
-			BotSession session, Gym gym) throws GeneralException {
-		RaidRegistration reg = context.getUniqueObject(RaidRegistration.class,
-				Filter.like(ExtendedAttributes.POKE_OBJECT_NAME, String.format("%s:%s:",
-						gym.getName(), session.getUser().getName()), Filter.MatchMode.START));
-		InlineKeyboardMarkup ikm = new InlineKeyboardMarkup();
-		InlineKeyboardButton ikb = new InlineKeyboardButton();
-		if (reg == null) {
-			ikb.setCallbackData(gym.getName());
-			ikb.setText(Localizer.localize(session.getUser(), "join_raid_group"));
-		} else {
-			ikb.setCallbackData(reg.getName());
-			ikb.setText(String.format("%s: %s", Localizer.localize(session.getUser(), "registration"),
-					Localizer.localize(session.getUser(), new Date(Util.atol(reg.getName().split(":")[2])))));
-		}
-		ikm.setKeyboard(Arrays.asList(Arrays.asList(ikb)));
-		return ikm;
-	}*/
-	
 	private String formatGym(BotSession session, Gym gym) {
-		return String.format("RAID: %s [ Level: %s, CP: %s, %s: %s ] %s: %sm - %s: %s",
+		return String.format("RAID: %s [ Level: %s, CP: %s, %s: %s, Team: %s ] %s: %sm - %s: %s",
 				Localizer.localize(session.getUser(), String.format("pokemon_%s", gym.getRaidPokemon().getPokemonId())),
 				Util.separateNumber(gym.getRaidLevel()), Util.separateNumber(gym.getRaidCp()),
-				Localizer.localize(session.getUser(), "gym"), gym.getDisplayName(), Localizer.localize(session.getUser(), "distance"),
+				Localizer.localize(session.getUser(), "gym"), gym.getDisplayName(),
+				gym.getTeam() == null ? "n/a" : Localizer.localize(session.getUser(), "team_" + gym.getTeam().getTeamId()),
+				Localizer.localize(session.getUser(), "distance"),
 				Util.separateNumber(Math.round(calculateDistance(session, gym.getLatitude(), gym.getLongitude()))),
 				Localizer.localize(session.getUser(), "end"), Localizer.localize(session.getUser(), gym.getRaidEnd()));
 	}
