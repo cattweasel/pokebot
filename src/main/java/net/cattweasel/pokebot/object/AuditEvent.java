@@ -1,8 +1,8 @@
 package net.cattweasel.pokebot.object;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -24,7 +24,7 @@ public class AuditEvent extends PokeObject {
 	private String source;
 	private String target;
 	
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "action", unique = false, nullable = false)
 	@XmlElement(name = "Action")
 	@XmlJavaTypeAdapter(WrappedReferenceAdapter.class)

@@ -1,7 +1,7 @@
 package net.cattweasel.pokebot.object;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -20,7 +20,7 @@ public class Player extends PokeObject {
 	
 	private Team team;
 	
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team", unique = false, nullable = false)
 	@XmlElement(name = "Team")
 	@XmlJavaTypeAdapter(WrappedReferenceAdapter.class)

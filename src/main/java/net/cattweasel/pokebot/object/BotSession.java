@@ -1,8 +1,8 @@
 package net.cattweasel.pokebot.object;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.Lob;
 import javax.persistence.ManyToOne;
@@ -36,7 +36,7 @@ public class BotSession extends PokeObject {
 		this.chatId = chatId;
 	}
 
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user", unique = true, nullable = false)
 	@XmlElement(name = "User")
 	@XmlJavaTypeAdapter(WrappedReferenceAdapter.class)

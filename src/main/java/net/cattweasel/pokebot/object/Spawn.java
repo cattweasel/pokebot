@@ -2,9 +2,9 @@ package net.cattweasel.pokebot.object;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -28,7 +28,7 @@ public class Spawn extends PokeObject {
 	private Double latitude;
 	private Double longitude;
 	
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "pokemon", unique = false, nullable = false)
 	@XmlElement(name = "Pokemon")
 	@XmlJavaTypeAdapter(WrappedReferenceAdapter.class)

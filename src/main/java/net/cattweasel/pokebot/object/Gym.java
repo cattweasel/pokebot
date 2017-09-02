@@ -2,9 +2,9 @@ package net.cattweasel.pokebot.object;
 
 import java.util.Date;
 
-import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
@@ -46,7 +46,7 @@ public class Gym extends PokeObject {
 		this.displayName = displayName;
 	}
 
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team", unique = false, nullable = true)
 	@XmlElement(name = "Team")
 	@XmlJavaTypeAdapter(WrappedReferenceAdapter.class)
@@ -140,7 +140,7 @@ public class Gym extends PokeObject {
 		this.raidLevel = raidLevel;
 	}
 
-	@ManyToOne(cascade = CascadeType.MERGE)
+	@ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "raid_pokemon", unique = false, nullable = true)
 	@XmlElement(name = "RaidPokemon")
 	@XmlJavaTypeAdapter(WrappedReferenceAdapter.class)

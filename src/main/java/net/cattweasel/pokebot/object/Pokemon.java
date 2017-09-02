@@ -3,12 +3,11 @@ package net.cattweasel.pokebot.object;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.Table;
-import javax.persistence.UniqueConstraint;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 @Entity
-@Table(name = "db_pokemon", uniqueConstraints = { @UniqueConstraint(columnNames = "pokemonId") })
+@Table(name = "db_pokemon")
 @XmlRootElement(name = "Pokemon")
 public class Pokemon extends PokeObject {
 
@@ -17,7 +16,7 @@ public class Pokemon extends PokeObject {
 	private Integer pokemonId;
 	private Boolean enabled;
 	
-	@Column(unique = false, nullable = false)
+	@Column(unique = true, nullable = false)
 	@XmlAttribute
 	public Integer getPokemonId() {
 		return pokemonId;

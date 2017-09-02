@@ -5,6 +5,8 @@ import java.io.InputStreamReader;
 import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 
 import org.apache.log4j.Logger;
 import org.json.simple.JSONArray;
@@ -18,6 +20,7 @@ import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.Pokemon;
+import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
@@ -53,6 +56,9 @@ public class GomapRefreshTask implements TaskExecutor {
 	private static final String ARG_EID = "eid";
 	private static final String ARG_POKEMON_ID = "pokemon_id";
 	
+	private Map<Integer, Pokemon> pokemonCache = new HashMap<Integer, Pokemon>();
+	private Map<Integer, Team> teamCache = new HashMap<Integer, Team>();
+	
 	private static final Logger LOG = Logger.getLogger(GomapRefreshTask.class);
 	
 	private boolean running = true;
@@ -60,6 +66,8 @@ public class GomapRefreshTask implements TaskExecutor {
 	@Override
 	public void execute(PokeContext context, TaskSchedule schedule, TaskResult result,
 			Attributes<String, Object> attributes) throws Exception {
+		LOG.debug("Starting GomapRefreshTask..");
+		LOG.debug("Fetching data from gomap.eu..");
 		String line;
 		StringBuilder sb = new StringBuilder();
 		URL url = new URL(attributes.getString(ARG_GOMAP_URL));
@@ -77,13 +85,18 @@ public class GomapRefreshTask implements TaskExecutor {
 		JSONParser parser = new JSONParser();
 		JSONObject json = (JSONObject) parser.parse(sb.toString());
 		if (running) {
+			LOG.debug("Processing spawns..");
 			processSpawns(context, (JSONArray) json.get(ARG_POKEMONS));
+			LOG.debug("Committing spawns..");
 			context.commitTransaction();
 		}
 		if (running) {
+			LOG.debug("Processing gyms..");
 			processGyms(context, (JSONArray) json.get(ARG_GYMS));
+			LOG.debug("Committing gyms..");
 			context.commitTransaction();
 		}
+		LOG.debug("Finished GomapRefreshTask!");
 	}
 	
 	@Override
@@ -109,15 +122,18 @@ public class GomapRefreshTask implements TaskExecutor {
 	private void processSpawn(PokeContext context, JSONObject spawn) throws GeneralException {
 		String name = Util.otos(spawn.get(ARG_EID));
 		Date disappearTime = new Date(Util.atol(Util.otos(spawn.get(ARG_DISAPPEAR_TIME))) * 1000L);
-		if (disappearTime.getTime() > new Date().getTime()
-				&& context.getObjectByName(Spawn.class, name) == null) {
-			Spawn result = new Spawn();
-			result.setDisappearTime(disappearTime);
-			result.setName(name);
-			result.setLatitude(Util.atod(Util.otos(spawn.get(ARG_LATITUDE))));
-			result.setLongitude(Util.atod(Util.otos(spawn.get(ARG_LONGITUDE))));
-			result.setPokemon(resolvePokemon(context, Util.otoi(spawn.get(ARG_POKEMON_ID))));
-			context.saveObject(result);
+		if (disappearTime.getTime() > new Date().getTime()) {
+			QueryOptions qo = new QueryOptions();
+			qo.addFilter(Filter.eq(ExtendedAttributes.POKE_OBJECT_NAME, name));
+			if (context.countObjects(Spawn.class, qo) == 0) {
+				Spawn result = new Spawn();
+				result.setDisappearTime(disappearTime);
+				result.setName(name);
+				result.setLatitude(Util.atod(Util.otos(spawn.get(ARG_LATITUDE))));
+				result.setLongitude(Util.atod(Util.otos(spawn.get(ARG_LONGITUDE))));
+				result.setPokemon(resolvePokemon(context, Util.otoi(spawn.get(ARG_POKEMON_ID))));
+				context.saveObject(result);
+			}
 		}
 	}
 	
@@ -158,11 +174,27 @@ public class GomapRefreshTask implements TaskExecutor {
 	}
 	
 	private Pokemon resolvePokemon(PokeContext context, Integer id) throws GeneralException {
-		return context.getUniqueObject(Pokemon.class, Filter.eq(ExtendedAttributes.POKEMON_POKEMON_ID, id));
+		Pokemon result = pokemonCache.get(id);
+		if (result == null) {
+			result = context.getUniqueObject(Pokemon.class, Filter.eq(
+					ExtendedAttributes.POKEMON_POKEMON_ID, id));
+			if (result != null) {
+				pokemonCache.put(id, result);
+			}
+		}
+		return result;
 	}
 	
 	private Team resolveTeam(PokeContext context, Integer id) throws GeneralException {
-		return context.getUniqueObject(Team.class, Filter.eq(ExtendedAttributes.TEAM_TEAM_ID, id));
+		Team result = teamCache.get(id);
+		if (result == null) {
+			result = context.getUniqueObject(Team.class, Filter.eq(
+					ExtendedAttributes.TEAM_TEAM_ID, id));
+			if (result != null) {
+				teamCache.put(id, result);
+			}
+		}
+		return result;
 	}
 	
 	private void saveGym(PokeContext context, Gym gym) throws GeneralException {
