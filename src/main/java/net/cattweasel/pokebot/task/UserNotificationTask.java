@@ -159,14 +159,16 @@ public class UserNotificationTask implements TaskExecutor {
 				spawn.getClass().getSimpleName(), spawn.getName());
 		try {
 			if (context.getObjectByName(UserNotification.class, name) == null) {
-				try {
-					UserNotification notif = announceSpawn(session, spawn);
-					context.saveObject(notif);
-					Auditor auditor = new Auditor(context);
-					auditor.log(Auditor.SYSTEM, AuditAction.SEND_SPAWN_NOTIFICATION, session.getUser().getName());
-					context.commitTransaction();
-				} catch (TelegramApiException ex) {
-					LOG.warn("Could not handle spawn: " + ex.getMessage(), ex);
+				if (!checkForDuplicates(context, session, spawn)) {
+					try {
+						UserNotification notif = announceSpawn(session, spawn);
+						context.saveObject(notif);
+						Auditor auditor = new Auditor(context);
+						auditor.log(Auditor.SYSTEM, AuditAction.SEND_SPAWN_NOTIFICATION, session.getUser().getName());
+						context.commitTransaction();
+					} catch (TelegramApiException ex) {
+						LOG.warn("Could not handle spawn: " + ex.getMessage(), ex);
+					}
 				}
 			}
 		} catch (GeneralException ex) {
@@ -174,6 +176,27 @@ public class UserNotificationTask implements TaskExecutor {
 		}
 	}
 	
+	private boolean checkForDuplicates(PokeContext context,
+			BotSession session, Spawn spawn) throws GeneralException {
+		boolean found = false;
+		QueryOptions qo = new QueryOptions();
+		qo.addFilter(Filter.like(ExtendedAttributes.POKE_OBJECT_NAME, String.format("%s:%s:",
+				session.getUser().getName(), Spawn.class.getSimpleName()), Filter.MatchMode.START));
+		Iterator<String> it = context.search(UserNotification.class, qo);
+		if (it != null) {
+			while (it.hasNext()) {
+				UserNotification notif = context.getObjectById(UserNotification.class, it.next());
+				Spawn s = context.getObjectByName(Spawn.class, notif.getName().split(":")[2]);
+				if (spawn.getDisappearTime().getTime() == s.getDisappearTime().getTime()
+						&& spawn.getPokemon().getId().equals(s.getPokemon().getId())) {
+					found = true;
+					break;
+				}
+			}
+		}
+		return found;
+	}
+
 	@SuppressWarnings("deprecation")
 	private UserNotification announceSpawn(BotSession session, Spawn spawn) throws TelegramApiException {
 		TelegramBot bot = Environment.getEnvironment().getTelegramBot();
