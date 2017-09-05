@@ -10,12 +10,44 @@ import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.Spawn;
+import net.cattweasel.pokebot.object.User;
 import net.cattweasel.pokebot.object.UserNotification;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 
 public class MapBean extends BaseBean {
 
+	public static class Player {
+		
+		private User user;
+		private Double latitude;
+		private Double longitude;
+		
+		public User getUser() {
+			return user;
+		}
+		
+		public void setUser(User user) {
+			this.user = user;
+		}
+
+		public Double getLatitude() {
+			return latitude;
+		}
+
+		public void setLatitude(Double latitude) {
+			this.latitude = latitude;
+		}
+
+		public Double getLongitude() {
+			return longitude;
+		}
+
+		public void setLongitude(Double longitude) {
+			this.longitude = longitude;
+		}
+	}
+	
 	public static class Location {
 		
 		private Double x;
@@ -47,16 +79,81 @@ public class MapBean extends BaseBean {
 		}
 	}
 	
-	public boolean getSessionActive() {
-		
-		return false; // TODO
-		
+	public List<Spawn> getUserSpawns() throws GeneralException {
+		List<Spawn> spawns = new ArrayList<Spawn>();
+		QueryOptions qo = new QueryOptions();
+		qo.addFilter(Filter.like(ExtendedAttributes.POKE_OBJECT_NAME, String.format("%s:%s:",
+				getLoggedInUser().getName(), Spawn.class.getSimpleName()), Filter.MatchMode.START));
+		Iterator<String> it = getContext().search(UserNotification.class, qo);
+		if (it != null) {
+			while (it.hasNext()) {
+				UserNotification notif = getContext().getObjectById(UserNotification.class, it.next());
+				Spawn spawn = getContext().getObjectByName(Spawn.class, notif.getName().split(":")[2]);
+				if (spawn != null) {
+					spawns.add(spawn);
+				}
+			}
+		}
+		return spawns;
 	}
 	
-	public boolean getLocationAvailable() {
-		
-		return false; // TODO
-		
+	public List<Gym> getUserRaids() throws GeneralException {
+		List<Gym> raids = new ArrayList<Gym>();
+		QueryOptions qo = new QueryOptions();
+		qo.addFilter(Filter.like(ExtendedAttributes.POKE_OBJECT_NAME, String.format("%s:%s:",
+				getLoggedInUser().getName(), Gym.class.getSimpleName()), Filter.MatchMode.START));
+		Iterator<String> it = getContext().search(UserNotification.class, qo);
+		if (it != null) {
+			while (it.hasNext()) {
+				UserNotification notif = getContext().getObjectById(UserNotification.class, it.next());
+				Gym gym = getContext().getObjectByName(Gym.class, notif.getName().split(":")[2]);
+				if (gym != null) {
+					raids.add(gym);
+				}
+			}
+		}
+		return raids;
+	}
+	
+	public List<Player> getPlayers() throws GeneralException {
+		List<Player> players = new ArrayList<Player>();
+		for (BotSession session : getContext().getObjects(BotSession.class)) {
+			if (session.getUser() != null && session.getUser().getSettings() != null
+					&& session.getUser().getSettings().getBoolean(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION)) {
+				Player player = new Player();
+				player.setLatitude(Util.atod(Util.otos(session.getAttributes().get(ExtendedAttributes.BOT_SESSION_LATITUDE))));
+				player.setLongitude(Util.atod(Util.otos(session.getAttributes().get(ExtendedAttributes.BOT_SESSION_LONGITUDE))));
+				player.setUser(getLoggedInUser());
+				players.add(player);
+			}
+		}
+		return players;
+	}
+	
+	public Location getUserPosition() throws GeneralException {
+		Location loc = null;
+		BotSession session = getContext().getUniqueObject(BotSession.class,
+				Filter.eq(ExtendedAttributes.BOT_SESSION_USER, getLoggedInUser()));
+		if (session != null && session.getAttributes() != null
+				&& session.getAttributes().get(ExtendedAttributes.BOT_SESSION_LATITUDE) != null) {
+			loc = new Location();
+			loc.setX(Util.atod(Util.otos(session.getAttributes().get(ExtendedAttributes.BOT_SESSION_LATITUDE))));
+			loc.setY(Util.atod(Util.otos(session.getAttributes().get(ExtendedAttributes.BOT_SESSION_LONGITUDE))));
+		}
+		return loc;
+	}
+	
+	public boolean getSessionActive() throws GeneralException {
+		BotSession session = getContext().getUniqueObject(BotSession.class,
+				Filter.eq(ExtendedAttributes.BOT_SESSION_USER, getLoggedInUser()));
+		return session != null;
+	}
+	
+	public boolean getLocationAvailable() throws GeneralException {
+		BotSession session = getContext().getUniqueObject(BotSession.class,
+				Filter.eq(ExtendedAttributes.BOT_SESSION_USER, getLoggedInUser()));
+		return session != null && session.getAttributes() != null
+				&& session.getAttributes().get(ExtendedAttributes.BOT_SESSION_LATITUDE) != null;
 	}
 	
 	public List<Location> getUserLocations() throws GeneralException {

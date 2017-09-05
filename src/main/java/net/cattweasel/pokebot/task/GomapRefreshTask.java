@@ -171,12 +171,15 @@ public class GomapRefreshTask implements TaskExecutor {
 	}
 	
 	private Pokemon resolvePokemon(PokeContext context, Integer id) throws GeneralException {
-		Pokemon result = pokemonCache.get(id);
-		if (result == null) {
-			result = context.getUniqueObject(Pokemon.class, Filter.eq(
-					ExtendedAttributes.POKEMON_POKEMON_ID, id));
-			if (result != null) {
-				pokemonCache.put(id, result);
+		Pokemon result = null;
+		if (id != null && id != 0) {
+			result = pokemonCache.get(id);
+			if (result == null) {
+				result = context.getUniqueObject(Pokemon.class, Filter.eq(
+						ExtendedAttributes.POKEMON_POKEMON_ID, id));
+				if (result != null) {
+					pokemonCache.put(id, result);
+				}
 			}
 		}
 		return result;
