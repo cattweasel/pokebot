@@ -6,12 +6,25 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 <ui:composition template="template.xhtml">
 	<ui:define name="content">
+	
+	<p>User: <h:outputText value="#{base.loggedInUser}" /></p>
+	<p>Session: <h:outputText value="#{base.loggedInSession}" /></p>
+	<p>Location: <h:outputText value="#{base.locationAvailable}" /></p>
+	
 		<ui:fragment rendered="#{base.loggedInUser eq null}">
 			<p><h:outputText value="#{msgs.settings_not_logged_in}" /></p>
 			<p><h:outputText escape="false" value="#{msgs.login_instructions}" /></p>
 			<p><b><h:outputText value="#{msgs.important}" />:</b>&nbsp;<h:outputText value="#{msgs.login_do_not_share_your_settings_link}" /></p>
 		</ui:fragment>
-		<ui:fragment rendered="#{base.loggedInUser ne null}">
+		<ui:fragment rendered="#{base.loggedInUser ne null and !map.sessionActive}">
+			<p><h:outputText value="#{msgs.map_no_bot_session_running}" /></p>
+			<p><h:outputText value="#{msgs.map_no_bot_session_running_desc}" /></p>
+		</ui:fragment>
+		<ui:fragment rendered="#{base.loggedInUser ne null and map.sessionActive and !map.locationAvailable">
+			<p><h:outputText value="#{msgs.map_no_location_available}" /></p>
+			<p><h:outputText value="#{msgs.map_no_location_available_desc}" /></p>
+		</ui:fragment>
+		<ui:fragment rendered="#{base.loggedInUser ne null and map.sessionActive and map.locationAvailable}">
 			
 			<!-- TODO -->
 			<p>Diese Seite befindet sich derzeit im Aufbau und wird mit Release 1.2 zur Verfügung stehen!</p>

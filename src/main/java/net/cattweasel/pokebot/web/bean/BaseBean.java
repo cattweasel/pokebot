@@ -5,8 +5,6 @@ import java.util.Map;
 import javax.faces.context.FacesContext;
 import javax.servlet.http.HttpSession;
 
-import org.apache.log4j.Logger;
-
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.object.BotSession;
@@ -23,8 +21,6 @@ public class BaseBean {
 
 	private PokeContext context;
 	private User user;
-	
-	private static final Logger LOG = Logger.getLogger(BaseBean.class);
 	
 	public String getUserCount() throws GeneralException {
 		return Util.separateNumber(getContext().countObjects(User.class));
@@ -48,20 +44,16 @@ public class BaseBean {
 		return Util.separateNumber(getContext().countObjects(Gym.class, qo));
 	}
 	
-	public User getLoggedInUser() {
+	public User getLoggedInUser() throws GeneralException {
 		if (user == null) {
 			String userId = getRequestScope().get("id");
 			if (Util.isNullOrEmpty(userId)) {
 				userId = Util.otos(getSessionScope().get("user"));
 			}
 			if (Util.isNotNullOrEmpty(userId)) {
-				try {
-					user = getContext().getObjectById(User.class, userId);
-					if (user != null) {
-						getSessionScope().put("user", user.getId());
-					}
-				} catch (GeneralException ex) {
-					LOG.error(ex);
+				user = getContext().getObjectById(User.class, userId);
+				if (user != null) {
+					getSessionScope().put("user", user.getId());
 				}
 			}
 		}

@@ -23,6 +23,8 @@ public class BotKeyboard extends ReplyKeyboardMarkup {
 		row2.add(new KeyboardButton("/help"));
 		row2.add(new KeyboardButton("/settings"));
 		row2.add(new KeyboardButton("/location").setRequestLocation(true));
+		row2.add(new KeyboardButton("/map"));
+		row2.add(new KeyboardButton("/history"));
 		rows.add(row2);
 		setKeyboard(rows);
 	}

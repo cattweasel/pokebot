@@ -6,6 +6,51 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core"
 	xmlns:f="http://java.sun.com/jsf/core">
 <ui:composition template="template.xhtml">
+	<ui:define name="header">
+		<script type="text/javascript">
+		
+		loadConfirmation = function() {
+			
+			Ext.MessageBox.confirm('#{msgs.confirmation}', '#{msgs.settings_confirm_profile_load}', function(a) {
+				if ("yes" === a) {
+					document.getElementById("settings-form:load-profile").click();
+				}
+			});
+			
+		};
+		
+		createConfirmation = function() {
+			
+			Ext.MessageBox.confirm('#{msgs.confirmation}', '#{msgs.settings_confirm_profile_create}', function(a) {
+				if ("yes" === a) {
+					document.getElementById("settings-form:create-profile").click();
+				}
+			});
+			
+		};
+		
+		saveConfirmation = function() {
+			
+			Ext.MessageBox.confirm('#{msgs.confirmation}', '#{msgs.settings_confirm_profile_save}', function(a) {
+				if ("yes" === a) {
+					document.getElementById("settings-form:save-profile").click();
+				}
+			});
+			
+		};
+		
+		deleteConfirmation = function() {
+			
+			Ext.MessageBox.confirm('#{msgs.confirmation}', '#{msgs.settings_confirm_profile_delete}', function(a) {
+				if ("yes" === a) {
+					document.getElementById("settings-form:delete-profile").click();
+				}
+			});
+			
+		};
+		
+		</script>
+	</ui:define>
 	<ui:define name="content">
 		<ui:fragment rendered="#{base.loggedInUser eq null}">
 			<p><h:outputText value="#{msgs.settings_not_logged_in}" /></p>
@@ -39,7 +84,10 @@
 							</h:selectOneMenu>
 						</td>
 						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.loadProfile}" value="#{msgs.load}" /></td>
+						<td>
+							<h:button value="#{msgs.load}" onclick="loadConfirmation(); return false;"/>
+							<h:commandButton id='load-profile' action="#{settings.loadProfile}" style="display:none" />
+						</td>
 						<td>&nbsp;</td>
 						<td><h:outputText value="#{msgs.settings_load_profile_desc}" /></td>
 					</tr>
@@ -52,7 +100,10 @@
 							</h:selectOneMenu>
 						</td>
 						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.saveProfile}" value="#{msgs.save}" /></td>
+						<td>
+							<h:button value="#{msgs.save}" onclick="saveConfirmation(); return false;"/>
+							<h:commandButton id='save-profile' action="#{settings.saveProfile}" style="display:none" />
+						</td>
 						<td>&nbsp;</td>
 						<td><h:outputText value="#{msgs.settings_save_profile_desc}" /></td>
 					</tr>
@@ -61,7 +112,10 @@
 						<td>&nbsp;</td>
 						<td colspan="3"><h:inputText value="#{settings.profileName}" /></td>
 						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.createProfile}" value="#{msgs.create}" /></td>
+						<td>
+							<h:button value="#{msgs.create}" onclick="createConfirmation(); return false;"/>
+							<h:commandButton id='create-profile' action="#{settings.createProfile}" style="display:none" />
+						</td>
 						<td>&nbsp;</td>
 						<td><h:outputText value="#{msgs.settings_create_profile_desc}" /></td>
 					</tr>
@@ -74,7 +128,10 @@
 							</h:selectOneMenu>
 						</td>
 						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.deleteProfile}" value="#{msgs.delete}" /></td>
+						<td>
+							<h:button value="#{msgs.delete}" onclick="deleteConfirmation(); return false;"/>
+							<h:commandButton id='delete-profile' action="#{settings.deleteProfile}" style="display:none" />
+						</td>
 						<td>&nbsp;</td>
 						<td><h:outputText value="#{msgs.settings_delete_profile_desc}" /></td>
 					</tr>

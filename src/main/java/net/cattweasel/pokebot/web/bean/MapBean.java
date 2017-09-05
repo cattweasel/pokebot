@@ -47,6 +47,18 @@ public class MapBean extends BaseBean {
 		}
 	}
 	
+	public boolean getSessionActive() {
+		
+		return false; // TODO
+		
+	}
+	
+	public boolean getLocationAvailable() {
+		
+		return false; // TODO
+		
+	}
+	
 	public List<Location> getUserLocations() throws GeneralException {
 		List<Location> result = new ArrayList<Location>();
 		Iterator<String> it = getContext().search(BotSession.class);

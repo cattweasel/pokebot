@@ -71,7 +71,7 @@ public class HistoryBean extends BaseBean {
 		return items;
 	}
 	
-	private HistoryItem createHistoryItem(AuditEvent event) {
+	private HistoryItem createHistoryItem(AuditEvent event) throws GeneralException {
 		HistoryItem item = new HistoryItem();
 		item.setDate(Localizer.localize(getLoggedInUser(), event.getCreated(), true));
 		item.setAction(event.getAction().getName());
@@ -92,7 +92,7 @@ public class HistoryBean extends BaseBean {
 		return item;
 	}
 	
-	private String resolveUsername() {
+	private String resolveUsername() throws GeneralException {
 		User user = getLoggedInUser();
 		return String.format("<u>%s</u>", user.getUsername() == null
 				? user.getName() : user.getUsername());

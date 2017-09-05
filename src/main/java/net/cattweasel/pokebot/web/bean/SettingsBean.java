@@ -131,7 +131,7 @@ public class SettingsBean extends BaseBean {
 		return pokemonSettings;
 	}
 	
-	public String getLanguage() {
+	public String getLanguage() throws GeneralException {
 		language = getSetting(ExtendedAttributes.USER_SETTINGS_LANGUAGE) != null
 				? Util.otos(getSetting(ExtendedAttributes.USER_SETTINGS_LANGUAGE))
 				: FacesContext.getCurrentInstance().getViewRoot().getLocale().getLanguage();
@@ -142,7 +142,7 @@ public class SettingsBean extends BaseBean {
 		this.language = language;
 	}
 	
-	public Boolean getGymEnabled() {
+	public Boolean getGymEnabled() throws GeneralException {
 		gymEnabled = getSetting(ExtendedAttributes.USER_SETTINGS_GYM_ENABLED) != null
 				? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_GYM_ENABLED)) : true;
 		return gymEnabled;
@@ -152,7 +152,7 @@ public class SettingsBean extends BaseBean {
 		this.gymEnabled = gymEnabled;
 	}
 	
-	public Boolean getDeleteExpired() {
+	public Boolean getDeleteExpired() throws GeneralException {
 		deleteExpired = getSetting(ExtendedAttributes.USER_SETTINGS_DELETE_EXPIRED) != null
 				? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_DELETE_EXPIRED)) : true;
 		return deleteExpired;
@@ -162,7 +162,7 @@ public class SettingsBean extends BaseBean {
 		this.deleteExpired = deleteExpired;
 	}
 	
-	public Boolean getShareLocation() {
+	public Boolean getShareLocation() throws GeneralException {
 		shareLocation = getSetting(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION) != null
 				? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION)) : false;
 		return shareLocation;
@@ -172,7 +172,7 @@ public class SettingsBean extends BaseBean {
 		this.shareLocation = shareLocation;
 	}
 	
-	public Integer getGymLevel() {
+	public Integer getGymLevel() throws GeneralException {
 		gymLevel = getSetting(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL) != null
 				? Util.otoi(getSetting(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL)) : 4;
 		return gymLevel;
@@ -188,7 +188,7 @@ public class SettingsBean extends BaseBean {
 		this.gymLevel = gymLevel;
 	}
 	
-	public Integer getGymRange() {
+	public Integer getGymRange() throws GeneralException {
 		gymRange = getSetting(ExtendedAttributes.USER_SETTINGS_GYM_RANGE) != null
 				? Util.otoi(getSetting(ExtendedAttributes.USER_SETTINGS_GYM_RANGE)) : 3000;
 		return gymRange;
@@ -213,7 +213,7 @@ public class SettingsBean extends BaseBean {
 		getContext().commitTransaction();
 	}
 	
-	private Attributes<String, Object> createSettings() {
+	private Attributes<String, Object> createSettings() throws GeneralException {
 		Attributes<String, Object> settings = getLoggedInUser().getSettings();
 		settings = settings == null ? new Attributes<String, Object>() : settings;
 		settings.put(ExtendedAttributes.USER_SETTINGS_LANGUAGE, language);
@@ -256,7 +256,7 @@ public class SettingsBean extends BaseBean {
 		return settings;
 	}
 	
-	private PokemonSetting createPokemonSetting(Pokemon pokemon) {
+	private PokemonSetting createPokemonSetting(Pokemon pokemon) throws GeneralException {
 		PokemonSetting setting = new PokemonSetting();
 		setting.setEnabled(isEnabled(pokemon));
 		setting.setPokemonId(pokemon.getPokemonId());
@@ -265,11 +265,11 @@ public class SettingsBean extends BaseBean {
 		return setting;
 	}
 	
-	private Boolean isEnabled(Pokemon pokemon) {
+	private Boolean isEnabled(Pokemon pokemon) throws GeneralException {
 		return Util.otob(getSetting(String.format("%s-enabled", pokemon.getPokemonId())));
 	}
 	
-	private Integer getRange(Pokemon pokemon) {
+	private Integer getRange(Pokemon pokemon) throws GeneralException {
 		int range = Util.otoi(getSetting(String.format("%s-range", pokemon.getPokemonId())));
 		if (range == 0) {
 			range = 3000;
@@ -277,7 +277,7 @@ public class SettingsBean extends BaseBean {
 		return range;
 	}
 	
-	private Object getSetting(String key) {
+	private Object getSetting(String key) throws GeneralException {
 		Attributes<String, Object> attrs = getLoggedInUser() == null
 				? null : getLoggedInUser().getSettings();
 		Object result = loadedProfile != null && loadedProfile.getSettings() != null
