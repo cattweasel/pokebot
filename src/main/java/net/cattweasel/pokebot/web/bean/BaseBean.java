@@ -51,9 +51,15 @@ public class BaseBean {
 	public User getLoggedInUser() {
 		if (user == null) {
 			String userId = getRequestScope().get("id");
+			if (Util.isNullOrEmpty(userId)) {
+				userId = Util.otos(getSessionScope().get("user"));
+			}
 			if (Util.isNotNullOrEmpty(userId)) {
 				try {
 					user = getContext().getObjectById(User.class, userId);
+					if (user != null) {
+						getSessionScope().put("user", user.getId());
+					}
 				} catch (GeneralException ex) {
 					LOG.error(ex);
 				}
@@ -79,5 +85,9 @@ public class BaseBean {
 	
 	protected Map<String, String> getRequestScope() {
 		return FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
+	}
+	
+	protected Map<String, Object> getSessionScope() {
+		return FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
 	}
 }

@@ -14,6 +14,8 @@ import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.command.BanCommand;
 import net.cattweasel.pokebot.command.BroadcastCommand;
 import net.cattweasel.pokebot.command.HelpCommand;
+import net.cattweasel.pokebot.command.HistoryCommand;
+import net.cattweasel.pokebot.command.MapCommand;
 import net.cattweasel.pokebot.command.ResetCommand;
 import net.cattweasel.pokebot.command.SettingsCommand;
 import net.cattweasel.pokebot.command.StartCommand;
@@ -45,6 +47,8 @@ public class TelegramBot extends TelegramLongPollingCommandBot {
 		register(new StatusCommand());
 		register(new StopCommand());
 		register(new UnbanCommand());
+		register(new MapCommand());
+		register(new HistoryCommand());
 	}
 	
 	@Override

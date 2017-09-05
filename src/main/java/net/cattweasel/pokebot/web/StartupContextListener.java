@@ -8,6 +8,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
+import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.ServiceDefinition;
 import net.cattweasel.pokebot.server.Importer;
 import net.cattweasel.pokebot.tools.GeneralException;
@@ -50,6 +51,26 @@ public class StartupContextListener implements ServletContextListener {
 				importer.importXml(xml);
 				LOG.info("Initialization complete.");
 			}
+			
+			// TODO: REMOVE AFTER DEPLOYMENT
+			AuditAction a = context.getObjectByName(AuditAction.class, "GetHistoryLink");
+			if (a == null) {
+				a = new AuditAction();
+				a.setName("GetHistoryLink");
+				a.setEnabled(true);
+				context.saveObject(a);
+				context.commitTransaction();
+			}
+			a = context.getObjectByName(AuditAction.class, "GetMapLink");
+			if (a == null) {
+				a = new AuditAction();
+				a.setName("GetMapLink");
+				a.setEnabled(true);
+				context.saveObject(a);
+				context.commitTransaction();
+			}
+			
+			
 		} finally {
 			if (null != context) {
 				PokeFactory.releaseContext(context);

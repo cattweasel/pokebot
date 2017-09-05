@@ -15,6 +15,7 @@ import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Pokemon;
 import net.cattweasel.pokebot.object.PokemonSetting;
+import net.cattweasel.pokebot.object.Profile;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.User;
 import net.cattweasel.pokebot.server.Auditor;
@@ -30,14 +31,103 @@ public class SettingsBean extends BaseBean {
 	private Boolean gymEnabled;
 	private Integer gymLevel;
 	private Integer gymRange;
-	private Boolean gymInvite;
+	private String profileName;
+	private String selectedLoadProfile;
+	private String selectedSaveProfile;
+	private String selectedDeleteProfile;
+	private Profile loadedProfile;
 	
 	private static final Logger LOG = Logger.getLogger(SettingsBean.class);
 	
-	public List<PokemonSetting> getPokemonSettings() {
-		if (pokemonSettings == null) {
-			pokemonSettings = createPokemonSettings();
+	public String getProfileName() {
+		return profileName;
+	}
+	
+	public void setProfileName(String profileName) {
+		this.profileName = profileName;
+	}
+	
+	public String getSelectedLoadProfile() {
+		return selectedLoadProfile;
+	}
+	
+	public void setSelectedLoadProfile(String selectedLoadProfile) {
+		this.selectedLoadProfile = selectedLoadProfile;
+	}
+	
+	public String getSelectedSaveProfile() {
+		return selectedSaveProfile;
+	}
+	
+	public void setSelectedSaveProfile(String selectedSaveProfile) {
+		this.selectedSaveProfile = selectedSaveProfile;
+	}
+	
+	public String getSelectedDeleteProfile() {
+		return selectedDeleteProfile;
+	}
+	
+	public void setSelectedDeleteProfile(String selectedDeleteProfile) {
+		this.selectedDeleteProfile = selectedDeleteProfile;
+	}
+	
+	public List<Profile> getAvailableProfiles() throws GeneralException {
+		List<Profile> profiles = new ArrayList<Profile>();
+		QueryOptions qo = new QueryOptions();
+		qo.addFilter(Filter.eq(ExtendedAttributes.PROFILE_USER, getLoggedInUser()));
+		qo.setOrder(ExtendedAttributes.PROFILE_DISPLAY_NAME, "ASC");
+		Iterator<String> it = getContext().search(Profile.class, qo);
+		if (it != null) {
+			while (it.hasNext()) {
+				profiles.add(getContext().getObjectById(Profile.class, it.next()));
+			}
 		}
+		return profiles;
+	}
+	
+	public void loadProfile() throws GeneralException {
+		if (Util.isNotNullOrEmpty(selectedLoadProfile)) {
+			loadedProfile = getContext().getObjectById(Profile.class, selectedLoadProfile);
+		}
+	}
+	
+	public void saveProfile() throws GeneralException {
+		if (Util.isNotNullOrEmpty(selectedSaveProfile)) {
+			Profile profile = getContext().getObjectById(Profile.class, selectedSaveProfile);
+			if (profile != null) {
+				profile.setSettings(createSettings());
+				getContext().saveObject(profile);
+				getContext().commitTransaction();
+			}
+		}
+	}
+	
+	public void createProfile() throws GeneralException {
+		if (Util.isNotNullOrEmpty(profileName) && getContext().getUniqueObject(
+				Profile.class, Filter.and(Filter.eq(ExtendedAttributes.PROFILE_USER, getLoggedInUser()),
+						Filter.eq(ExtendedAttributes.PROFILE_DISPLAY_NAME, profileName))) == null) {
+			Profile profile = new Profile();
+			profile.setDisplayName(profileName);
+			profile.setName(Util.uuid());
+			profile.setUser(getLoggedInUser());
+			getContext().saveObject(profile);
+			getContext().commitTransaction();
+		}
+		profileName = null;
+	}
+	
+	public void deleteProfile() throws GeneralException {
+		if (Util.isNotNullOrEmpty(selectedDeleteProfile)) {
+			Profile profile = getContext().getObjectById(Profile.class, selectedDeleteProfile);
+			if (profile != null) {
+				getContext().removeObject(profile);
+				getContext().commitTransaction();
+			}
+		}
+	}
+	
+	public List<PokemonSetting> getPokemonSettings() {
+		pokemonSettings = createPokemonSettings();
 		return pokemonSettings;
 	}
 	
@@ -53,10 +143,8 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	public Boolean getGymEnabled() {
-		if (gymEnabled == null) {
-			gymEnabled = getSetting(ExtendedAttributes.USER_SETTINGS_GYM_ENABLED) != null
-					? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_GYM_ENABLED)) : true;
-		}
+		gymEnabled = getSetting(ExtendedAttributes.USER_SETTINGS_GYM_ENABLED) != null
+				? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_GYM_ENABLED)) : true;
 		return gymEnabled;
 	}
 	
@@ -65,10 +153,8 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	public Boolean getDeleteExpired() {
-		if (deleteExpired == null) {
-			deleteExpired = getSetting(ExtendedAttributes.USER_SETTINGS_DELETE_EXPIRED) != null
-					? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_DELETE_EXPIRED)) : true;
-		}
+		deleteExpired = getSetting(ExtendedAttributes.USER_SETTINGS_DELETE_EXPIRED) != null
+				? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_DELETE_EXPIRED)) : true;
 		return deleteExpired;
 	}
 	
@@ -77,10 +163,8 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	public Boolean getShareLocation() {
-		if (shareLocation == null) {
-			shareLocation = getSetting(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION) != null
-					? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION)) : false;
-		}
+		shareLocation = getSetting(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION) != null
+				? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION)) : false;
 		return shareLocation;
 	}
 	
@@ -89,10 +173,8 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	public Integer getGymLevel() {
-		if (gymLevel == null) {
-			gymLevel = getSetting(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL) != null
-					? Util.otoi(getSetting(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL)) : 4;
-		}
+		gymLevel = getSetting(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL) != null
+				? Util.otoi(getSetting(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL)) : 4;
 		return gymLevel;
 	}
 	
@@ -107,10 +189,8 @@ public class SettingsBean extends BaseBean {
 	}
 	
 	public Integer getGymRange() {
-		if (gymRange == null) {
-			gymRange = getSetting(ExtendedAttributes.USER_SETTINGS_GYM_RANGE) != null
-					? Util.otoi(getSetting(ExtendedAttributes.USER_SETTINGS_GYM_RANGE)) : 3000;
-		}
+		gymRange = getSetting(ExtendedAttributes.USER_SETTINGS_GYM_RANGE) != null
+				? Util.otoi(getSetting(ExtendedAttributes.USER_SETTINGS_GYM_RANGE)) : 3000;
 		return gymRange;
 	}
 	
@@ -124,31 +204,26 @@ public class SettingsBean extends BaseBean {
 		this.gymRange = gymRange;
 	}
 	
-	public Boolean getGymInvite() {
-		if (gymInvite == null) {
-			gymInvite = getSetting(ExtendedAttributes.USER_SETTINGS_GYM_INVITE) != null
-					? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_GYM_INVITE)) : true;
-		}
-		return gymInvite;
-	}
-	
-	public void setGymInvite(Boolean gymInvite) {
-		this.gymInvite = gymInvite;
-	}
-	
 	public void save() throws GeneralException {
 		User user = getLoggedInUser();
-		Attributes<String, Object> settings = user.getSettings();
+		user.setSettings(createSettings());
+		getContext().saveObject(user);
+		Auditor auditor = new Auditor(getContext());
+		auditor.log(user.getName(), AuditAction.UPDATE_SETTINGS, user.getName());
+		getContext().commitTransaction();
+	}
+	
+	private Attributes<String, Object> createSettings() {
+		Attributes<String, Object> settings = getLoggedInUser().getSettings();
 		settings = settings == null ? new Attributes<String, Object>() : settings;
 		settings.put(ExtendedAttributes.USER_SETTINGS_LANGUAGE, language);
 		FacesContext.getCurrentInstance().getViewRoot().setLocale(new Locale(language));
-		settings.put(ExtendedAttributes.USER_SETTINGS_DELETE_EXPIRED, getDeleteExpired());
-		settings.put(ExtendedAttributes.USER_SETTINGS_GYM_ENABLED, getGymEnabled());
-		settings.put(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL, getGymLevel());
-		settings.put(ExtendedAttributes.USER_SETTINGS_GYM_RANGE, getGymRange());
-		settings.put(ExtendedAttributes.USER_SETTINGS_GYM_INVITE, gymInvite);
+		settings.put(ExtendedAttributes.USER_SETTINGS_DELETE_EXPIRED, deleteExpired);
+		settings.put(ExtendedAttributes.USER_SETTINGS_GYM_ENABLED, gymEnabled);
+		settings.put(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL, gymLevel);
+		settings.put(ExtendedAttributes.USER_SETTINGS_GYM_RANGE, gymRange);
 		settings.put(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION, shareLocation);
-		for (PokemonSetting s : getPokemonSettings()) {
+		for (PokemonSetting s : pokemonSettings) {
 			if (s.getRange() != null && s.getRange() < 500) {
 				s.setRange(500);
 			}
@@ -158,11 +233,7 @@ public class SettingsBean extends BaseBean {
 			settings.put(String.format("%s-enabled", s.getPokemonId()), s.getEnabled());
 			settings.put(String.format("%s-range", s.getPokemonId()), s.getRange());
 		}
-		user.setSettings(settings);
-		getContext().saveObject(user);
-		Auditor auditor = new Auditor(getContext());
-		auditor.log(user.getName(), AuditAction.UPDATE_SETTINGS, user.getName());
-		getContext().commitTransaction();
+		return settings;
 	}
 	
 	private List<PokemonSetting> createPokemonSettings() {
@@ -209,6 +280,8 @@ public class SettingsBean extends BaseBean {
 	private Object getSetting(String key) {
 		Attributes<String, Object> attrs = getLoggedInUser() == null
 				? null : getLoggedInUser().getSettings();
-		return attrs == null ? null : attrs.get(key);
+		Object result = loadedProfile != null && loadedProfile.getSettings() != null
+				? loadedProfile.getSettings().get(key) : attrs != null ? attrs.get(key) : null;
+		return result;
 	}
 }

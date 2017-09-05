@@ -20,7 +20,6 @@ import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.Pokemon;
-import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
 import net.cattweasel.pokebot.object.TaskSchedule;
@@ -123,9 +122,7 @@ public class GomapRefreshTask implements TaskExecutor {
 		String name = Util.otos(spawn.get(ARG_EID));
 		Date disappearTime = new Date(Util.atol(Util.otos(spawn.get(ARG_DISAPPEAR_TIME))) * 1000L);
 		if (disappearTime.getTime() > new Date().getTime()) {
-			QueryOptions qo = new QueryOptions();
-			qo.addFilter(Filter.eq(ExtendedAttributes.POKE_OBJECT_NAME, name));
-			if (context.countObjects(Spawn.class, qo) == 0) {
+			if (context.getObjectByName(Spawn.class, name) == null) {
 				Spawn result = new Spawn();
 				result.setDisappearTime(disappearTime);
 				result.setName(name);

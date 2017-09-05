@@ -16,6 +16,72 @@
 			<h:form id="settings-form">
 				<table>
 					<tr>
+						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_profile_settings}" /></th>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<th colspan="3"><h:outputText value="#{msgs.setting}" /></th>
+						<th>&nbsp;</th>
+						<th colspan="3"><h:outputText value="#{msgs.value}" /></th>
+						<th>&nbsp;</th>
+						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
+						<th>&nbsp;</th>
+						<th><h:outputText value="#{msgs.description}" /></th>
+					</tr>
+					<tr>
+						<td colspan="3"><h:outputText value="#{msgs.settings_load_profile}" />:</td>
+						<td>&nbsp;</td>
+						<td colspan="3">
+							<h:selectOneMenu value="#{settings.selectedLoadProfile}">
+								<f:selectItems value="#{settings.availableProfiles}" var="profile" itemLabel="#{profile.displayName}" itemValue="#{profile.id}" />
+							</h:selectOneMenu>
+						</td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.loadProfile}" value="#{msgs.load}" /></td>
+						<td>&nbsp;</td>
+						<td><h:outputText value="#{msgs.settings_load_profile_desc}" /></td>
+					</tr>
+					<tr>
+						<td colspan="3"><h:outputText value="#{msgs.settings_save_profile}" />:</td>
+						<td>&nbsp;</td>
+						<td colspan="3">
+							<h:selectOneMenu value="#{settings.selectedSaveProfile}">
+								<f:selectItems value="#{settings.availableProfiles}" var="profile" itemLabel="#{profile.displayName}" itemValue="#{profile.id}" />
+							</h:selectOneMenu>
+						</td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.saveProfile}" value="#{msgs.save}" /></td>
+						<td>&nbsp;</td>
+						<td><h:outputText value="#{msgs.settings_save_profile_desc}" /></td>
+					</tr>
+					<tr>
+						<td colspan="3"><h:outputText value="#{msgs.settings_create_profile}" />:</td>
+						<td>&nbsp;</td>
+						<td colspan="3"><h:inputText value="#{settings.profileName}" /></td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.createProfile}" value="#{msgs.create}" /></td>
+						<td>&nbsp;</td>
+						<td><h:outputText value="#{msgs.settings_create_profile_desc}" /></td>
+					</tr>
+					<tr>
+						<td colspan="3"><h:outputText value="#{msgs.settings_delete_profile}" />:</td>
+						<td>&nbsp;</td>
+						<td colspan="3">
+							<h:selectOneMenu value="#{settings.selectedDeleteProfile}">
+								<f:selectItems value="#{settings.availableProfiles}" var="profile" itemLabel="#{profile.displayName}" itemValue="#{profile.id}" />
+							</h:selectOneMenu>
+						</td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.deleteProfile}" value="#{msgs.delete}" /></td>
+						<td>&nbsp;</td>
+						<td><h:outputText value="#{msgs.settings_delete_profile_desc}" /></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
 						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_global_settings}" /></th>
 					</tr>
 					<tr>
@@ -106,15 +172,6 @@
 						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 						<td>&nbsp;</td>
 						<td><h:outputText value="#{msgs.settings_raid_range_desc}" /></td>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_raid_group_invite}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3"><h:selectBooleanCheckbox value="#{settings.gymInvite}" disabled="true" /></td>
-						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" disabled="true" /></td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_raid_group_invite_desc}" /></td>
 					</tr>
 					<tr>
 						<td>&nbsp;</td>

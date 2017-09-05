@@ -1,0 +1,22 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
+<html xmlns="http://www.w3.org/1999/xhtml"
+	xmlns:ui="http://java.sun.com/jsf/facelets"
+	xmlns:h="http://java.sun.com/jsf/html"
+	xmlns:c="http://java.sun.com/jsp/jstl/core">
+<ui:composition template="template.xhtml">
+	<ui:define name="content">
+		<ui:fragment rendered="#{base.loggedInUser eq null}">
+			<p><h:outputText value="#{msgs.settings_not_logged_in}" /></p>
+			<p><h:outputText escape="false" value="#{msgs.login_instructions}" /></p>
+			<p><b><h:outputText value="#{msgs.important}" />:</b>&nbsp;<h:outputText value="#{msgs.login_do_not_share_your_settings_link}" /></p>
+		</ui:fragment>
+		<ui:fragment rendered="#{base.loggedInUser ne null}">
+			
+			<!-- TODO -->
+			<p>Diese Seite befindet sich derzeit im Aufbau und wird mit Release 1.2 zur Verfügung stehen!</p>
+			
+		</ui:fragment>
+	</ui:define>
+</ui:composition>
+</html>

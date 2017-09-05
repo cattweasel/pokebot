@@ -2,6 +2,9 @@ package net.cattweasel.pokebot.object;
 
 public class ExtendedAttributes {
 
+	public static final String AUDIT_EVENT_SOURCE = "source";
+	public static final String AUDIT_EVENT_TARGET = "target";
+	
 	public static final String BOT_SESSION_LATITUDE = "latitude";
 	public static final String BOT_SESSION_LONGITUDE = "longitude";
 	public static final String BOT_SESSION_USER = "user";
@@ -27,6 +30,10 @@ public class ExtendedAttributes {
 	public static final String POKE_OBJECT_CREATED = "created";
 	public static final String POKE_OBJECT_MODIFIED = "modified";
 	
+	public static final String PROFILE_USER = "user";
+	public static final String PROFILE_DISPLAY_NAME = "displayName";
+	public static final String PROFILE_SETTINGS = "settings";
+	
 	public static final String RAID_GROUP_USERS = "users";
 	
 	public static final String SPAWN_POKEMON = "pokemon";
@@ -51,5 +58,4 @@ public class ExtendedAttributes {
 	public static final String USER_SETTINGS_LANGUAGE = "language";
 	public static final String USER_SETTINGS_DELETE_EXPIRED = "deleteExpired";
 	public static final String USER_SETTINGS_SHARE_LOCATION = "shareLocation";
-	public static final String USER_SETTINGS_GYM_INVITE = "gymInvite";
 }

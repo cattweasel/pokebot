@@ -28,6 +28,20 @@
 	</script>
 </ui:fragment>
 
+<ui:fragment rendered="#{base.loggedInUser ne null}">
+	<script type="text/javascript">
+	
+	navigationItems.push({
+		text: '#{msgs.navigation_map}',
+		iconCls: 'icon-map',
+		handler: function() {
+			document.location = '#{request.contextPath}/map.jsf';
+		}
+	});
+	
+	</script>
+</ui:fragment>
+
 <ui:fragment rendered="#{base.loggedInUser ne null and base.loggedInUser.hasCapability('SystemAdministrator')}">
 	<script type="text/javascript">
 	
@@ -100,6 +114,14 @@
 		iconCls: 'icon-settings',
 		handler: function() {
 			document.location = '#{request.contextPath}/settings.jsf';
+		}
+	});
+	
+	navigationItems.push({
+		text: '#{msgs.navigation_history}',
+		iconCls: 'icon-history',
+		handler: function() {
+			document.location = '#{request.contextPath}/history.jsf';
 		}
 	});
 	

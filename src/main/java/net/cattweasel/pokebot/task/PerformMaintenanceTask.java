@@ -46,10 +46,6 @@ public class PerformMaintenanceTask implements TaskExecutor {
 			removeOrphanRaids(context);
 			context.commitTransaction();
 		}
-		/*if (running) {
-			removeOrphanRaidRegistrations(context);
-			context.commitTransaction();
-		}*/
 	}
 
 	@Override
@@ -125,26 +121,4 @@ public class PerformMaintenanceTask implements TaskExecutor {
 			LOG.error("Error removing orphan raids: " + ex.getMessage(), ex);
 		}
 	}
-	
-	/*private void removeOrphanRaidRegistrations(PokeContext context) {
-		Iterator<String> it = null;
-		try {
-			it = context.search(RaidRegistration.class);
-			if (it != null) {
-				while (running && it.hasNext()) {
-					RaidRegistration reg = context.getObjectById(RaidRegistration.class, it.next());
-					if (reg != null) {
-						Terminator terminator = new Terminator(context);
-						String[] parts = reg.getName().split(":");
-						if (new Date(Util.atol(parts[2])).getTime() < new Date().getTime()) {
-							terminator.deleteObject(reg);
-						}
-					}
-				}
-				context.commitTransaction();
-			}
-		} catch (GeneralException ex) {
-			LOG.error("Error removing orphan raid registrations: " + ex.getMessage(), ex);
-		}
-	}*/
 }

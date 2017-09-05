@@ -13,7 +13,13 @@
 	<managed-bean>
 		<managed-bean-name>settings</managed-bean-name>
 		<managed-bean-class>net.cattweasel.pokebot.web.bean.SettingsBean</managed-bean-class>
-		<managed-bean-scope>session</managed-bean-scope>
+		<managed-bean-scope>request</managed-bean-scope>
+	</managed-bean>
+	
+	<managed-bean>
+		<managed-bean-name>history</managed-bean-name>
+		<managed-bean-class>net.cattweasel.pokebot.web.bean.HistoryBean</managed-bean-class>
+		<managed-bean-scope>request</managed-bean-scope>
 	</managed-bean>
 	
 	<managed-bean>
