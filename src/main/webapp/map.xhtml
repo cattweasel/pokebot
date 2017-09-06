@@ -34,6 +34,8 @@
     				pokemon.push({
     					lat: #{spawn.latitude},
     					lng: #{spawn.longitude},
+    					icon: "#{spawn.icon}",
+    					description: "#{spawn.description}"
     				});
     				
     				</script>
@@ -44,6 +46,8 @@
     				raids.push({
     					lat: #{gym.latitude},
     					lng: #{gym.longitude},
+    					icon: "#{gym.icon}",
+    					description: "#{gym.description}"
     				});
     				
     				</script>
@@ -55,6 +59,8 @@
     				players.push({
     					lat: #{player.latitude},
     					lng: #{player.longitude},
+    					icon: "#{player.icon}",
+    					description: "#{player.description}"
     				});
     				
     				</script>
@@ -74,36 +80,57 @@
         			});
         			
         			for (var i=0; i&lt;pokemon.length; i++) {
-        				new google.maps.Marker({
+        				var marker = new google.maps.Marker({
               			position: {
               				lat: pokemon[i].lat,
               				lng: pokemon[i].lng
               			},
               			map: userMap,
-              			label: 'POKEMON' // TODO
+              			icon: pokemon[i].icon
             			});
+        				var infowindow = new google.maps.InfoWindow();
+        				google.maps.event.addListener(marker, 'click', (function(marker, content, infowindow) { 
+        				    return function() {
+        				        infowindow.setContent(content);
+        				        infowindow.open(userMap, marker);
+        				    };
+        				})(marker, pokemon[i].description, infowindow));
         			}
         			
         			for (var i=0; i&lt;raids.length; i++) {
-        				new google.maps.Marker({
+        				var marker = new google.maps.Marker({
               			position: {
               				lat: raids[i].lat,
               				lng: raids[i].lng
               			},
               			map: userMap,
-              			label: 'RAID' // TODO
+              			icon: raids[i].icon
             			});
+            			var infowindow = new google.maps.InfoWindow();
+        				google.maps.event.addListener(marker, 'click', (function(marker, content, infowindow) { 
+        				    return function() {
+        				        infowindow.setContent(content);
+        				        infowindow.open(userMap, marker);
+        				    };
+        				})(marker, raids[i].description, infowindow));
         			}
         			
         			for (var i=0; i&lt;players.length; i++) {
-        				new google.maps.Marker({
+        				var marker = new google.maps.Marker({
               			position: {
               				lat: players[i].lat,
               				lng: players[i].lng
               			},
               			map: userMap,
-              			label: 'USER' // TODO
+              			icon: players[i].icon
             			});
+        				var infowindow = new google.maps.InfoWindow();
+        				google.maps.event.addListener(marker, 'click', (function(marker, content, infowindow) { 
+        				    return function() {
+        				        infowindow.setContent(content);
+        				        infowindow.open(userMap, marker);
+        				    };
+        				})(marker, players[i].description, infowindow));
         			}
         			
       		}

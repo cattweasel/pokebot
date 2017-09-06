@@ -1,6 +1,7 @@
 package net.cattweasel.pokebot.web.bean;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
 
@@ -13,23 +14,18 @@ import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.User;
 import net.cattweasel.pokebot.object.UserNotification;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.GeoLocation;
+import net.cattweasel.pokebot.tools.Localizer;
 import net.cattweasel.pokebot.tools.Util;
 
 public class MapBean extends BaseBean {
 
-	public static class Player {
+	public static class ReturnValue {
 		
-		private User user;
+		private String icon;
 		private Double latitude;
 		private Double longitude;
-		
-		public User getUser() {
-			return user;
-		}
-		
-		public void setUser(User user) {
-			this.user = user;
-		}
+		private String description;
 
 		public Double getLatitude() {
 			return latitude;
@@ -45,6 +41,22 @@ public class MapBean extends BaseBean {
 
 		public void setLongitude(Double longitude) {
 			this.longitude = longitude;
+		}
+
+		public String getIcon() {
+			return icon;
+		}
+
+		public void setIcon(String icon) {
+			this.icon = icon;
+		}
+		
+		public String getDescription() {
+			return description;
+		}
+		
+		public void setDescription(String description) {
+			this.description = description;
 		}
 	}
 	
@@ -79,8 +91,8 @@ public class MapBean extends BaseBean {
 		}
 	}
 	
-	public List<Spawn> getUserSpawns() throws GeneralException {
-		List<Spawn> spawns = new ArrayList<Spawn>();
+	public List<ReturnValue> getUserSpawns() throws GeneralException {
+		List<ReturnValue> spawns = new ArrayList<ReturnValue>();
 		QueryOptions qo = new QueryOptions();
 		qo.addFilter(Filter.like(ExtendedAttributes.POKE_OBJECT_NAME, String.format("%s:%s:",
 				getLoggedInUser().getName(), Spawn.class.getSimpleName()), Filter.MatchMode.START));
@@ -90,15 +102,20 @@ public class MapBean extends BaseBean {
 				UserNotification notif = getContext().getObjectById(UserNotification.class, it.next());
 				Spawn spawn = getContext().getObjectByName(Spawn.class, notif.getName().split(":")[2]);
 				if (spawn != null) {
-					spawns.add(spawn);
+					ReturnValue s = new ReturnValue();
+					s.setLatitude(spawn.getLatitude());
+					s.setLongitude(spawn.getLongitude());
+					s.setIcon(getRequestContextPath() + "/img/pokemon/" + spawn.getPokemon().getPokemonId() + ".png");
+					s.setDescription(formatSpawnDescription(spawn));
+					spawns.add(s);
 				}
 			}
 		}
 		return spawns;
 	}
 	
-	public List<Gym> getUserRaids() throws GeneralException {
-		List<Gym> raids = new ArrayList<Gym>();
+	public List<ReturnValue> getUserRaids() throws GeneralException {
+		List<ReturnValue> raids = new ArrayList<ReturnValue>();
 		QueryOptions qo = new QueryOptions();
 		qo.addFilter(Filter.like(ExtendedAttributes.POKE_OBJECT_NAME, String.format("%s:%s:",
 				getLoggedInUser().getName(), Gym.class.getSimpleName()), Filter.MatchMode.START));
@@ -108,22 +125,80 @@ public class MapBean extends BaseBean {
 				UserNotification notif = getContext().getObjectById(UserNotification.class, it.next());
 				Gym gym = getContext().getObjectByName(Gym.class, notif.getName().split(":")[2]);
 				if (gym != null) {
-					raids.add(gym);
+					ReturnValue raid = new ReturnValue();
+					raid.setLatitude(gym.getLatitude());
+					raid.setLongitude(gym.getLongitude());
+					if (gym.getTeam() != null) {
+						raid.setIcon(getRequestContextPath() + "/img/teams/" + gym.getTeam().getTeamId() + ".png");
+					} else {
+						raid.setIcon(getRequestContextPath() + "/img/icons/gym.png");
+					}
+					raid.setDescription(formatRaidDescription(gym));
+					raids.add(raid);
 				}
 			}
 		}
 		return raids;
 	}
 	
-	public List<Player> getPlayers() throws GeneralException {
-		List<Player> players = new ArrayList<Player>();
+	private String formatRaidDescription(Gym gym) throws GeneralException {
+		User user = getLoggedInUser();
+		BotSession session = getContext().getUniqueObject(BotSession.class, Filter.eq(ExtendedAttributes.BOT_SESSION_USER, user));
+		return String.format("Pokemon: %s (Level %s)<br/>%s: %s<br/>Team: %s<br/>%s: %sm<br/>%s: %s (%sm)", Localizer.localize(user,
+				String.format("pokemon_%s", gym.getRaidPokemon().getPokemonId())), gym.getRaidLevel(), Localizer.localize(user, "gym"),
+				gym.getDisplayName(), Localizer.localize(user, String.format("team_%s", gym.getTeam().getTeamId())), Localizer.localize(user, "distance"),
+				Util.separateNumber(Math.round(calculateDistance(session, gym.getLatitude(), gym.getLongitude()))),
+				Localizer.localize(user, "end"), Localizer.localize(user, gym.getRaidEnd()), (gym.getRaidEnd().getTime() - new Date().getTime()) / 60000);
+	}
+	
+	private String formatUserDescription(BotSession session) throws GeneralException {
+		User user = getLoggedInUser();
+		return String.format("%s: %s<br/>%s", Localizer.localize(user, "user"),
+				Util.isNullOrEmpty(session.getUser().getUsername()) ? session.getUser().getName()
+						: session.getUser().getUsername(), Localizer.localize(user, session.getModified(),  true));
+	}
+	
+	private String formatSpawnDescription(Spawn spawn) throws GeneralException {
+		User user = getLoggedInUser();
+		BotSession session = getContext().getUniqueObject(BotSession.class, Filter.eq(ExtendedAttributes.BOT_SESSION_USER, user));
+		return String.format("Pokemon: %s<br/>%s: %sm<br/>%s: %s (%sm)", Localizer.localize(user, String.format("pokemon_%s",
+				spawn.getPokemon().getPokemonId())), Localizer.localize(user, "distance"),
+				Util.separateNumber(Math.round(calculateDistance(session, spawn.getLatitude(), spawn.getLongitude()))),
+				Localizer.localize(user, "end"), Localizer.localize(user, spawn.getDisappearTime()),
+				(spawn.getDisappearTime().getTime() - new Date().getTime()) / 60000);
+	}
+	
+	private Double calculateDistance(BotSession session, Double lat, Double lng) {
+		Double distance = 0D;
+		if (session != null && session.get(ExtendedAttributes.BOT_SESSION_LATITUDE) != null
+				&& session.get(ExtendedAttributes.BOT_SESSION_LONGITUDE) != null) {
+			GeoLocation loc = GeoLocation.fromDegrees(lat, lng);
+			Double la = Util.atod(Util.otos(session.get(ExtendedAttributes.BOT_SESSION_LATITUDE)));
+			Double lo = Util.atod(Util.otos(session.get(ExtendedAttributes.BOT_SESSION_LONGITUDE)));
+			distance = loc.distanceTo(GeoLocation.fromDegrees(la, lo));
+		}
+		return distance;
+	}
+
+	public List<ReturnValue> getPlayers() throws GeneralException {
+		List<ReturnValue> players = new ArrayList<ReturnValue>();
+		BotSession own = getContext().getUniqueObject(BotSession.class,
+				Filter.eq(ExtendedAttributes.BOT_SESSION_USER, getLoggedInUser()));
+		ReturnValue p = new ReturnValue();
+		p.setLatitude(Util.atod(Util.otos(own.getAttributes().get(ExtendedAttributes.BOT_SESSION_LATITUDE))));
+		p.setLongitude(Util.atod(Util.otos(own.getAttributes().get(ExtendedAttributes.BOT_SESSION_LONGITUDE))));
+		p.setIcon(getRequestContextPath() + "/img/icons/player-self.png");
+		p.setDescription(formatUserDescription(own));
+		players.add(p);
 		for (BotSession session : getContext().getObjects(BotSession.class)) {
-			if (session.getUser() != null && session.getUser().getSettings() != null
+			if (session.getUser() != null && !session.getUser().getName().equals(getLoggedInUser().getName())
+					&& session.getUser().getSettings() != null
 					&& session.getUser().getSettings().getBoolean(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION)) {
-				Player player = new Player();
+				ReturnValue player = new ReturnValue();
 				player.setLatitude(Util.atod(Util.otos(session.getAttributes().get(ExtendedAttributes.BOT_SESSION_LATITUDE))));
 				player.setLongitude(Util.atod(Util.otos(session.getAttributes().get(ExtendedAttributes.BOT_SESSION_LONGITUDE))));
-				player.setUser(getLoggedInUser());
+				player.setIcon(getRequestContextPath() + "/img/icons/player-other.png");
+				player.setDescription(formatUserDescription(session));
 				players.add(player);
 			}
 		}

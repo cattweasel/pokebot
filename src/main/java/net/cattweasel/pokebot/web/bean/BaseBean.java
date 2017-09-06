@@ -75,6 +75,10 @@ public class BaseBean {
 		return context;
 	}
 	
+	protected String getRequestContextPath() {
+		return FacesContext.getCurrentInstance().getExternalContext().getRequestContextPath();
+	}
+	
 	protected Map<String, String> getRequestScope() {
 		return FacesContext.getCurrentInstance().getExternalContext().getRequestParameterMap();
 	}
