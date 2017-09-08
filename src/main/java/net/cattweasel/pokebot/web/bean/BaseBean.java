@@ -60,6 +60,10 @@ public class BaseBean {
 		return user;
 	}
 	
+	public String getLoggedInUserId() throws GeneralException {
+		return getLoggedInUser() == null ? null : getLoggedInUser().getId();
+	}
+	
 	public void logout() {
 		HttpSession session = (HttpSession) FacesContext.getCurrentInstance()
 				.getExternalContext().getSession(false);

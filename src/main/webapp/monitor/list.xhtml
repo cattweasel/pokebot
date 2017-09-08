@@ -11,9 +11,78 @@
 			<p><h:outputText escape="false" value="#{msgs.back_to_dashboard}" /></p>
 		</ui:fragment>
 		<ui:fragment rendered="#{base.loggedInUser ne null and base.loggedInUser.hasCapability('SystemAdministrator')}">
+			<script type="text/javascript">
 			
-			<!-- TODO -->
+			Ext.onReady(function() {
+				
+				var store = Ext.create('Ext.data.Store', {
+				    model: 'User',
+				    proxy: {
+				        type: 'ajax',
+				        url: '#{request.contextPath}/rest/user/list',
+				        reader: {
+				            type: 'json',
+				            rootProperty: 'objects',
+				            successProperty: 'success',
+				            totalProperty: 'total'
+				        },
+				        extraParams: {
+				        		userId: '#{base.loggedInUserId}'
+				        }
+				    },
+				    remoteSort: true,
+				    pageSize: 20,
+					autoLoad: true
+				});
+				
+				Ext.create('Ext.grid.Panel', {
+	    			    title: '#{msgs.navigation_monitor_user_list}',
+	    			    renderTo: Ext.get('content'),
+	    			    store: store,
+	    			    columns: [{
+		    			    	header: 'User-ID', 
+		    			    	dataIndex: 'name',
+		    			    	flex: 1
+	    			    }, {
+	    			    		header: 'Username',
+	    			    		dataIndex: 'username',
+	    			    		flex: 1
+	    			    }, {
+	   			    		header: '#{msgs.firstname}',
+	   			    		dataIndex: 'firstname',
+	   			    		flex: 1
+	   			    }, {
+	   			    		header: '#{msgs.lastname}',
+	   			    		dataIndex: 'lastname',
+	   			    		flex: 1
+	   			    }, {
+	    			    		header: '#{msgs.created}',
+	    			    		dataIndex: 'created',
+	    			    		renderer: function(val) {
+	    			    			return val === null ? null : new Date(val);
+	    			    		},
+	    			    		flex: 1
+	    			    }, {
+	    			    		header: '#{msgs.modified}',
+	    			    		dataIndex: 'modified',
+	    			    		renderer: function(val) {
+	    			    			return val === null ? null : new Date(val);
+	    			    		},
+	    			    		flex: 1
+	    			    }, {
+	    			    		header: '#{msgs.banned}',
+	    			    		dataIndex: 'banned',
+	    			    		flex: 1
+	    			    }],
+	    			    bbar: Ext.create('Ext.PagingToolbar', {
+	    		            store: store,
+	    		            displayInfo: true
+	    		        })
+	    			});
+				
+			});
 			
+			</script>
 		</ui:fragment>
 	</ui:define>
 </ui:composition>

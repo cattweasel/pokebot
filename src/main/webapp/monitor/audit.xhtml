@@ -11,9 +11,66 @@
 			<p><h:outputText escape="false" value="#{msgs.back_to_dashboard}" /></p>
 		</ui:fragment>
 		<ui:fragment rendered="#{base.loggedInUser ne null and base.loggedInUser.hasCapability('SystemAdministrator')}">
+			<script type="text/javascript">
 			
-			<!-- TODO -->
+			Ext.onReady(function() {
+				
+				var store = Ext.create('Ext.data.Store', {
+				    model: 'AuditEvent',
+				    proxy: {
+				        type: 'ajax',
+				        url: '#{request.contextPath}/rest/audit/event/list',
+				        reader: {
+				            type: 'json',
+				            rootProperty: 'objects',
+				            successProperty: 'success',
+				            totalProperty: 'total'
+				        },
+				        extraParams: {
+				        		userId: '#{base.loggedInUserId}'
+				        }
+				    },
+				    remoteSort: true,
+				    pageSize: 20,
+					autoLoad: true
+				});
+				
+				Ext.create('Ext.grid.Panel', {
+	    			    title: '#{msgs.navigation_monitor_audit_log}',
+	    			    renderTo: Ext.get('content'),
+	    			    store: store,
+	    			    columns: [{
+	    			    		header: '#{msgs.created}',
+	    			    		dataIndex: 'created',
+	    			    		renderer: function(val) {
+	    			    			return val === null ? null : new Date(val);
+	    			    		},
+	    			    		flex: 1
+	    			    }, {
+	    			    		header: '#{msgs.source}',
+	    			    		dataIndex: 'source',
+	    			    		flex: 1
+	    			    }, {
+	    			    		header: '#{msgs.action}',
+	    			    		dataIndex: 'action',
+	    			    		renderer: function(val) {
+	    			    			return val === null ? null : val.name;
+	    			    		},
+	    			    		flex: 1
+	    			    }, {
+	    			    		header: '#{msgs.target}',
+	    			    		dataIndex: 'target',
+	    			    		flex: 1
+	    			    }],
+	    			    bbar: Ext.create('Ext.PagingToolbar', {
+	    		            store: store,
+	    		            displayInfo: true
+	    		        })
+	    			});
+				
+			});
 			
+			</script>
 		</ui:fragment>
 	</ui:define>
 </ui:composition>
