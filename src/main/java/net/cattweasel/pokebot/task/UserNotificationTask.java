@@ -263,11 +263,13 @@ public class UserNotificationTask implements TaskExecutor {
 	}
 	
 	private String formatGym(BotSession session, Gym gym) {
+		String pokemon = gym.getRaidPokemon() == null ? "n/a" : Localizer.localize(
+				session.getUser(), String.format("pokemon_%s", gym.getRaidPokemon().getPokemonId()));
+		String raidCp = gym.getRaidCp() == null ? "n/a" : Util.separateNumber(gym.getRaidCp());
+		String team = gym.getTeam() == null ? "n/a" : Localizer.localize(session.getUser(), "team_" + gym.getTeam().getTeamId());
 		return String.format("RAID: %s [ Level: %s, CP: %s, %s: %s, Team: %s ] %s: %sm - %s: %s",
-				Localizer.localize(session.getUser(), String.format("pokemon_%s", gym.getRaidPokemon().getPokemonId())),
-				Util.separateNumber(gym.getRaidLevel()), Util.separateNumber(gym.getRaidCp()),
-				Localizer.localize(session.getUser(), "gym"), gym.getDisplayName(),
-				gym.getTeam() == null ? "n/a" : Localizer.localize(session.getUser(), "team_" + gym.getTeam().getTeamId()),
+				pokemon, Util.separateNumber(gym.getRaidLevel()), raidCp,
+				Localizer.localize(session.getUser(), "gym"), gym.getDisplayName(), team,
 				Localizer.localize(session.getUser(), "distance"),
 				Util.separateNumber(Math.round(calculateDistance(session, gym.getLatitude(), gym.getLongitude()))),
 				Localizer.localize(session.getUser(), "end"), Localizer.localize(session.getUser(), gym.getRaidEnd()));
