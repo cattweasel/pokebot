@@ -46,6 +46,7 @@
 	    			    		renderer: function(val) {
 	    			    			return val === null ? null : val.username === null ? val.name : val.username;
 	    			    		},
+	    			    		sortable: false,
 	    			    		flex: 1
 	    			    }, {
 		    			    	header: '#{msgs.created}', 
@@ -62,10 +63,20 @@
 	    			    		},
 	    			    		flex: 1
 	    			    }, {
+	    			    		header: '#{msgs.notifications}',
+	    			    		dataIndex: 'attributes',
+	    			    		renderer: function(val) {
+	    			    			return val === null ? null : val.notifications == null || val.notifications === undefined
+	    			    					? null : val.notifications;
+	    			    		},
+	    			    		sortable: false,
+	    			    		flex: 1
+	    			    }, {
 	    			    		header: '#{msgs.position}',
 	    			    		dataIndex: 'attributes',
 	    			    		renderer: function(val) {
-	    			    			return val === null ? null : val.latitude === null ? null : val.latitude + ":" + val.longitude;
+	    			    			return val === null ? null : val.latitude === null || val.latitude === undefined
+	    			    					? null : val.latitude + ":" + val.longitude;
 	    			    		},
 	    			    		sortable: false,
 	    			    		flex: 1
