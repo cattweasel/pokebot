@@ -49,6 +49,15 @@
 			
 		};
 		
+		updatePokemonRange = function() {
+			
+			var items = document.getElementsByClassName('range');
+			for (var i=0; i&lt;items.length; i++) {
+				items[i].value = document.getElementById('pokemon-range').value;
+			}
+			
+		};
+		
 		</script>
 	</ui:define>
 	<ui:define name="content">
@@ -60,6 +69,47 @@
 		<ui:fragment rendered="#{base.loggedInUser ne null}">
 			<h:form id="settings-form">
 				<table>
+					<tr>
+						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_global_settings}" /></th>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
+						<th colspan="3"><h:outputText value="#{msgs.setting}" /></th>
+						<th>&nbsp;</th>
+						<th colspan="3"><h:outputText value="#{msgs.value}" /></th>
+						<th>&nbsp;</th>
+						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
+						<th>&nbsp;</th>
+						<th><h:outputText value="#{msgs.description}" /></th>
+					</tr>
+					<tr>
+						<td colspan="3"><h:outputText value="#{msgs.settings_delete_expired_messages}" />:</td>
+						<td>&nbsp;</td>
+						<td colspan="3">&nbsp;<h:selectBooleanCheckbox value="#{settings.deleteExpired}" /></td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
+						<td>&nbsp;</td>
+						<td><h:outputText value="#{msgs.settings_delete_expired_messages_desc}" /></td>
+					</tr>
+					<tr>
+						<td colspan="3"><h:outputText value="#{msgs.settings_user_language}" />:</td>
+						<td>&nbsp;</td>
+						<td colspan="3">
+							<h:selectOneMenu value="#{settings.language}">
+								<f:selectItem itemValue="de" itemLabel="#{msgs.language_de}" />
+								<f:selectItem itemValue="en" itemLabel="#{msgs.language_en}" />
+							</h:selectOneMenu>
+						</td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
+						<td>&nbsp;</td>
+						<td><h:outputText value="#{msgs.settings_user_language_desc}" /></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
 					<tr>
 						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_profile_settings}" /></th>
 					</tr>
@@ -139,56 +189,6 @@
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
-						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_global_settings}" /></th>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<th colspan="3"><h:outputText value="#{msgs.setting}" /></th>
-						<th>&nbsp;</th>
-						<th colspan="3"><h:outputText value="#{msgs.value}" /></th>
-						<th>&nbsp;</th>
-						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
-						<th>&nbsp;</th>
-						<th><h:outputText value="#{msgs.description}" /></th>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_delete_expired_messages}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3">&nbsp;<h:selectBooleanCheckbox value="#{settings.deleteExpired}" /></td>
-						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_delete_expired_messages_desc}" /></td>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_user_language}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3">
-							<h:selectOneMenu value="#{settings.language}">
-								<f:selectItem itemValue="de" itemLabel="#{msgs.language_de}" />
-								<f:selectItem itemValue="en" itemLabel="#{msgs.language_en}" />
-							</h:selectOneMenu>
-						</td>
-						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_user_language_desc}" /></td>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_share_location}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3"><h:selectBooleanCheckbox value="#{settings.shareLocation}" /></td>
-						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_share_location_desc}" /></td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
 						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_raid_settings}" /></th>
 					</tr>
 					<tr>
@@ -240,6 +240,31 @@
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
+						<th colspan="3"><h:outputText value="#{msgs.setting}" /></th>
+						<th>&nbsp;</th>
+						<th colspan="3"><h:outputText value="#{msgs.value}" /></th>
+						<th>&nbsp;</th>
+						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
+						<th>&nbsp;</th>
+						<th><h:outputText value="#{msgs.description}" /></th>
+					</tr>
+					<tr>
+						<td colspan="3"><h:outputText value="#{msgs.settings_global_pokemon_range}" />:</td>
+						<td>&nbsp;</td>
+						<td colspan="3"><input id="pokemon-range" type="text" value="3000" /></td>
+						<td>&nbsp;</td>
+						<td>
+							<button onclick="updatePokemonRange(); return false;">
+								<h:outputText value="#{msgs.accept}" />
+							</button>
+						</td>
+						<td>&nbsp;</td>
+						<td><h:outputText value="#{msgs.settings_global_pokemon_range_desc}" /></td>
+					</tr>
+					<tr>
+						<td>&nbsp;</td>
+					</tr>
+					<tr>
 						<th><h:outputText value="#{msgs.id}" /></th>
 						<th>&nbsp;</th>
 						<th><h:outputText value="#{msgs.pokemon}" /></th>
@@ -260,7 +285,7 @@
 							<td>&nbsp;</td>
 							<td><h:selectBooleanCheckbox value="#{setting.enabled}" /></td>
 							<td>&nbsp;</td>
-							<td><h:inputText value="#{setting.range}" /></td>
+							<td><h:inputText class="range" value="#{setting.range}" /></td>
 							<td>&nbsp;</td>
 							<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
 							<td>&nbsp;</td>

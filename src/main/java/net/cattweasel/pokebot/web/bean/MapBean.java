@@ -155,7 +155,8 @@ public class MapBean extends BaseBean {
 		User user = getLoggedInUser();
 		return String.format("%s: %s<br/>%s", Localizer.localize(user, "user"),
 				Util.isNullOrEmpty(session.getUser().getUsername()) ? session.getUser().getName()
-						: session.getUser().getUsername(), Localizer.localize(user, session.getModified(),  true));
+						: session.getUser().getUsername(), Localizer.localize(user, session.getModified() == null
+						? session.getCreated() : session.getModified(),  true));
 	}
 	
 	private String formatSpawnDescription(Spawn spawn) throws GeneralException {
@@ -184,23 +185,13 @@ public class MapBean extends BaseBean {
 		List<ReturnValue> players = new ArrayList<ReturnValue>();
 		BotSession own = getContext().getUniqueObject(BotSession.class,
 				Filter.eq(ExtendedAttributes.BOT_SESSION_USER, getLoggedInUser()));
-		ReturnValue p = new ReturnValue();
-		p.setLatitude(Util.atod(Util.otos(own.getAttributes().get(ExtendedAttributes.BOT_SESSION_LATITUDE))));
-		p.setLongitude(Util.atod(Util.otos(own.getAttributes().get(ExtendedAttributes.BOT_SESSION_LONGITUDE))));
-		p.setIcon(getRequestContextPath() + "/img/icons/player-self.png");
-		p.setDescription(formatUserDescription(own));
-		players.add(p);
-		for (BotSession session : getContext().getObjects(BotSession.class)) {
-			if (session.getUser() != null && !session.getUser().getName().equals(getLoggedInUser().getName())
-					&& session.getUser().getSettings() != null
-					&& session.getUser().getSettings().getBoolean(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION)) {
-				ReturnValue player = new ReturnValue();
-				player.setLatitude(Util.atod(Util.otos(session.getAttributes().get(ExtendedAttributes.BOT_SESSION_LATITUDE))));
-				player.setLongitude(Util.atod(Util.otos(session.getAttributes().get(ExtendedAttributes.BOT_SESSION_LONGITUDE))));
-				player.setIcon(getRequestContextPath() + "/img/icons/player-other.png");
-				player.setDescription(formatUserDescription(session));
-				players.add(player);
-			}
+		if (own != null) {
+			ReturnValue p = new ReturnValue();
+			p.setLatitude(Util.atod(Util.otos(own.getAttributes().get(ExtendedAttributes.BOT_SESSION_LATITUDE))));
+			p.setLongitude(Util.atod(Util.otos(own.getAttributes().get(ExtendedAttributes.BOT_SESSION_LONGITUDE))));
+			p.setIcon(getRequestContextPath() + "/img/icons/player.png");
+			p.setDescription(formatUserDescription(own));
+			players.add(p);
 		}
 		return players;
 	}

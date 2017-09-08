@@ -27,7 +27,6 @@ public class SettingsBean extends BaseBean {
 	private List<PokemonSetting> pokemonSettings;
 	private String language;
 	private Boolean deleteExpired;
-	private Boolean shareLocation;
 	private Boolean gymEnabled;
 	private Integer gymLevel;
 	private Integer gymRange;
@@ -162,16 +161,6 @@ public class SettingsBean extends BaseBean {
 		this.deleteExpired = deleteExpired;
 	}
 	
-	public Boolean getShareLocation() throws GeneralException {
-		shareLocation = getSetting(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION) != null
-				? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION)) : false;
-		return shareLocation;
-	}
-	
-	public void setShareLocation(Boolean shareLocation) {
-		this.shareLocation = shareLocation;
-	}
-	
 	public Integer getGymLevel() throws GeneralException {
 		gymLevel = getSetting(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL) != null
 				? Util.otoi(getSetting(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL)) : 4;
@@ -222,7 +211,6 @@ public class SettingsBean extends BaseBean {
 		settings.put(ExtendedAttributes.USER_SETTINGS_GYM_ENABLED, gymEnabled);
 		settings.put(ExtendedAttributes.USER_SETTINGS_GYM_LEVEL, gymLevel);
 		settings.put(ExtendedAttributes.USER_SETTINGS_GYM_RANGE, gymRange);
-		settings.put(ExtendedAttributes.USER_SETTINGS_SHARE_LOCATION, shareLocation);
 		for (PokemonSetting s : pokemonSettings) {
 			if (s.getRange() != null && s.getRange() < 500) {
 				s.setRange(500);

@@ -57,5 +57,4 @@ public class ExtendedAttributes {
 	public static final String USER_SETTINGS_GYM_LEVEL = "gymLevel";
 	public static final String USER_SETTINGS_LANGUAGE = "language";
 	public static final String USER_SETTINGS_DELETE_EXPIRED = "deleteExpired";
-	public static final String USER_SETTINGS_SHARE_LOCATION = "shareLocation";
 }

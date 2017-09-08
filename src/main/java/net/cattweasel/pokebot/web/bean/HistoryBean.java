@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
 
+import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.object.AuditEvent;
 import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
@@ -87,6 +88,9 @@ public class HistoryBean extends BaseBean {
 			target = resolveUsername();
 		} else if (Auditor.SYSTEM.equals(target)) {
 			target = String.format("<i>%s</i>", target);
+		} else if (AuditAction.UPDATE_LOCATION.equals(item.getAction())) {
+			String[] parts = target.split(":");
+			target = String.format("%s.XXXXXX:%s.XXXXXX", parts[0].split("\\.")[0], parts[1].split("\\.")[0]);
 		}
 		item.setTarget(target);
 		return item;
