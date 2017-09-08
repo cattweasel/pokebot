@@ -16,10 +16,10 @@
 			Ext.onReady(function() {
 				
 				var store = Ext.create('Ext.data.Store', {
-				    model: 'User',
+				    model: 'BotSession',
 				    proxy: {
 				        type: 'ajax',
-				        url: '#{request.contextPath}/rest/user/list',
+				        url: '#{request.contextPath}/rest/session/list',
 				        reader: {
 				            type: 'json',
 				            rootProperty: 'objects',
@@ -36,32 +36,24 @@
 				});
 				
 				Ext.create('Ext.grid.Panel', {
-	    			    title: '#{msgs.navigation_monitor_user_list}',
+	    			    title: '#{msgs.navigation_monitor_session_list}',
 	    			    renderTo: Ext.get('content'),
 	    			    store: store,
+	    			    height: 608,
 	    			    columns: [{
-		    			    	header: 'User-ID', 
-		    			    	dataIndex: 'name',
-		    			    	flex: 1
-	    			    }, {
-	    			    		header: 'Username',
-	    			    		dataIndex: 'username',
-	    			    		flex: 1
-	    			    }, {
-	   			    		header: '#{msgs.firstname}',
-	   			    		dataIndex: 'firstname',
-	   			    		flex: 1
-	   			    }, {
-	   			    		header: '#{msgs.lastname}',
-	   			    		dataIndex: 'lastname',
-	   			    		flex: 1
-	   			    }, {
-	    			    		header: '#{msgs.created}',
-	    			    		dataIndex: 'created',
+	    			    		header: '#{msgs.user}',
+	    			    		dataIndex: 'user',
 	    			    		renderer: function(val) {
-	    			    			return val === null ? null : new Date(val);
+	    			    			return val === null ? null : val.username === null ? val.name : val.username;
 	    			    		},
 	    			    		flex: 1
+	    			    }, {
+		    			    	header: '#{msgs.created}', 
+		    			    	dataIndex: 'created',
+		    			    	renderer: function(val) {
+	    			    			return val === null ? null : new Date(val);
+	    			    		},
+		    			    	flex: 1
 	    			    }, {
 	    			    		header: '#{msgs.modified}',
 	    			    		dataIndex: 'modified',
@@ -70,8 +62,12 @@
 	    			    		},
 	    			    		flex: 1
 	    			    }, {
-	    			    		header: '#{msgs.banned}',
-	    			    		dataIndex: 'banned',
+	    			    		header: '#{msgs.position}',
+	    			    		dataIndex: 'attributes',
+	    			    		renderer: function(val) {
+	    			    			return val === null ? null : val.latitude === null ? null : val.latitude + ":" + val.longitude;
+	    			    		},
+	    			    		sortable: false,
 	    			    		flex: 1
 	    			    }],
 	    			    bbar: Ext.create('Ext.PagingToolbar', {

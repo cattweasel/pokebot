@@ -56,7 +56,13 @@
 	    		text: '#{msgs.navigation_monitor_user_list}',
 	    		iconCls: 'icon-list',
 	    		handler: function() {
-	    			document.location = '#{request.contextPath}/monitor/list.jsf';
+	    			document.location = '#{request.contextPath}/monitor/user.jsf';
+	    		}
+	    }, {
+	    		text: '#{msgs.navigation_monitor_session_list}',
+	    		iconCls: 'icon-explorer',
+	    		handler: function() {
+	    			document.location = '#{request.contextPath}/monitor/session.jsf';
 	    		}
 	    }, {
 	    		text: '#{msgs.navigation_monitor_user_map}',

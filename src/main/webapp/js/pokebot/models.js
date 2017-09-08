@@ -21,6 +21,23 @@ Ext.define('AuditEvent', {
     	}]
 });
 
+Ext.define('BotSession', {
+    extend: 'Ext.data.Model',
+    fields: [{
+		name: 'id',
+		type: 'string'
+	}, {
+		name: 'name',
+		type: 'string'
+    	}, {
+    		name: 'created',
+    		type: 'number'
+    	}, {
+    		name: 'modified',
+    		type: 'number'
+    	}]
+});
+
 Ext.define('User', {
     extend: 'Ext.data.Model',
     fields: [{
