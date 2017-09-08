@@ -24,6 +24,10 @@ import net.cattweasel.pokebot.tools.Util;
 
 public class SettingsBean extends BaseBean {
 
+	private static final String VIEW_ALL = "all";
+	private static final String VIEW_SELECTED = "selected";
+	private static final String VIEW_UNSELECTED = "unselected";
+	
 	private List<PokemonSetting> pokemonSettings;
 	private String language;
 	private Boolean deleteExpired;
@@ -35,6 +39,7 @@ public class SettingsBean extends BaseBean {
 	private String selectedSaveProfile;
 	private String selectedDeleteProfile;
 	private Profile loadedProfile;
+	private String view = VIEW_ALL;
 	
 	private static final Logger LOG = Logger.getLogger(SettingsBean.class);
 	
@@ -123,6 +128,17 @@ public class SettingsBean extends BaseBean {
 				getContext().commitTransaction();
 			}
 		}
+	}
+	
+	public void updateView() throws GeneralException {
+	}
+	
+	public String getView() {
+		return view;
+	}
+	
+	public void setView(String view) {
+		this.view = view;
 	}
 	
 	public List<PokemonSetting> getPokemonSettings() {
@@ -235,13 +251,27 @@ public class SettingsBean extends BaseBean {
 			if (it != null) {
 				while (it.hasNext()) {
 					Pokemon pokemon = getContext().getObjectById(Pokemon.class, it.next());
-					settings.add(createPokemonSetting(pokemon));
+					if (isPartOfView(pokemon)) {
+						settings.add(createPokemonSetting(pokemon));
+					}
 				}
 			}
 		} catch (GeneralException ex) {
 			LOG.error(ex);
 		}
 		return settings;
+	}
+	
+	private boolean isPartOfView(Pokemon pokemon) throws GeneralException {
+		boolean result = VIEW_ALL.equals(view);
+		if (!result) {
+			if (isEnabled(pokemon) && VIEW_SELECTED.equals(view)) {
+				result = true;
+			} else if (!isEnabled(pokemon) && VIEW_UNSELECTED.equals(view)) {
+				result = true;
+			}
+		}
+		return result;
 	}
 	
 	private PokemonSetting createPokemonSetting(Pokemon pokemon) throws GeneralException {

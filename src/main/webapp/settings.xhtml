@@ -262,6 +262,21 @@
 						<td><h:outputText value="#{msgs.settings_global_pokemon_range_desc}" /></td>
 					</tr>
 					<tr>
+						<td colspan="3"><h:outputText value="#{msgs.settings_show_pokemon}" /></td>
+						<td>&nbsp;</td>
+						<td colspan="3">
+							<h:selectOneMenu value="#{settings.view}">
+								<f:selectItem itemValue="all" itemLabel="#{msgs.all}" />
+								<f:selectItem itemValue="selected" itemLabel="#{msgs.selected}" />
+								<f:selectItem itemValue="unselected" itemLabel="#{msgs.unselected}" />
+							</h:selectOneMenu>
+						</td>
+						<td>&nbsp;</td>
+						<td><h:commandButton action="#{settings.updateView}" value="#{msgs.accept}" /></td>
+						<td>&nbsp;</td>
+						<td><h:outputText value="#{msgs.settings_show_pokemon_desc}" /></td>
+					</tr>
+					<tr>
 						<td>&nbsp;</td>
 					</tr>
 					<tr>
