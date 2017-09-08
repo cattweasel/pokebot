@@ -143,12 +143,17 @@ public class MapBean extends BaseBean {
 	
 	private String formatRaidDescription(Gym gym) throws GeneralException {
 		User user = getLoggedInUser();
-		BotSession session = getContext().getUniqueObject(BotSession.class, Filter.eq(ExtendedAttributes.BOT_SESSION_USER, user));
-		return String.format("Pokemon: %s (Level %s)<br/>%s: %s<br/>Team: %s<br/>%s: %sm<br/>%s: %s (%sm)", Localizer.localize(user,
-				String.format("pokemon_%s", gym.getRaidPokemon().getPokemonId())), gym.getRaidLevel(), Localizer.localize(user, "gym"),
-				gym.getDisplayName(), Localizer.localize(user, String.format("team_%s", gym.getTeam().getTeamId())), Localizer.localize(user, "distance"),
+		BotSession session = getContext().getUniqueObject(BotSession.class,
+				Filter.eq(ExtendedAttributes.BOT_SESSION_USER, user));
+		String pokemon = gym.getRaidPokemon() == null ? "n/a" : Localizer.localize(user,
+				String.format("pokemon_%s", gym.getRaidPokemon().getPokemonId()));
+		return String.format("Pokemon: %s (Level %s)<br/>%s: %s<br/>Team: %s<br/>%s: %sm<br/>%s: %s (%sm)", pokemon,
+				gym.getRaidLevel(), Localizer.localize(user, "gym"), gym.getDisplayName(),
+				gym.getTeam() == null ? "n/a" : Localizer.localize(user, String.format("team_%s",
+						gym.getTeam().getTeamId())), Localizer.localize(user, "distance"),
 				Util.separateNumber(Math.round(calculateDistance(session, gym.getLatitude(), gym.getLongitude()))),
-				Localizer.localize(user, "end"), Localizer.localize(user, gym.getRaidEnd()), (gym.getRaidEnd().getTime() - new Date().getTime()) / 60000);
+				Localizer.localize(user, "end"), Localizer.localize(user, gym.getRaidEnd()),
+				(gym.getRaidEnd().getTime() - new Date().getTime()) / 60000);
 	}
 	
 	private String formatUserDescription(BotSession session) throws GeneralException {
