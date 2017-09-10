@@ -52,6 +52,7 @@ public class BroadcastCommand extends AbstractCommand {
 					context.commitTransaction();
 				}
 			}
+			// TODO: Benutzer wird über Fehler nicht informiert, es wird lediglich serverseitig geloggt
 		} catch (GeneralException ex) {
 			LOG.error("Error executing broadcast command: " + ex.getMessage(), ex);
 		} finally {

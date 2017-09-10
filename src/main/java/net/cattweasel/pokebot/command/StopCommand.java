@@ -42,6 +42,7 @@ public class StopCommand extends AbstractCommand {
 			} else {
 				sendMessage(sender, chat, Localizer.localize(usr, "cmd_stop_failure_message"));
 			}
+			// TODO: Benutzer wird über Fehler nicht informiert, es wird lediglich serverseitig geloggt
 		} catch (GeneralException ex) {
 			LOG.error("Error executing stop command: " + ex.getMessage(), ex);
 		} finally {

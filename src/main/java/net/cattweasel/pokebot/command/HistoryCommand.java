@@ -27,12 +27,19 @@ public class HistoryCommand extends AbstractCommand {
 		try {
 			context = PokeFactory.createContext(getClass().getSimpleName());
 			net.cattweasel.pokebot.object.User usr = resolveUser(context, user);
+			// TODO: 1. Unsicher. Durch diesen Link bekommt man ebenfalls Zugriff auf etwaige Admin Funktionen, da rein über die ID authorisiert wird.
+			//       Besser wäre hier ein One Time Link, der nur begrenzte Zeit gültig ist.
+			//		 Beispiel: Eine UUID generieren und als Parameter mitliefern. UUID und Referenz auf UserID in Datenbank speichern. Task, der 
+			//		 nach 5 Min die UUID wieder killt. 
+			//		 Verifizierung beim ersten Zugriff (also wenn Session noch nicht existiert), ob UUID mitgeliefert wurde
+			//		 2. Logging und ggf. temp/permaban, wenn mehrfach versucht wird, ohne UUID zuzugreifen.
 			String link = String.format("https://www.nyapgbot.net/history.jsf?id=%s", usr.getId());
 			sendMessage(sender, chat, String.format("%s: %s", Localizer.localize(usr,
 					"cmd_history_success_message"), link));
 			Auditor auditor = new Auditor(context);
 			auditor.log(Util.otos(user.getId()), AuditAction.GET_HISTORY_LINK, link);
 			context.commitTransaction();
+			// TODO: Benutzer wird über Fehler nicht informiert, es wird lediglich serverseitig geloggt
 		} catch (GeneralException ex) {
 			LOG.error("Error executing history command: " + ex.getMessage(), ex);
 		} finally {

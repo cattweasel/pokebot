@@ -27,12 +27,19 @@ public class HelpCommand extends AbstractCommand {
 		try {
 			context = PokeFactory.createContext(getClass().getSimpleName());
 			net.cattweasel.pokebot.object.User usr = resolveUser(context, user);
+			// TODO: 1. Unsicher. Durch diesen Link bekommt man ebenfalls Zugriff auf etwaige Admin Funktionen, da rein über die ID authorisiert wird.
+			//       Besser wäre hier ein One Time Link, der nur begrenzte Zeit gültig ist.
+			//		 Beispiel: Eine UUID generieren und als Parameter mitliefern. UUID und Referenz auf UserID in Datenbank speichern. Task, der 
+			//		 nach 5 Min die UUID wieder killt. 
+			//		 Verifizierung beim ersten Zugriff (also wenn Session noch nicht existiert), ob UUID mitgeliefert wurde
+			//		 2. Logging und ggf. temp/permaban, wenn mehrfach versucht wird, ohne UUID zuzugreifen.
 			String link = String.format("https://www.nyapgbot.net/help.jsf?id=%s", usr.getId());
 			sendMessage(sender, chat, String.format("%s: %s", Localizer.localize(usr,
 					"cmd_help_success_message"), link));
 			Auditor auditor = new Auditor(context);
 			auditor.log(Util.otos(user.getId()), AuditAction.GET_SETTINGS_LINK, link); // TODO: WRONG AUDIT ACTION
 			context.commitTransaction();
+			// TODO: Benutzer wird über Fehler nicht informiert, es wird lediglich serverseitig geloggt
 		} catch (GeneralException ex) {
 			LOG.error("Error executing help command: " + ex.getMessage(), ex);
 		} finally {

@@ -55,6 +55,7 @@ public class StatusCommand extends AbstractCommand {
 			Auditor auditor = new Auditor(context);
 			auditor.log(Util.otos(user.getId()), AuditAction.GET_BOT_STATUS, Util.otos(chat.getId()));
 			context.commitTransaction();
+			// TODO: Benutzer wird über Fehler nicht informiert, es wird lediglich serverseitig geloggt
 		} catch (GeneralException ex) {
 			LOG.error("Error executing status command: " + ex.getMessage(), ex);
 		} finally {
