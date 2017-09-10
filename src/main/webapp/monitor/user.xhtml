@@ -60,14 +60,14 @@
 	    			    		header: '#{msgs.created}',
 	    			    		dataIndex: 'created',
 	    			    		renderer: function(val) {
-	    			    			return val === null ? null : new Date(val);
+	    			    			return val === null || val === undefined || val === 0 ? null : new Date(val);
 	    			    		},
 	    			    		flex: 1
 	    			    }, {
 	    			    		header: '#{msgs.modified}',
 	    			    		dataIndex: 'modified',
 	    			    		renderer: function(val) {
-	    			    			return val === null ? null : new Date(val);
+	    			    			return val === null || val === undefined || val === 0 ? null : new Date(val);
 	    			    		},
 	    			    		flex: 1
 	    			    }, {

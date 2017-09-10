@@ -31,7 +31,7 @@ public class HelpCommand extends AbstractCommand {
 			sendMessage(sender, chat, String.format("%s: %s", Localizer.localize(usr,
 					"cmd_help_success_message"), link));
 			Auditor auditor = new Auditor(context);
-			auditor.log(Util.otos(user.getId()), AuditAction.GET_SETTINGS_LINK, link);
+			auditor.log(Util.otos(user.getId()), AuditAction.GET_SETTINGS_LINK, link); // TODO: WRONG AUDIT ACTION
 			context.commitTransaction();
 		} catch (GeneralException ex) {
 			LOG.error("Error executing help command: " + ex.getMessage(), ex);

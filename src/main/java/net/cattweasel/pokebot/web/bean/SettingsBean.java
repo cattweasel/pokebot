@@ -231,8 +231,8 @@ public class SettingsBean extends BaseBean {
 			if (s.getRange() != null && s.getRange() < 500) {
 				s.setRange(500);
 			}
-			if (s.getRange() != null && s.getRange() > 20000) {
-				s.setRange(20000);
+			if (s.getRange() != null && s.getRange() > 50000) {
+				s.setRange(50000);
 			}
 			settings.put(String.format("%s-enabled", s.getPokemonId()), s.getEnabled());
 			settings.put(String.format("%s-range", s.getPokemonId()), s.getRange());
