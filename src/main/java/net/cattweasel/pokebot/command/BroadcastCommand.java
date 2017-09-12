@@ -42,7 +42,7 @@ public class BroadcastCommand extends AbstractCommand {
 			} else {
 				Capability cap = context.getObjectByName(Capability.class, Capability.BROADCAST_ADMINISTRATOR);
 				if (!CapabilityManager.hasCapability(usr, cap)) {
-					sendMessage(sender, chat, Localizer.localize(usr, "cmd_broadcast_not_authorized"));
+					sendMessage(sender, chat, Localizer.localize(usr, "cmd_not_authorized"));
 				} else {
 					int count = sendBroadcast(context, sender, msg, chat);
 					sendMessage(sender, chat, String.format("%s: %s",
@@ -52,9 +52,9 @@ public class BroadcastCommand extends AbstractCommand {
 					context.commitTransaction();
 				}
 			}
-			// TODO: Benutzer wird über Fehler nicht informiert, es wird lediglich serverseitig geloggt
 		} catch (GeneralException ex) {
 			LOG.error("Error executing broadcast command: " + ex.getMessage(), ex);
+			sendErrorMessage(sender, chat, resolveUser(context, user), ex);
 		} finally {
 			if (context != null) {
 				try {

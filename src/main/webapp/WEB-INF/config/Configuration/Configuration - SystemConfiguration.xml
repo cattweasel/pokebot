@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<Configuration name="SystemConfiguration">
+	<attributes>
+		<entry>
+            <key>baseUrl</key>
+            <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">https://www.nyapgbot.net</value>
+        </entry>
+    </attributes>
+</Configuration>

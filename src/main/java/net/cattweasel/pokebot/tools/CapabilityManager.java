@@ -7,7 +7,7 @@ public class CapabilityManager {
 	
 	public static boolean hasCapability(User user, Capability cap) {
 		boolean result = false;
-		if (user.getCapabilities() != null) {
+		if (user != null && user.getCapabilities() != null) {
 			for (Capability c : user.getCapabilities()) {
 				if (Capability.SYSTEM_ADMINISTRATOR.equals(c.getName())
 						|| cap.getName().equals(c.getName())) {

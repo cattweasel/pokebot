@@ -13,10 +13,13 @@ import net.cattweasel.pokebot.object.AuditAction;
 import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.BotKeyboard;
 import net.cattweasel.pokebot.tools.GeneralException;
+import net.cattweasel.pokebot.tools.Localizer;
 import net.cattweasel.pokebot.tools.Util;
 
 public abstract class AbstractCommand extends BotCommand {
 
+	private net.cattweasel.pokebot.object.User resolvedUser;
+	
 	private static final Logger LOG = Logger.getLogger(AbstractCommand.class);
 	
 	public AbstractCommand(String commandIdentifier, String description) {
@@ -36,25 +39,40 @@ public abstract class AbstractCommand extends BotCommand {
 		}
 	}
 	
-	protected net.cattweasel.pokebot.object.User resolveUser(PokeContext context, User user) {
-		net.cattweasel.pokebot.object.User result = null;
+	@SuppressWarnings("deprecation")
+	protected void sendErrorMessage(AbsSender sender, Chat chat,
+			net.cattweasel.pokebot.object.User user, Exception ex) {
+		SendMessage msg = new SendMessage();
+		msg.setChatId(chat.getId());
+		msg.setText(Localizer.localize(user, "cmd_unknown_error"));
+		msg.setReplyMarkup(new BotKeyboard());
 		try {
-			result = context.getObjectByName(net.cattweasel.pokebot.object.User.class, Util.otos(user.getId()));
-			if (result == null) {
-				result = new net.cattweasel.pokebot.object.User();
-				result.setFirstname(user.getFirstName());
-				result.setLanguageCode(user.getLanguageCode());
-				result.setLastname(user.getLastName());
-				result.setName(Util.otos(user.getId()));
-				result.setUsername(user.getUserName());
-				context.saveObject(result);
-				Auditor auditor = new Auditor(context);
-				auditor.log(Auditor.SYSTEM, AuditAction.CREATE_USER, result.getName());
-				context.commitTransaction();
-			}
-		} catch (GeneralException ex) {
-			LOG.error("Error resolving User: " + ex.getMessage(), ex);
+			sender.sendMessage(msg);
+		} catch (TelegramApiException e) {
+			LOG.error(e);
 		}
-		return result;
+	}
+	
+	protected net.cattweasel.pokebot.object.User resolveUser(PokeContext context, User user) {
+		if (resolvedUser == null) {
+			try {
+				resolvedUser = context.getObjectByName(net.cattweasel.pokebot.object.User.class, Util.otos(user.getId()));
+				if (resolvedUser == null) {
+					resolvedUser = new net.cattweasel.pokebot.object.User();
+					resolvedUser.setFirstname(user.getFirstName());
+					resolvedUser.setLanguageCode(user.getLanguageCode());
+					resolvedUser.setLastname(user.getLastName());
+					resolvedUser.setName(Util.otos(user.getId()));
+					resolvedUser.setUsername(user.getUserName());
+					context.saveObject(resolvedUser);
+					Auditor auditor = new Auditor(context);
+					auditor.log(Auditor.SYSTEM, AuditAction.CREATE_USER, resolvedUser.getName());
+					context.commitTransaction();
+				}
+			} catch (GeneralException ex) {
+				LOG.error("Error resolving User: " + ex.getMessage(), ex);
+			}
+		}
+		return resolvedUser;
 	}
 }

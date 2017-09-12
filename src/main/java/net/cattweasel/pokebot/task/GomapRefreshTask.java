@@ -106,10 +106,15 @@ public class GomapRefreshTask implements TaskExecutor {
 	
 	private void processSpawns(PokeContext context, JSONArray spawns) {
 		if (spawns != null && !spawns.isEmpty()) {
+			int counter = 1;
 			for (int i=0; i<spawns.size(); i++) {
 				if (running) {
 					try {
 						processSpawn(context, (JSONObject) spawns.get(i));
+						if (counter % 500 == 0) {
+							context.commitTransaction();
+						}
+						counter++;
 					} catch (GeneralException ex) {
 						LOG.error("Error processing spawn: " + spawns.get(i), ex);
 					}

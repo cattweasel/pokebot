@@ -8,6 +8,7 @@ import org.telegram.telegrambots.bots.AbsSender;
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.object.AuditAction;
+import net.cattweasel.pokebot.object.Configuration;
 import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Localizer;
@@ -33,15 +34,15 @@ public class MapCommand extends AbstractCommand {
 			//		 nach 5 Min die UUID wieder killt. 
 			//		 Verifizierung beim ersten Zugriff (also wenn Session noch nicht existiert), ob UUID mitgeliefert wurde.
 			//		2. Logging und ggf. temp/permaban, wenn mehrfach versucht wird, ohne UUID zuzugreifen.
-			String link = String.format("https://www.nyapgbot.net/map.jsf?id=%s", usr.getId());
-			sendMessage(sender, chat, String.format("%s: %s", Localizer.localize(usr,
-					"cmd_map_success_message"), link));
+			Configuration config = context.getObjectByName(Configuration.class, Configuration.SYSTEM_CONFIGURATION);
+			String link = String.format("%s/map.jsf?id=%s", Util.otos(config.get("baseUrl")), usr.getId());
+			sendMessage(sender, chat, String.format("%s: %s", Localizer.localize(usr, "cmd_map_success_message"), link));
 			Auditor auditor = new Auditor(context);
 			auditor.log(Util.otos(user.getId()), AuditAction.GET_MAP_LINK, link);
 			context.commitTransaction();
-			// TODO: Benutzer wird über Fehler nicht informiert, es wird lediglich serverseitig geloggt
 		} catch (GeneralException ex) {
 			LOG.error("Error executing map command: " + ex.getMessage(), ex);
+			sendErrorMessage(sender, chat, resolveUser(context, user), ex);
 		} finally {
 			if (context != null) {
 				try {

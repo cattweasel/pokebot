@@ -11,8 +11,10 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlRootElement(name = "AuditAction")
 public class AuditAction extends PokeObject {
 
+	public static final String BAN_USER = "BanUser";
 	public static final String CREATE_USER = "CreateUser";
 	public static final String GET_BOT_STATUS = "GetBotStatus";
+	public static final String GET_HELP_LINK = "GetHelpLink";
 	public static final String GET_HISTORY_LINK = "GetHistoryLink";
 	public static final String GET_MAP_LINK = "GetMapLink";
 	public static final String GET_SETTINGS_LINK = "GetSettingsLink";
@@ -22,6 +24,7 @@ public class AuditAction extends PokeObject {
 	public static final String SEND_SPAWN_NOTIFICATION = "SendSpawnNotification";
 	public static final String START_BOT_SESSION = "StartBotSession";
 	public static final String STOP_BOT_SESSION = "StopBotSession";
+	public static final String UNBAN_USER = "UnbanUser";
 	public static final String UPDATE_LOCATION = "UpdateLocation";
 	public static final String UPDATE_SETTINGS = "UpdateSettings";
 	

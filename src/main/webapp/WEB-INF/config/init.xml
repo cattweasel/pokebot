@@ -2,9 +2,14 @@
 <ImportContainer>
 	<ImportActions>
 		
+		<!-- DEFAULT CONFIGURATIONS -->
+		<ImportAction location="Configuration/Configuration - SystemConfiguration.xml" />
+		
 		<!-- DEFAULT AUDIT ACTIONS -->
+		<ImportAction location="AuditAction/AuditAction - BanUser.xml" />
 		<ImportAction location="AuditAction/AuditAction - CreateUser.xml" />
 		<ImportAction location="AuditAction/AuditAction - GetBotStatus.xml" />
+		<ImportAction location="AuditAction/AuditAction - GetHelpLink.xml" />
 		<ImportAction location="AuditAction/AuditAction - GetHistoryLink.xml" />
 		<ImportAction location="AuditAction/AuditAction - GetMapLink.xml" />
 		<ImportAction location="AuditAction/AuditAction - GetSettingsLink.xml" />
@@ -14,6 +19,7 @@
 		<ImportAction location="AuditAction/AuditAction - SendSpawnNotification.xml" />
 		<ImportAction location="AuditAction/AuditAction - StartBotSession.xml" />
 		<ImportAction location="AuditAction/AuditAction - StopBotSession.xml" />
+		<ImportAction location="AuditAction/AuditAction - UnbanUser.xml" />
 		<ImportAction location="AuditAction/AuditAction - UpdateLocation.xml" />
 		<ImportAction location="AuditAction/AuditAction - UpdateSettings.xml" />
 		

@@ -46,9 +46,9 @@ public class StartCommand extends AbstractCommand {
 			}
 			context.saveObject(session);
 			context.commitTransaction();
-			// TODO: Benutzer wird über Fehler nicht informiert, es wird lediglich serverseitig geloggt
 		} catch (GeneralException ex) {
 			LOG.error("Error executing start command: " + ex.getMessage(), ex);
+			sendErrorMessage(sender, chat, resolveUser(context, user), ex);
 		} finally {
 			if (context != null) {
 				try {

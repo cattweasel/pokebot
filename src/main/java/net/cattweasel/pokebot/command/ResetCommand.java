@@ -51,9 +51,9 @@ public class ResetCommand extends AbstractCommand {
 				context.commitTransaction();
 				sendMessage(sender, chat, Localizer.localize(usr, "cmd_reset_success_message"));
 			}
-			// TODO: Benutzer wird über Fehler nicht informiert, es wird lediglich serverseitig geloggt
 		} catch (GeneralException ex) {
 			LOG.error("Error executing reset command: " + ex.getMessage(), ex);
+			sendErrorMessage(sender, chat, resolveUser(context, user), ex);
 		} finally {
 			if (context != null) {
 				try {
