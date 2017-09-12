@@ -10,6 +10,7 @@ import org.telegram.telegrambots.exceptions.TelegramApiException;
 
 import net.cattweasel.pokebot.api.PokeContext;
 import net.cattweasel.pokebot.object.AuditAction;
+import net.cattweasel.pokebot.object.OnetimeLink;
 import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.BotKeyboard;
 import net.cattweasel.pokebot.tools.GeneralException;
@@ -17,8 +18,6 @@ import net.cattweasel.pokebot.tools.Localizer;
 import net.cattweasel.pokebot.tools.Util;
 
 public abstract class AbstractCommand extends BotCommand {
-
-	private net.cattweasel.pokebot.object.User resolvedUser;
 	
 	private static final Logger LOG = Logger.getLogger(AbstractCommand.class);
 	
@@ -54,25 +53,33 @@ public abstract class AbstractCommand extends BotCommand {
 	}
 	
 	protected net.cattweasel.pokebot.object.User resolveUser(PokeContext context, User user) {
-		if (resolvedUser == null) {
-			try {
-				resolvedUser = context.getObjectByName(net.cattweasel.pokebot.object.User.class, Util.otos(user.getId()));
-				if (resolvedUser == null) {
-					resolvedUser = new net.cattweasel.pokebot.object.User();
-					resolvedUser.setFirstname(user.getFirstName());
-					resolvedUser.setLanguageCode(user.getLanguageCode());
-					resolvedUser.setLastname(user.getLastName());
-					resolvedUser.setName(Util.otos(user.getId()));
-					resolvedUser.setUsername(user.getUserName());
-					context.saveObject(resolvedUser);
-					Auditor auditor = new Auditor(context);
-					auditor.log(Auditor.SYSTEM, AuditAction.CREATE_USER, resolvedUser.getName());
-					context.commitTransaction();
-				}
-			} catch (GeneralException ex) {
-				LOG.error("Error resolving User: " + ex.getMessage(), ex);
+		net.cattweasel.pokebot.object.User result = null;
+		try {
+			result = context.getObjectByName(net.cattweasel.pokebot.object.User.class, Util.otos(user.getId()));
+			if (result == null) {
+				result = new net.cattweasel.pokebot.object.User();
+				result.setFirstname(user.getFirstName());
+				result.setLanguageCode(user.getLanguageCode());
+				result.setLastname(user.getLastName());
+				result.setName(Util.otos(user.getId()));
+				result.setUsername(user.getUserName());
+				context.saveObject(result);
+				Auditor auditor = new Auditor(context);
+				auditor.log(Auditor.SYSTEM, AuditAction.CREATE_USER, result.getName());
+				context.commitTransaction();
 			}
+		} catch (GeneralException ex) {
+			LOG.error("Error resolving User: " + ex.getMessage(), ex);
 		}
-		return resolvedUser;
+		return result;
+	}
+	
+	protected OnetimeLink createOnetimeLink(PokeContext context,
+			net.cattweasel.pokebot.object.User user) throws GeneralException {
+		OnetimeLink link = new OnetimeLink();
+		link.setName(Util.uuid());
+		link.setUser(user);
+		context.saveObject(link);
+		return link;
 	}
 }

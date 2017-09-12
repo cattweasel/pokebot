@@ -12,6 +12,7 @@ import net.cattweasel.pokebot.object.Attributes;
 import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
+import net.cattweasel.pokebot.object.OnetimeLink;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.Spawn;
 import net.cattweasel.pokebot.object.TaskResult;
@@ -35,6 +36,10 @@ public class PerformMaintenanceTask implements TaskExecutor {
 	public void execute(PokeContext context, TaskSchedule schedule, TaskResult result,
 			Attributes<String, Object> attributes) throws Exception {
 		if (running) {
+			removeOrphanOnetimeLinks(context);
+			context.commitTransaction();
+		}
+		if (running) {
 			removeOrphanUserNotifications(context);
 			context.commitTransaction();
 		}
@@ -52,6 +57,27 @@ public class PerformMaintenanceTask implements TaskExecutor {
 	public boolean terminate() {
 		running = false;
 		return true;
+	}
+	
+	private void removeOrphanOnetimeLinks(PokeContext context) {
+		Terminator terminator = new Terminator(context);
+		QueryOptions qo = new QueryOptions();
+		qo.addFilter(Filter.lt(ExtendedAttributes.POKE_OBJECT_CREATED, new Date(new Date().getTime() - 180000L)));
+		Iterator<String> it = null;
+		try {
+			it = context.search(OnetimeLink.class, qo);
+			if (it != null) {
+				while (running && it.hasNext()) {
+					OnetimeLink link = context.getObjectById(OnetimeLink.class, it.next());
+					if (link != null) {
+						LOG.debug("Removing orphan onetime link: " + link);
+						terminator.deleteObject(link);
+					}
+				}
+			}
+		} catch (GeneralException ex) {
+			LOG.error("Error removing orphan onetime links: " + ex.getMessage(), ex);
+		}
 	}
 	
 	private void removeOrphanUserNotifications(PokeContext context) {

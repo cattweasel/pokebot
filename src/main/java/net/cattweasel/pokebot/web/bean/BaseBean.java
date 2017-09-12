@@ -11,6 +11,7 @@ import net.cattweasel.pokebot.object.BotSession;
 import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
+import net.cattweasel.pokebot.object.OnetimeLink;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.User;
 import net.cattweasel.pokebot.object.UserNotification;
@@ -47,7 +48,9 @@ public class BaseBean {
 	public User getLoggedInUser() throws GeneralException {
 		if (user == null) {
 			String userId = getRequestScope().get("id");
-			if (Util.isNullOrEmpty(userId)) {
+			if (Util.isNotNullOrEmpty(userId)) {
+				userId = resolveOnetimeLink(userId);
+			} else {
 				userId = Util.otos(getSessionScope().get("user"));
 			}
 			if (Util.isNotNullOrEmpty(userId)) {
@@ -89,5 +92,10 @@ public class BaseBean {
 	
 	protected Map<String, Object> getSessionScope() {
 		return FacesContext.getCurrentInstance().getExternalContext().getSessionMap();
+	}
+	
+	private String resolveOnetimeLink(String userId) throws GeneralException {
+		OnetimeLink link = getContext().getObjectByName(OnetimeLink.class, userId);
+		return link == null || link.getUser() == null ? userId : link.getUser().getId();
 	}
 }
