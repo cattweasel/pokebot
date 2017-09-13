@@ -7,308 +7,359 @@
 	xmlns:f="http://java.sun.com/jsf/core">
 <ui:composition template="template.xhtml">
 	<ui:define name="header">
-		<script type="text/javascript">
-		
-		loadConfirmation = function() {
+		<ui:fragment rendered="#{base.loggedInUser ne null}">
+			<script type="text/javascript">
 			
-			Ext.MessageBox.confirm('#{msgs.confirmation}', '#{msgs.settings_confirm_profile_load}', function(a) {
-				if ("yes" === a) {
-					document.getElementById("settings-form:load-profile").click();
-				}
+			var savePokemonSettings = function() {
+				Ext.MessageBox.confirm('#{msgs.confirmation}', '#{msgs.confirm_settings_save}', function(a) {
+					if ("yes" === a) {
+						var params = {};
+						params['userId'] = '#{base.loggedInUser.id}';
+						var items = Ext.StoreMgr.lookup('pokemon-store').data.items;
+						for (var i=0; i&lt;items.length; i++) {
+							params[items[i].data.pokemonId + "-enabled"] = items[i].data.enabled;
+							params[items[i].data.pokemonId + "-range"] = items[i].data.range;
+						}
+						Ext.Ajax.request({
+							url: '#{request.contextPath}/rest/user/settings/savePokemon',
+						    params: params,
+						    success: function(response) {
+						        var json = Ext.decode(response.responseText);
+						        if (json.success === true) {
+						        		document.location = document.location;
+						        } else {
+						        		Ext.Msg.alert('#{msgs.error}', json.message);
+						        }
+						    }
+						});
+					}
+				});
+			};
+			
+			var save = function(fields) {
+				Ext.MessageBox.confirm('#{msgs.confirmation}', '#{msgs.confirm_settings_save}', function(a) {
+					if ("yes" === a) {
+						var params = {};
+						params['userId'] = '#{base.loggedInUser.id}';
+						for (var i=0; i&lt;fields.length; i++) {
+							params[fields[i]] = Ext.getCmp(fields[i]).getValue();
+						}
+						Ext.Ajax.request({
+							url: '#{request.contextPath}/rest/user/settings/save',
+						    params: params,
+						    success: function(response) {
+						        var json = Ext.decode(response.responseText);
+						        if (json.success === true) {
+						        		document.location = document.location;
+						        } else {
+						        		Ext.Msg.alert('#{msgs.error}', json.message);
+						        }
+						    }
+						});
+					}
+				});
+			};
+			
+			Ext.onReady(function() {
+				
+				var languageStore = Ext.create('Ext.data.Store', {
+				    fields: ['id', 'name'],
+				    data : [
+				        { "id": "de", "name": "#{msgs.language_de}" },
+				        { "id": "en", "name": "#{msgs.language_en}" }
+				    ]
+				});
+				
+				var selectionStore = Ext.create('Ext.data.Store', {
+				    fields: ['id', 'name'],
+				    data : [
+				        { "id": "all", "name": "#{msgs.all}" },
+				        { "id": "selected", "name": "#{msgs.selected}" },
+				        { "id": "unselected", "name": "#{msgs.unselected}" }
+				    ]
+				});
+				
+				var profileStore = Ext.create('Ext.data.Store', {
+				    model: 'Profile',
+				    id: 'profile-store',
+				    proxy: {
+				        type: 'ajax',
+				        url: '#{request.contextPath}/rest/profile/list',
+				        reader: {
+				            type: 'json',
+				            rootProperty: 'objects',
+				            successProperty: 'success',
+				            totalProperty: 'total'
+				        },
+				        extraParams: {
+				        		userId: '#{base.loggedInUserId}'
+				        }
+				    },
+				    remoteSort: true,
+				    pageSize: 20,
+					autoLoad: true
+				});
+				
+				var pokemonStore = Ext.create('Ext.data.Store', {
+				    model: 'PokemonSetting',
+				    id: 'pokemon-store',
+				    proxy: {
+				        type: 'ajax',
+				        url: '#{request.contextPath}/rest/user/settings/pokemon/list',
+				        reader: {
+				            type: 'json',
+				            rootProperty: 'objects',
+				            successProperty: 'success',
+				            totalProperty: 'total'
+				        },
+				        extraParams: {
+				        		userId: '#{base.loggedInUserId}'
+				        }
+				    },
+				    remoteSort: true,
+				    pageSize: 20,
+					autoLoad: true
+				});
+				
+				Ext.create("Ext.form.FormPanel", {
+		  			renderTo: Ext.get('content'),
+		  			title: '#{msgs.settings_global_settings}',
+		  			width: '100%',
+		  			bodyPadding: 10,
+		  			layout: 'anchor',
+		  		    defaults: {
+		  		        anchor: '100%',
+		  		        labelWidth: 260
+		  		    },
+		  		  	bbar: ['->', {
+		    				xtype: 'button',
+	  		    			text: '#{msgs.save_settings}',
+	  		    			handler: function() {
+	  		    				var fields = [];
+	  		    				fields.push("deleteExpired");
+	  		    				fields.push("language");
+	  		    				save(fields);
+	  		    			}
+	  		    		}],
+		  			items: [{
+		  				xtype: 'checkbox',
+		  				id: 'deleteExpired',
+		  				fieldLabel: '#{msgs.settings_delete_expired_messages}',
+		  				value: #{settings.deleteExpired}
+		  			}, {
+		  				xtype: 'combobox',
+		  				id: 'language',
+		  				fieldLabel: '#{msgs.settings_user_language}',
+		  				value: '#{settings.language}',
+		  				store: languageStore,
+		  				displayField: 'name',
+		  				valueField: 'id',
+		  				forceSelection: true,
+		  				allowBlank: false
+		  			}]
+				});
+				
+				Ext.create("Ext.form.FormPanel", {
+		  			renderTo: Ext.get('content'),
+		  			title: '#{msgs.settings_profile_settings}',
+		  			width: '100%',
+		  			style: {
+		  				margin: '15px 0 0 0'
+		  			},
+		  			bodyPadding: 10,
+		  			layout: 'anchor',
+		  		    defaults: {
+		  		        anchor: '100%',
+		  		      	labelWidth: 260
+		  		    },
+			  		bbar: ['->', {
+			    			xtype: 'button',
+		  		    		text: '#{msgs.save_settings}',
+		  		    		handler: function() {
+		  		    			var fields = [];
+	  		    				fields.push("createProfile");
+	  		    				fields.push("loadProfile");
+	  		    				fields.push("saveProfile");
+	  		    				fields.push("deleteProfile");
+	  		    				save(fields);
+		  		    		}
+		  		    	}],
+		  			items: [{
+		  				xtype: 'textfield',
+		  				id: 'createProfile',
+		  				fieldLabel: '#{msgs.settings_create_profile}',
+		  				emptyText: '#{msgs.enter_profile_name} ..'
+		  			}, {
+		  				xtype: 'combobox',
+		  				id: 'loadProfile',
+		  				fieldLabel: '#{msgs.settings_load_profile}',
+		  				emptyText: '#{msgs.select_profile} ..',
+		  				store: profileStore,
+		  				displayField: 'displayName',
+		  				valueField: 'id',
+		  				forceSelection: true
+		  			}, {
+		  				xtype: 'combobox',
+		  				id: 'saveProfile',
+		  				fieldLabel: '#{msgs.settings_save_profile}',
+		  				emptyText: '#{msgs.select_profile} ..',
+		  				store: profileStore,
+		  				displayField: 'displayName',
+		  				valueField: 'id',
+		  				forceSelection: true
+		  			}, {
+		  				xtype: 'combobox',
+		  				id: 'deleteProfile',
+		  				fieldLabel: '#{msgs.settings_delete_profile}',
+		  				emptyText: '#{msgs.select_profile} ..',
+		  				store: profileStore,
+		  				displayField: 'displayName',
+		  				valueField: 'id',
+		  				forceSelection: true
+		  			}]
+				});
+				
+				Ext.create("Ext.form.FormPanel", {
+		  			renderTo: Ext.get('content'),
+		  			title: '#{msgs.settings_raid_settings}',
+		  			width: '100%',
+		  			style: {
+		  				margin: '15px 0 0 0'
+		  			},
+		  			bodyPadding: 10,
+		  			layout: 'anchor',
+		  		    defaults: {
+		  		        anchor: '100%',
+		  		      	labelWidth: 260
+		  		    },
+		  		    bbar: ['->', {
+	  		    			xtype: 'button',
+		  		    		text: '#{msgs.save_settings}',
+		  		    		handler: function() {
+		  		    			var fields = [];
+	  		    				fields.push("gymEnabled");
+	  		    				fields.push("gymLevel");
+	  		    				fields.push("gymRange");
+	  		    				save(fields);
+		  		    		}
+		  		    	}],
+		  			items: [{
+		  				xtype: 'checkbox',
+		  				id: 'gymEnabled',
+		  				fieldLabel: '#{msgs.settings_enable_raid_notifications}',
+		  				value: #{settings.gymEnabled}
+		  			}, {
+		  				xtype: 'numberfield',
+		  				id: 'gymLevel',
+		  				fieldLabel: '#{msgs.settings_raid_min_level}',
+		  				value: #{settings.gymLevel},
+		  				minValue: 1,
+		  				maxValue: 5
+		  			}, {
+		  				xtype: 'numberfield',
+		  				id: 'gymRange',
+		  				fieldLabel: '#{msgs.settings_raid_range}',
+		  				value: #{settings.gymRange},
+		  				minValue: 200,
+		  				maxValue: 50000
+		  			}]
+				});
+				
+				Ext.create("Ext.grid.Panel", {
+		  			renderTo: Ext.get('content'),
+		  			title: '#{msgs.settings_pokemon_settings}',
+		  			width: '100%',
+		  			style: {
+		  				margin: '15px 0 0 0'
+		  			},
+		  			store: pokemonStore,
+		  			scrollable: false,
+		  			selType: 'cellmodel',
+		  		    plugins: [
+		  		        Ext.create('Ext.grid.plugin.CellEditing', {
+		  		            clicksToEdit: 1
+		  		        })
+		  		    ],
+		  		    tbar: [{
+		  		    		xtype: 'combobox',
+		  		    		fieldLabel: '#{msgs.settings_show_pokemon}',
+		  		    		store: selectionStore,
+		  		    		displayField: 'name',
+		  				valueField: 'id',
+		  				forceSelection: true,
+		  				allowBlank: false,
+		  				value: 'all',
+		  				disabled: true // TODO
+		  		    }, {
+		  		    		xtype: 'numberfield',
+		  		    		id: 'global-range',
+		  		    		fieldLabel: '#{msgs.settings_global_pokemon_range}',
+		  		    		style: {
+		  		    			margin: '0 0 0 15px'
+		  		    		},
+		  		    		labelWidth: 200,
+		  		    		value: 3000,
+		  		    		minValue: 200,
+		  		    		maxValue: 50000,
+		  		    		disabled: true // TODO
+		  		    }, {
+		  		    		xtype: 'button',
+		  		    		text: '#{msgs.accept}',
+		  		    		style: {
+		  		    			margin: '0 0 0 15px'
+		  		    		},
+		  		    		disabled: true // TODO
+		  		    }, '->', {
+		  		    		xtype: 'button',
+		  		    		text: '#{msgs.save_settings}',
+		  		    		handler: function() {
+		  		    			savePokemonSettings();
+		  		    		}
+		  		    }],
+		  			columns: [{
+		  				header: 'ID',
+		  				dataIndex: 'pokemonId',
+		  				width: 130
+		  			}, {
+		  				header: 'Name',
+		  				dataIndex: 'displayName',
+		  				sortable: false,
+		  				width: 130
+		  			}, {
+		  				xtype: 'checkcolumn',
+		  				header: '#{msgs.activated}',
+		  				dataIndex: 'enabled',
+		  				sortable: false,
+		  				editor: {
+	  				    		xtype: 'checkbox',
+	  				    		cls: 'x-grid-checkheader-editor'
+	  				  	},
+	  				  	width: 150
+		  			}, {
+		  				header: '#{msgs.settings_pokemon_range}',
+		  				dataIndex: 'range',
+		  				sortable: false,
+		  				editor: {
+		  	                xtype: 'numberfield',
+		  	                allowBlank: false,
+		  	                minValue: 200,
+		  	                maxValue: 50000
+		  	            },
+		  	            flex: 1
+		  			}]
+				});
+				
 			});
 			
-		};
-		
-		createConfirmation = function() {
-			
-			Ext.MessageBox.confirm('#{msgs.confirmation}', '#{msgs.settings_confirm_profile_create}', function(a) {
-				if ("yes" === a) {
-					document.getElementById("settings-form:create-profile").click();
-				}
-			});
-			
-		};
-		
-		saveConfirmation = function() {
-			
-			Ext.MessageBox.confirm('#{msgs.confirmation}', '#{msgs.settings_confirm_profile_save}', function(a) {
-				if ("yes" === a) {
-					document.getElementById("settings-form:save-profile").click();
-				}
-			});
-			
-		};
-		
-		deleteConfirmation = function() {
-			
-			Ext.MessageBox.confirm('#{msgs.confirmation}', '#{msgs.settings_confirm_profile_delete}', function(a) {
-				if ("yes" === a) {
-					document.getElementById("settings-form:delete-profile").click();
-				}
-			});
-			
-		};
-		
-		updatePokemonRange = function() {
-			
-			var items = document.getElementsByClassName('range');
-			for (var i=0; i&lt;items.length; i++) {
-				items[i].value = document.getElementById('pokemon-range').value;
-			}
-			
-		};
-		
-		</script>
+			</script>
+		</ui:fragment>
 	</ui:define>
 	<ui:define name="content">
 		<ui:fragment rendered="#{base.loggedInUser eq null}">
-			<p><h:outputText value="#{msgs.settings_not_logged_in}" /></p>
-			<p><h:outputText escape="false" value="#{msgs.login_instructions}" /></p>
-			<p><b><h:outputText value="#{msgs.important}" />:</b>&nbsp;<h:outputText value="#{msgs.login_do_not_share_your_settings_link}" /></p>
-		</ui:fragment>
-		<ui:fragment rendered="#{base.loggedInUser ne null}">
-			<h:form id="settings-form">
-				<table>
-					<tr>
-						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_global_settings}" /></th>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<th colspan="3"><h:outputText value="#{msgs.setting}" /></th>
-						<th>&nbsp;</th>
-						<th colspan="3"><h:outputText value="#{msgs.value}" /></th>
-						<th>&nbsp;</th>
-						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
-						<th>&nbsp;</th>
-						<th><h:outputText value="#{msgs.description}" /></th>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_delete_expired_messages}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3">&nbsp;<h:selectBooleanCheckbox value="#{settings.deleteExpired}" /></td>
-						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_delete_expired_messages_desc}" /></td>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_user_language}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3">
-							<h:selectOneMenu value="#{settings.language}">
-								<f:selectItem itemValue="de" itemLabel="#{msgs.language_de}" />
-								<f:selectItem itemValue="en" itemLabel="#{msgs.language_en}" />
-							</h:selectOneMenu>
-						</td>
-						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_user_language_desc}" /></td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_profile_settings}" /></th>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<th colspan="3"><h:outputText value="#{msgs.setting}" /></th>
-						<th>&nbsp;</th>
-						<th colspan="3"><h:outputText value="#{msgs.value}" /></th>
-						<th>&nbsp;</th>
-						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
-						<th>&nbsp;</th>
-						<th><h:outputText value="#{msgs.description}" /></th>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_load_profile}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3">
-							<h:selectOneMenu value="#{settings.selectedLoadProfile}">
-								<f:selectItems value="#{settings.availableProfiles}" var="profile" itemLabel="#{profile.displayName}" itemValue="#{profile.id}" />
-							</h:selectOneMenu>
-						</td>
-						<td>&nbsp;</td>
-						<td>
-							<h:button value="#{msgs.load}" onclick="loadConfirmation(); return false;"/>
-							<h:commandButton id='load-profile' action="#{settings.loadProfile}" style="display:none" />
-						</td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_load_profile_desc}" /></td>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_save_profile}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3">
-							<h:selectOneMenu value="#{settings.selectedSaveProfile}">
-								<f:selectItems value="#{settings.availableProfiles}" var="profile" itemLabel="#{profile.displayName}" itemValue="#{profile.id}" />
-							</h:selectOneMenu>
-						</td>
-						<td>&nbsp;</td>
-						<td>
-							<h:button value="#{msgs.save}" onclick="saveConfirmation(); return false;"/>
-							<h:commandButton id='save-profile' action="#{settings.saveProfile}" style="display:none" />
-						</td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_save_profile_desc}" /></td>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_create_profile}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3"><h:inputText value="#{settings.profileName}" /></td>
-						<td>&nbsp;</td>
-						<td>
-							<h:button value="#{msgs.create}" onclick="createConfirmation(); return false;"/>
-							<h:commandButton id='create-profile' action="#{settings.createProfile}" style="display:none" />
-						</td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_create_profile_desc}" /></td>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_delete_profile}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3">
-							<h:selectOneMenu value="#{settings.selectedDeleteProfile}">
-								<f:selectItems value="#{settings.availableProfiles}" var="profile" itemLabel="#{profile.displayName}" itemValue="#{profile.id}" />
-							</h:selectOneMenu>
-						</td>
-						<td>&nbsp;</td>
-						<td>
-							<h:button value="#{msgs.delete}" onclick="deleteConfirmation(); return false;"/>
-							<h:commandButton id='delete-profile' action="#{settings.deleteProfile}" style="display:none" />
-						</td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_delete_profile_desc}" /></td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_raid_settings}" /></th>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<th colspan="3"><h:outputText value="#{msgs.setting}" /></th>
-						<th>&nbsp;</th>
-						<th colspan="3"><h:outputText value="#{msgs.value}" /></th>
-						<th>&nbsp;</th>
-						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
-						<th>&nbsp;</th>
-						<th><h:outputText value="#{msgs.description}" /></th>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_enable_raid_notifications}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3"><h:selectBooleanCheckbox value="#{settings.gymEnabled}" /></td>
-						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_enable_raid_notifications_desc}" /></td>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_raid_min_level}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3"><h:inputText value="#{settings.gymLevel}" /></td>
-						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_raid_min_level_desc}" /></td>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_raid_range}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3"><h:inputText value="#{settings.gymRange}" /></td>
-						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_raid_range_desc}" /></td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<th colspan="5" style="text-decoration:underline"><h:outputText value="#{msgs.settings_pokemon_settings}" /></th>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<th colspan="3"><h:outputText value="#{msgs.setting}" /></th>
-						<th>&nbsp;</th>
-						<th colspan="3"><h:outputText value="#{msgs.value}" /></th>
-						<th>&nbsp;</th>
-						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
-						<th>&nbsp;</th>
-						<th><h:outputText value="#{msgs.description}" /></th>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_global_pokemon_range}" />:</td>
-						<td>&nbsp;</td>
-						<td colspan="3"><input id="pokemon-range" type="text" value="3000" /></td>
-						<td>&nbsp;</td>
-						<td>
-							<button onclick="updatePokemonRange(); return false;">
-								<h:outputText value="#{msgs.accept}" />
-							</button>
-						</td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_global_pokemon_range_desc}" /></td>
-					</tr>
-					<tr>
-						<td colspan="3"><h:outputText value="#{msgs.settings_show_pokemon}" /></td>
-						<td>&nbsp;</td>
-						<td colspan="3">
-							<h:selectOneMenu value="#{settings.view}">
-								<f:selectItem itemValue="all" itemLabel="#{msgs.all}" />
-								<f:selectItem itemValue="selected" itemLabel="#{msgs.selected}" />
-								<f:selectItem itemValue="unselected" itemLabel="#{msgs.unselected}" />
-							</h:selectOneMenu>
-						</td>
-						<td>&nbsp;</td>
-						<td><h:commandButton action="#{settings.updateView}" value="#{msgs.accept}" /></td>
-						<td>&nbsp;</td>
-						<td><h:outputText value="#{msgs.settings_show_pokemon_desc}" /></td>
-					</tr>
-					<tr>
-						<td>&nbsp;</td>
-					</tr>
-					<tr>
-						<th><h:outputText value="#{msgs.id}" /></th>
-						<th>&nbsp;</th>
-						<th><h:outputText value="#{msgs.pokemon}" /></th>
-						<th>&nbsp;</th>
-						<th><h:outputText value="#{msgs.activated}" /></th>
-						<th>&nbsp;</th>
-						<th><h:outputText value="#{msgs.settings_pokemon_range}" /></th>
-						<th>&nbsp;</th>
-						<th>&nbsp;<h:outputText value="#{msgs.action}" /></th>
-						<th>&nbsp;</th>
-						<th><h:outputText value="#{msgs.description}" /></th>
-					</tr>
-					<ui:repeat var="setting" value="#{settings.pokemonSettings}">
-						<tr>
-							<td><h:outputText value="#{setting.pokemonId}" /></td>
-							<td>&nbsp;</td>
-							<td><h:outputText value="#{msgs[setting.messageKey]}" /></td>
-							<td>&nbsp;</td>
-							<td><h:selectBooleanCheckbox value="#{setting.enabled}" /></td>
-							<td>&nbsp;</td>
-							<td><h:inputText class="range" value="#{setting.range}" /></td>
-							<td>&nbsp;</td>
-							<td><h:commandButton action="#{settings.save}" value="#{msgs.save}" /></td>
-							<td>&nbsp;</td>
-							<td><h:outputText value="#{msgs.settings_pokemon_desc}" />&nbsp;<h:outputText value="#{msgs[setting.messageKey]}" /></td>
-						</tr>
-					</ui:repeat>
-				</table>
-			</h:form>
+			<ui:include src="include/messagebox.xhtml">
+				<ui:param name="title" value="#{msgs.not_logged_in}" />
+				<ui:param name="content" value="#{msgs.login_instructions}" />
+			</ui:include>
 		</ui:fragment>
 	</ui:define>
 </ui:composition>

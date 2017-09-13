@@ -12,7 +12,23 @@ body {
 }
 
 #content {
-	margin: 10px;
+	margin: 10px 15px 25px 15px;
+}
+
+#content h3 {
+	font-size: 20px;
+}
+
+#content p {
+	font-size: 18px;
+}
+
+#content ul li {
+	font-size: 18px;
+}
+
+#content table {
+	font-size: 18px;
 }
 
 #footer {
@@ -24,10 +40,14 @@ table tr {
 }
 
 #content #about-box {
-	width: 670px;
+	width: 850px;
 	height: 300px;
 	margin: 5% auto 0 auto;
 	text-align: center;
+}
+
+#content #about-box p {
+	font-size: 16px;
 }
 
 #content #about-box #about-logo {

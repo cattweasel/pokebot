@@ -31,9 +31,9 @@ public class SessionResource extends BaseResource {
 	@SuppressWarnings("unchecked")
 	public String list(@QueryParam("start") int start, @QueryParam("page") int page, @QueryParam("limit") int limit,
 			@QueryParam("query") String query, @QueryParam("sort") String order, @QueryParam("userId") String userId) {
-		JSONObject result = createListResponse(BotSession.class, start, page, limit, query, order,
+		JSONObject result = createListResponse(BotSession.class, null, start, page, limit, query, order,
 				Arrays.asList("name"), userId, Arrays.asList(Capability.SYSTEM_ADMINISTRATOR));
-		JSONArray oldObjects = (JSONArray) result.get("objects");
+		JSONArray oldObjects = (JSONArray) result.get(ARG_OBJECTS);
 		JSONArray newObjects = new JSONArray();
 		if (oldObjects != null) {
 			for (int i=0; i<oldObjects.size(); i++) {
@@ -41,7 +41,7 @@ public class SessionResource extends BaseResource {
 				session.put("notifications", calculateNotifications(session));
 				newObjects.add(session);
 			}
-			result.put("objects", newObjects);
+			result.put(ARG_OBJECTS, newObjects);
 		}
 		return result.toJSONString();
 	}

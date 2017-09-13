@@ -6,9 +6,39 @@
 	xmlns:c="http://java.sun.com/jsp/jstl/core">
 <ui:composition template="template.xhtml">
 	<ui:define name="content">
-		
-		<p>Diese Seite befindet sich derzeit noch im Aufbau - Wir bitten um Verst&auml;ndnis!</p>
-		
+		<h3>Anleitung zum Erstellen des <a href="https://web.telegram.org/#/im?p=%40nyapgbot" target="_blank">@nyapgbot</a></h3>
+		<p>Diese Anleitung erklärt Schritt für Schritt, wie ihr den Bot benutzt und einstellen könnt.</p>
+		<p>Wichtig: Dieser Bot funktioniert nur in Gebieten, die von der Gomap.eu abgedeckt sind, da er seine Daten direkt aus der Map bezieht.</p>
+		<ul>
+			<li>Sucht über die Telegram Suchfunktion den Bot. Die Suchfunktion findet ihr direkt über euren Chats. Klickt dort auf die Lupe und gebt @nyapgbot ein. Klickt anschließend auf den Bot und es öffnet sich ein Chat mit diesem. Dies sollte nun so aussehen:<br /><br /><img src="#{request.contextPath}/img/help-1.png" width="499" height="476" /><br /><br /></li>
+			<li>Für Fragen, Anregungen oder Hilfe könnt ihr gerne auf den <a href="tg://join?invite=D-SrUkOc983TqFuCOv0QdA">Link</a> klicken, der euch angezeigt wird.<br /><br /></li>
+			<li>Klickt nun unten auf Start, damit beginnt ihr die Konversation mit dem Bot. Nun sollte euch unten dieses Menü angezeigt werden:<br /><br /><img src="#{request.contextPath}/img/help-2.png" width="472" height="455" /><br /><br /></li>
+			<li>Wählt zuerst euren Standort, indem ihr auf Location klickt. Ihr könnt jeden beliebigen Standort wählen. Euer aktueller Standort sollte laden, sobald GPS eingeschalten ist. (Achtung Standort aktualisiert sich NICHT automatisch)<br /><br /></li>
+			<li>Als nächstes wählt ihr Settings und bekommt eine Nachricht, mit einem persönlichen Link für eure Einstellungen. Klickt diesen an.<br /><br /></li>
+			<li>
+				Dieses Fenster öffnet sich und ihr könnt die gewünschten Einstellungen wählen:<br /><br /><img src="#{request.contextPath}/img/help-3.png" width="648" height="531" /><br /><br />
+				<ul>
+					<li>Globale Einstellungen: Sprache wählen und ggf. Haken bei automatisch Nachrichten löschen setzen.<br /><br /></li>
+					<li>Profil Einstellungen: Erstellt ein Profil mit den jeweiligen Einstellungen. Ihr könnt verschiedene Profile erstellen wie z.B. Tag / Nacht oder Home / Arbeit etc. Unter Profil laden, läd das jeweilige Profil, wenn ihr es benötigt.<br /><br /></li> 
+					<li>Raid Einstellungen: Aktiviert / Deaktiviert Raid-Meldungen für das gewählte Profil. Außerdem könnt ihr hier wählen, ab welchem Raid-Level und welcher Entfernung der Raid gepostet werden soll.<br /><br /></li>
+				</ul>
+			</li>
+			<li>Nun habt ihr erstmal die wichtigsten Sachen konfiguriert und könnt auf den Start-Button klicken und der Bot sollte nun beginnen Nachrichten zu senden.<br /><br /></li>
+			<li>
+				Befehle, die im Textfeld geschrieben werden können:<br /><br />
+				<ul>
+					<li>/start : Startet den Bot</li>
+					<li>/stop : Stoppt den Bot</li>
+					<li>/reset : Erstellt alle Meldungen erneut</li>
+					<li>/status : Zeigt den aktuellen Botstatus an</li>
+					<li>/help : Zeigt den Link zu dieser Seite</li>
+					<li>/settings : Zeigt den Link zu euren persönlichen Einstellungen</li>
+					<li>/location : Lässt euch einen Standort bestimmen</li>
+					<li>/map : Zeigt euch den Link zu eurer persönlichen Map</li>
+				</ul>
+			</li>
+		</ul>
+		<p>Bei Problemen oder Fragen tretet einfach der Telegram Gruppe bei, dort sind viele nette Leute, die euch gern weiterhelfen, wenn etwas mal nicht funktionieren sollte: <a href="tg://join?invite=D-SrUkOc983TqFuCOv0QdA">https://t.me/joinchat/D-SrUkOc983TqFuCOv0QdA</a></p>
 	</ui:define>
 </ui:composition>
 </html>

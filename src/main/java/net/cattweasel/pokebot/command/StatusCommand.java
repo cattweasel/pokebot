@@ -16,6 +16,7 @@ import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.Gym;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.UserNotification;
+import net.cattweasel.pokebot.object.QueryOptions.OrderValue;
 import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Localizer;
@@ -39,7 +40,7 @@ public class StatusCommand extends AbstractCommand {
 			int raids = context.countObjects(Gym.class, qo);
 			qo = new QueryOptions();
 			qo.setLimit(1);
-			qo.setOrder(ExtendedAttributes.POKE_OBJECT_CREATED, "DESC");
+			qo.setOrder(ExtendedAttributes.POKE_OBJECT_CREATED, OrderValue.DESC);
 			List<UserNotification> msgs = context.getObjects(UserNotification.class, qo);
 			net.cattweasel.pokebot.object.User usr = resolveUser(context, user);
 			String sessionState = context.getUniqueObject(BotSession.class, Filter.eq(ExtendedAttributes.BOT_SESSION_USER, usr)) == null

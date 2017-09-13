@@ -10,6 +10,7 @@ import net.cattweasel.pokebot.object.ExtendedAttributes;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.QueryOptions;
 import net.cattweasel.pokebot.object.User;
+import net.cattweasel.pokebot.object.QueryOptions.OrderValue;
 import net.cattweasel.pokebot.server.Auditor;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Localizer;
@@ -61,7 +62,7 @@ public class HistoryBean extends BaseBean {
 		QueryOptions qo = new QueryOptions();
 		qo.addFilter(Filter.or(Filter.eq(ExtendedAttributes.AUDIT_EVENT_SOURCE, getLoggedInUser().getName()),
 				Filter.eq(ExtendedAttributes.AUDIT_EVENT_TARGET, getLoggedInUser().getName())));
-		qo.setOrder(ExtendedAttributes.POKE_OBJECT_CREATED, "DESC");
+		qo.setOrder(ExtendedAttributes.POKE_OBJECT_CREATED, OrderValue.DESC);
 		qo.setLimit(500);
 		Iterator<String> it = getContext().search(AuditEvent.class, qo);
 		if (it != null) {

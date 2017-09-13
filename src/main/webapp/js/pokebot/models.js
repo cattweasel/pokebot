@@ -38,6 +38,23 @@ Ext.define('BotSession', {
     	}]
 });
 
+Ext.define('Profile', {
+    extend: 'Ext.data.Model',
+    fields: [{
+		name: 'id',
+		type: 'string'
+	}, {
+		name: 'name',
+		type: 'string'
+    	}, {
+    		name: 'created',
+    		type: 'number'
+    	}, {
+    		name: 'modified',
+    		type: 'number'
+    	}]
+});
+
 Ext.define('User', {
     extend: 'Ext.data.Model',
     fields: [{
@@ -67,5 +84,22 @@ Ext.define('User', {
     	}, {
     		name: 'modified',
     		type: 'number'
+    	}]
+});
+
+Ext.define('PokemonSetting', {
+    extend: 'Ext.data.Model',
+    fields: [{
+		name: 'pokemonId',
+		type: 'int'
+	}, {
+		name: 'displayName',
+		type: 'string'
+    	}, {
+    		name: 'enabled',
+    		type: 'boolean'
+    	}, {
+    		name: 'range',
+    		type: 'integer'
     	}]
 });

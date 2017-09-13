@@ -98,20 +98,6 @@
 	</script>
 </ui:fragment>
 
-<ui:fragment rendered="#{base.loggedInUser eq null}">
-	<script type="text/javascript">
-	
-	navigationItems.push({
-		text: '#{msgs.navigation_login}',
-		iconCls: 'icon-login',
-		handler: function() {
-			document.location = '#{request.contextPath}/login.jsf';
-		}
-	});
-	
-	</script>
-</ui:fragment>
-
 <ui:fragment rendered="#{base.loggedInUser ne null}">
 	<script type="text/javascript">
 	

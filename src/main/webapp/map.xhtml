@@ -7,17 +7,22 @@
 <ui:composition template="template.xhtml">
 	<ui:define name="content">
 		<ui:fragment rendered="#{base.loggedInUser eq null}">
-			<p><h:outputText value="#{msgs.settings_not_logged_in}" /></p>
-			<p><h:outputText escape="false" value="#{msgs.login_instructions}" /></p>
-			<p><b><h:outputText value="#{msgs.important}" />:</b>&nbsp;<h:outputText value="#{msgs.login_do_not_share_your_settings_link}" /></p>
+			<ui:include src="include/messagebox.xhtml">
+				<ui:param name="title" value="#{msgs.not_logged_in}" />
+				<ui:param name="content" value="#{msgs.login_instructions}" />
+			</ui:include>
 		</ui:fragment>
 		<ui:fragment rendered="#{base.loggedInUser ne null and !map.sessionActive}">
-			<p><h:outputText value="#{msgs.map_no_bot_session_running}" /></p>
-			<p><h:outputText value="#{msgs.map_no_bot_session_running_desc}" /></p>
+			<ui:include src="include/messagebox.xhtml">
+				<ui:param name="title" value="#{msgs.map_no_bot_session_running}" />
+				<ui:param name="content" value="#{msgs.map_no_bot_session_running_desc}" />
+			</ui:include>
 		</ui:fragment>
 		<ui:fragment rendered="#{base.loggedInUser ne null and map.sessionActive and !map.locationAvailable}">
-			<p><h:outputText value="#{msgs.map_no_location_available}" /></p>
-			<p><h:outputText value="#{msgs.map_no_location_available_desc}" /></p>
+			<ui:include src="include/messagebox.xhtml">
+				<ui:param name="title" value="#{msgs.map_no_location_available}" />
+				<ui:param name="content" value="#{msgs.map_no_location_available_desc}" />
+			</ui:include>
 		</ui:fragment>
 		<ui:fragment rendered="#{base.loggedInUser ne null and map.sessionActive and map.locationAvailable}">
 			<div id="user-map" />

@@ -12,13 +12,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 public class AuditAction extends PokeObject {
 
 	public static final String BAN_USER = "BanUser";
+	public static final String CREATE_PROFILE = "CreateProfile";
 	public static final String CREATE_USER = "CreateUser";
+	public static final String DELETE_PROFILE = "DeleteProfile";
 	public static final String GET_BOT_STATUS = "GetBotStatus";
 	public static final String GET_HELP_LINK = "GetHelpLink";
 	public static final String GET_HISTORY_LINK = "GetHistoryLink";
 	public static final String GET_MAP_LINK = "GetMapLink";
 	public static final String GET_SETTINGS_LINK = "GetSettingsLink";
+	public static final String LOAD_PROFILE = "LoadProfile";
 	public static final String RESET_NOTIFICATIONS = "ResetNotifications";
+	public static final String SAVE_PROFILE = "SaveProfile";
 	public static final String SEND_BROADCAST = "SendBroadcast";
 	public static final String SEND_RAID_NOTIFICATION = "SendRaidNotification";
 	public static final String SEND_SPAWN_NOTIFICATION = "SendSpawnNotification";

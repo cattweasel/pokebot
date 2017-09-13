@@ -20,6 +20,9 @@ import net.cattweasel.pokebot.tools.Util;
 
 public class BaseBean {
 
+	private static final String ARG_ID = "id";
+	private static final String ARG_USER = "user";
+	
 	private PokeContext context;
 	private User user;
 	
@@ -47,16 +50,16 @@ public class BaseBean {
 	
 	public User getLoggedInUser() throws GeneralException {
 		if (user == null) {
-			String userId = getRequestScope().get("id");
+			String userId = getRequestScope().get(ARG_ID);
 			if (Util.isNotNullOrEmpty(userId)) {
 				userId = resolveOnetimeLink(userId);
 			} else {
-				userId = Util.otos(getSessionScope().get("user"));
+				userId = Util.otos(getSessionScope().get(ARG_USER));
 			}
 			if (Util.isNotNullOrEmpty(userId)) {
 				user = getContext().getObjectById(User.class, userId);
 				if (user != null) {
-					getSessionScope().put("user", user.getId());
+					getSessionScope().put(ARG_USER, user.getId());
 				}
 			}
 		}
@@ -72,6 +75,9 @@ public class BaseBean {
 				.getExternalContext().getSession(false);
 		if (session != null) {
 			session.invalidate();
+			if (getSessionScope() != null) {
+				getSessionScope().put(ARG_USER, null);
+			}
 		}
 	}
 	

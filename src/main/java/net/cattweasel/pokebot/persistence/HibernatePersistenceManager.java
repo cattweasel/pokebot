@@ -28,6 +28,7 @@ import net.cattweasel.pokebot.api.PersistenceManager;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.PokeObject;
 import net.cattweasel.pokebot.object.QueryOptions;
+import net.cattweasel.pokebot.object.QueryOptions.OrderValue;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 
@@ -359,7 +360,7 @@ public class HibernatePersistenceManager implements PersistenceManager, Cloneabl
 			criteria.setFirstResult(qo.getFirstResult());
 		}
 		if (qo.getOrderProperty() != null && qo.getOrderValue() != null) {
-			if (qo.getOrderValue().equalsIgnoreCase("asc")) {
+			if (OrderValue.ASC == qo.getOrderValue()) {
 				criteria.addOrder(Order.asc(qo.getOrderProperty()));
 			} else {
 				criteria.addOrder(Order.desc(qo.getOrderProperty()));

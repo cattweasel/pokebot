@@ -18,7 +18,7 @@ public class AuditResource extends BaseResource {
 	@Path("event/list")
 	public String list(@QueryParam("start") int start, @QueryParam("page") int page, @QueryParam("limit") int limit,
 			@QueryParam("query") String query, @QueryParam("sort") String order, @QueryParam("userId") String userId) {
-		return createListResponse(AuditEvent.class, start, page, limit, query, order, Arrays.asList("source", "action", "target"),
+		return createListResponse(AuditEvent.class, null, start, page, limit, query, order, Arrays.asList("source", "action", "target"),
 				userId, Arrays.asList(Capability.SYSTEM_ADMINISTRATOR)).toJSONString();
 	}
 }

@@ -20,11 +20,16 @@ public class QueryOptions implements Serializable {
 
 	private static final long serialVersionUID = -3063687392704653578L;
 	
+	public static enum OrderValue {
+		
+		ASC, DESC;
+	}
+	
 	private List<Filter> filters;
 	private int limit;
 	private int firstResult;
 	private String orderProperty;
-	private String orderValue;
+	private OrderValue orderValue;
 
 	public QueryOptions() {
 		filters = new ArrayList<Filter>();
@@ -94,7 +99,7 @@ public class QueryOptions implements Serializable {
 	 * @param orderProperty The property to be ordered
 	 * @param orderValue The direction for this order (ASC or DESC)
 	 */
-	public void setOrder(String orderProperty, String orderValue) {
+	public void setOrder(String orderProperty, OrderValue orderValue) {
 		this.orderProperty = orderProperty;
 		this.orderValue = orderValue;
 	}
@@ -115,7 +120,7 @@ public class QueryOptions implements Serializable {
 	 * @return The order value o this query options (ASC or DESC)
 	 */
 	@XmlAttribute
-	public String getOrderValue() {
+	public OrderValue getOrderValue() {
 		return orderValue;
 	}
 

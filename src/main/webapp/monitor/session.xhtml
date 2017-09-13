@@ -7,8 +7,10 @@
 <ui:composition template="../template.xhtml">
 	<ui:define name="content">
 		<ui:fragment rendered="#{base.loggedInUser eq null or !base.loggedInUser.hasCapability('SystemAdministrator')}">
-			<p><b><h:outputText value="#{msgs.error}" />:</b>&nbsp;<h:outputText value="#{msgs.page_not_authorized}" /></p>
-			<p><h:outputText escape="false" value="#{msgs.back_to_dashboard}" /></p>
+			<ui:include src="../include/messagebox.xhtml">
+				<ui:param name="title" value="#{msgs.not_authorized}" />
+				<ui:param name="content" value="#{msgs.back_to_dashboard}" />
+			</ui:include>
 		</ui:fragment>
 		<ui:fragment rendered="#{base.loggedInUser ne null and base.loggedInUser.hasCapability('SystemAdministrator')}">
 			<script type="text/javascript">
@@ -31,7 +33,7 @@
 				        }
 				    },
 				    remoteSort: true,
-				    pageSize: 20,
+				    pageSize: 15,
 					autoLoad: true
 				});
 				
@@ -39,7 +41,7 @@
 	    			    title: '#{msgs.navigation_monitor_session_list}',
 	    			    renderTo: Ext.get('content'),
 	    			    store: store,
-	    			    height: 608,
+	    			    height: 638,
 	    			    columns: [{
 	    			    		header: '#{msgs.user}',
 	    			    		dataIndex: 'user',

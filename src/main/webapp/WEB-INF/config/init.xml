@@ -7,13 +7,17 @@
 		
 		<!-- DEFAULT AUDIT ACTIONS -->
 		<ImportAction location="AuditAction/AuditAction - BanUser.xml" />
+		<ImportAction location="AuditAction/AuditAction - CreateProfile.xml" />
 		<ImportAction location="AuditAction/AuditAction - CreateUser.xml" />
+		<ImportAction location="AuditAction/AuditAction - DeleteProfile.xml" />
 		<ImportAction location="AuditAction/AuditAction - GetBotStatus.xml" />
 		<ImportAction location="AuditAction/AuditAction - GetHelpLink.xml" />
 		<ImportAction location="AuditAction/AuditAction - GetHistoryLink.xml" />
 		<ImportAction location="AuditAction/AuditAction - GetMapLink.xml" />
 		<ImportAction location="AuditAction/AuditAction - GetSettingsLink.xml" />
+		<ImportAction location="AuditAction/AuditAction - LoadProfile.xml" />
 		<ImportAction location="AuditAction/AuditAction - ResetNotifications.xml" />
+		<ImportAction location="AuditAction/AuditAction - SaveProfile.xml" />
 		<ImportAction location="AuditAction/AuditAction - SendBroadcast.xml" />
 		<ImportAction location="AuditAction/AuditAction - SendRaidNotification.xml" />
 		<ImportAction location="AuditAction/AuditAction - SendSpawnNotification.xml" />

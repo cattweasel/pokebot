@@ -1,0 +1,49 @@
+.x-form-item-label-default {
+	color: #000000 !important;
+	font: 300 20px/24px helvetica,arial,verdana,sans-serif;
+}
+
+.x-btn-inner-default-toolbar-small {
+	color: #000000 !important;
+}
+
+.x-panel-header-title-default {
+	font-size: 20px;
+}
+
+.x-panel-header-title-default {
+	line-height: 20px;
+}
+
+.x-form-text-default {
+    font: 300 20px/24px helvetica,arial,verdana,sans-serif;
+}
+
+.x-toolbar-text-default {
+	font: 300 20px/24px helvetica,arial,verdana,sans-serif;
+}
+
+.x-boundlist-item {
+	font: 20px/24px helvetica,arial,verdana,sans-serif;
+}
+
+.x-window-body-default {
+	font-size: 18px;
+}
+
+.x-window-header-title-default {
+	font-size: 20px;
+	line-height: 20px;
+}
+
+.x-btn-inner-default-toolbar-small {
+	font: 300 16px/20px helvetica,arial,verdana,sans-serif;
+}
+
+.x-grid-item {
+	font: 300 20px/24px helvetica,arial,verdana,sans-serif;
+}
+
+.x-column-header {
+	font: 300 20px/24px helvetica,arial,verdana,sans-serif;
+}

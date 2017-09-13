@@ -7,9 +7,10 @@
 <ui:composition template="template.xhtml">
 	<ui:define name="content">
 		<ui:fragment rendered="#{base.loggedInUser eq null}">
-			<p><h:outputText value="#{msgs.settings_not_logged_in}" /></p>
-			<p><h:outputText escape="false" value="#{msgs.login_instructions}" /></p>
-			<p><b><h:outputText value="#{msgs.important}" />:</b>&nbsp;<h:outputText value="#{msgs.login_do_not_share_your_settings_link}" /></p>
+			<ui:include src="include/messagebox.xhtml">
+				<ui:param name="title" value="#{msgs.not_logged_in}" />
+				<ui:param name="content" value="#{msgs.login_instructions}" />
+			</ui:include>
 		</ui:fragment>
 		<ui:fragment rendered="#{base.loggedInUser ne null}">
 			<h3><h:outputText value="#{msgs.history_your_personal_history}" /></h3>

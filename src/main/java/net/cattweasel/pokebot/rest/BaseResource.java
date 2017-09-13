@@ -14,12 +14,18 @@ import net.cattweasel.pokebot.api.PokeFactory;
 import net.cattweasel.pokebot.object.Filter;
 import net.cattweasel.pokebot.object.PokeObject;
 import net.cattweasel.pokebot.object.QueryOptions;
+import net.cattweasel.pokebot.object.QueryOptions.OrderValue;
 import net.cattweasel.pokebot.object.User;
 import net.cattweasel.pokebot.tools.GeneralException;
 import net.cattweasel.pokebot.tools.Util;
 
 public class BaseResource {
 
+	protected static final String ARG_SUCCESS = "success";
+	protected static final String ARG_OBJECTS = "objects";
+	protected static final String ARG_TOTAL = "total";
+	protected static final String ARG_MESSAGE = "message";
+	
 	private PokeContext context;
 	
 	private static final Logger LOG = Logger.getLogger(BaseResource.class);
@@ -36,14 +42,14 @@ public class BaseResource {
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected <T extends PokeObject> JSONObject createListResponse(Class<T> clazz, int start, int page, int limit,
+	protected <T extends PokeObject> JSONObject createListResponse(Class<T> clazz, QueryOptions qo, int start, int page, int limit,
 			String query, String order, List<String> searchFields, String userId, List<String> requiredCapabilities) {
 		JSONObject result = new JSONObject();
 		if (requiredCapabilities != null && !accessGranted(userId, requiredCapabilities)) {
-			result.put("success", false);
-			result.put("message", "User not authorized or permitted!");
+			result.put(ARG_SUCCESS, false);
+			result.put(ARG_MESSAGE, "User not authorized or permitted!");
 		} else {
-			QueryOptions qo = new QueryOptions();
+			qo = qo == null ? new QueryOptions() : qo;
 			try {
 				int total = getContext().countObjects(clazz, qo);
 				qo.setFirstResult(start);
@@ -57,7 +63,7 @@ public class BaseResource {
 						JSONArray json = (JSONArray) new JSONParser().parse(order);
 						if (json != null && !json.isEmpty()) {
 							qo.setOrder(Util.otos(((JSONObject) json.get(0)).get("property")),
-									Util.otos(((JSONObject) json.get(0)).get("direction")));
+									OrderValue.valueOf(Util.otos(((JSONObject) json.get(0)).get("direction")).toUpperCase()));
 						}
 					} catch (ParseException ex) {
 						LOG.error(ex);
@@ -67,12 +73,12 @@ public class BaseResource {
 				for (PokeObject object : getContext().getObjects(clazz, qo)) {
 					objects.add(object.toJson());
 				}
-				result.put("success", true);
-				result.put("total", total);
-				result.put("objects", objects);
+				result.put(ARG_SUCCESS, true);
+				result.put(ARG_TOTAL, total);
+				result.put(ARG_OBJECTS, objects);
 			} catch (GeneralException ex) {
-				result.put("success", false);
-				result.put("message", ex.getMessage());
+				result.put(ARG_SUCCESS, false);
+				result.put(ARG_MESSAGE, ex.getMessage());
 			}
 		}
 		return result;
