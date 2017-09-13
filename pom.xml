@@ -3,7 +3,7 @@
 	<modelVersion>4.0.0</modelVersion>
 	<groupId>net.cattweasel</groupId>
 	<artifactId>pokebot</artifactId>
-	<version>1.3</version>
+	<version>1.4</version>
 	<packaging>war</packaging>
 	<properties>
 		<java.version>1.8</java.version>

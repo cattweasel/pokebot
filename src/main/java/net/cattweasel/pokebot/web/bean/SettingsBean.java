@@ -14,6 +14,7 @@ public class SettingsBean extends BaseBean {
 	private Boolean gymEnabled;
 	private Integer gymLevel;
 	private Integer gymRange;
+	private Boolean updatesEnabled;
 	
 	public String getLanguage() throws GeneralException {
 		language = getSetting(ExtendedAttributes.USER_SETTINGS_LANGUAGE) != null
@@ -34,6 +35,16 @@ public class SettingsBean extends BaseBean {
 	
 	public void setGymEnabled(Boolean gymEnabled) {
 		this.gymEnabled = gymEnabled;
+	}
+	
+	public Boolean getUpdatesEnabled() throws GeneralException {
+		updatesEnabled = getSetting(ExtendedAttributes.USER_SETTINGS_UPDATES_ENABLED) != null
+				? Util.otob(getSetting(ExtendedAttributes.USER_SETTINGS_UPDATES_ENABLED)) : true;
+		return updatesEnabled;
+	}
+	
+	public void setUpdatesEnabled(Boolean updatesEnabled) {
+		this.updatesEnabled = updatesEnabled;
 	}
 	
 	public Boolean getDeleteExpired() throws GeneralException {

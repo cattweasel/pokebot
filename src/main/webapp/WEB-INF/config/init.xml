@@ -21,6 +21,7 @@
 		<ImportAction location="AuditAction/AuditAction - SendBroadcast.xml" />
 		<ImportAction location="AuditAction/AuditAction - SendRaidNotification.xml" />
 		<ImportAction location="AuditAction/AuditAction - SendSpawnNotification.xml" />
+		<ImportAction location="AuditAction/AuditAction - SendUpdateNotification.xml" />
 		<ImportAction location="AuditAction/AuditAction - StartBotSession.xml" />
 		<ImportAction location="AuditAction/AuditAction - StopBotSession.xml" />
 		<ImportAction location="AuditAction/AuditAction - UnbanUser.xml" />
@@ -40,11 +41,13 @@
 		<!-- DEFAULT TASK DEFINITIONS -->
 		<ImportAction location="TaskDefinition/TaskDefinition - Gomap Refresh Task.xml" />
 		<ImportAction location="TaskDefinition/TaskDefinition - Perform Maintenance Task.xml" />
+		<ImportAction location="TaskDefinition/TaskDefinition - Update Refresh Task.xml" />
 		<ImportAction location="TaskDefinition/TaskDefinition - User Notification Task.xml" />
 		
 		<!-- DEFAULT TASK SCHEDULES -->
 		<ImportAction location="TaskSchedule/TaskSchedule - Gomap Refresh Task.xml" />
 		<ImportAction location="TaskSchedule/TaskSchedule - Perform Maintenance Task.xml" />
+		<ImportAction location="TaskSchedule/TaskSchedule - Update Refresh Task.xml" />
 		<ImportAction location="TaskSchedule/TaskSchedule - User Notification Task.xml" />
 		
 		<!-- DEFAULT TEAMS -->

@@ -1,6 +1,5 @@
 .x-form-item-label-default {
 	color: #000000 !important;
-	font: 300 20px/24px helvetica,arial,verdana,sans-serif;
 }
 
 .x-btn-inner-default-toolbar-small {
@@ -8,42 +7,26 @@
 }
 
 .x-panel-header-title-default {
-	font-size: 20px;
+	font-size: 26px;
 }
 
 .x-panel-header-title-default {
-	line-height: 20px;
+	line-height: 26px;
 }
 
-.x-form-text-default {
-    font: 300 20px/24px helvetica,arial,verdana,sans-serif;
-}
-
-.x-toolbar-text-default {
-	font: 300 20px/24px helvetica,arial,verdana,sans-serif;
-}
-
-.x-boundlist-item {
-	font: 20px/24px helvetica,arial,verdana,sans-serif;
+.x-form-text-default, .x-toolbar-text-default, .x-boundlist-item, .x-form-item-label-default, .x-grid-item, .x-column-header {
+    font: 300 26px/30px helvetica,arial,verdana,sans-serif;
 }
 
 .x-window-body-default {
-	font-size: 18px;
+	font-size: 22px;
 }
 
 .x-window-header-title-default {
-	font-size: 20px;
-	line-height: 20px;
+	font-size: 24px;
+	line-height: 24px;
 }
 
-.x-btn-inner-default-toolbar-small {
-	font: 300 16px/20px helvetica,arial,verdana,sans-serif;
-}
-
-.x-grid-item {
-	font: 300 20px/24px helvetica,arial,verdana,sans-serif;
-}
-
-.x-column-header {
-	font: 300 20px/24px helvetica,arial,verdana,sans-serif;
+.x-btn-inner-default-toolbar-small, .x-btn-inner-default-small {
+	font: 300 22px/26px helvetica,arial,verdana,sans-serif;
 }

@@ -129,7 +129,7 @@
 		  			layout: 'anchor',
 		  		    defaults: {
 		  		        anchor: '100%',
-		  		        labelWidth: 260
+		  		        labelWidth: 300
 		  		    },
 		  		  	bbar: ['->', {
 		    				xtype: 'button',
@@ -137,6 +137,7 @@
 	  		    			handler: function() {
 	  		    				var fields = [];
 	  		    				fields.push("deleteExpired");
+	  		    				fields.push("updatesEnabled");
 	  		    				fields.push("language");
 	  		    				save(fields);
 	  		    			}
@@ -146,6 +147,11 @@
 		  				id: 'deleteExpired',
 		  				fieldLabel: '#{msgs.settings_delete_expired_messages}',
 		  				value: #{settings.deleteExpired}
+		  			}, {
+		  				xtype: 'checkbox',
+		  				id: 'updatesEnabled',
+		  				fieldLabel: '#{msgs.settings_updates_enabled}',
+		  				value: #{settings.updatesEnabled}
 		  			}, {
 		  				xtype: 'combobox',
 		  				id: 'language',
@@ -164,13 +170,13 @@
 		  			title: '#{msgs.settings_profile_settings}',
 		  			width: '100%',
 		  			style: {
-		  				margin: '15px 0 0 0'
+		  				margin: '20px 0 0 0'
 		  			},
 		  			bodyPadding: 10,
 		  			layout: 'anchor',
 		  		    defaults: {
 		  		        anchor: '100%',
-		  		      	labelWidth: 260
+		  		      	labelWidth: 300
 		  		    },
 			  		bbar: ['->', {
 			    			xtype: 'button',
@@ -224,13 +230,13 @@
 		  			title: '#{msgs.settings_raid_settings}',
 		  			width: '100%',
 		  			style: {
-		  				margin: '15px 0 0 0'
+		  				margin: '20px 0 0 0'
 		  			},
 		  			bodyPadding: 10,
 		  			layout: 'anchor',
 		  		    defaults: {
 		  		        anchor: '100%',
-		  		      	labelWidth: 260
+		  		      	labelWidth: 300
 		  		    },
 		  		    bbar: ['->', {
 	  		    			xtype: 'button',
@@ -270,7 +276,7 @@
 		  			title: '#{msgs.settings_pokemon_settings}',
 		  			width: '100%',
 		  			style: {
-		  				margin: '15px 0 0 0'
+		  				margin: '20px 0 0 0'
 		  			},
 		  			store: pokemonStore,
 		  			scrollable: false,
@@ -286,6 +292,7 @@
 		  		    		store: selectionStore,
 		  		    		displayField: 'name',
 		  				valueField: 'id',
+		  				labelWidth: 90,
 		  				forceSelection: true,
 		  				allowBlank: false,
 		  				value: 'all',
@@ -297,7 +304,7 @@
 		  		    		style: {
 		  		    			margin: '0 0 0 15px'
 		  		    		},
-		  		    		labelWidth: 200,
+		  		    		labelWidth: 145,
 		  		    		value: 3000,
 		  		    		minValue: 200,
 		  		    		maxValue: 50000,
@@ -306,7 +313,7 @@
 		  		    		xtype: 'button',
 		  		    		text: '#{msgs.accept}',
 		  		    		style: {
-		  		    			margin: '0 0 0 15px'
+		  		    			margin: '0 0 0 10px'
 		  		    		},
 		  		    		disabled: true // TODO
 		  		    }, '->', {

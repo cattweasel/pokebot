@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
+<TaskDefinition name="Update Refresh Task" executor="net.cattweasel.pokebot.task.UpdateRefreshTask" resultAction="Delete">
+	<attributes>
+		<entry>
+            <key>updateUrl</key>
+            <value xsi:type="xs:string" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">http://pokemongo.nianticlabs.com/en/post/</value>
+        </entry>
+    </attributes>
+</TaskDefinition>

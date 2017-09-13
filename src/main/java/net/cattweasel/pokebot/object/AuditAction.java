@@ -26,6 +26,7 @@ public class AuditAction extends PokeObject {
 	public static final String SEND_BROADCAST = "SendBroadcast";
 	public static final String SEND_RAID_NOTIFICATION = "SendRaidNotification";
 	public static final String SEND_SPAWN_NOTIFICATION = "SendSpawnNotification";
+	public static final String SEND_UPDATE_NOTIFICATION = "SendUpdateNotification";
 	public static final String START_BOT_SESSION = "StartBotSession";
 	public static final String STOP_BOT_SESSION = "StopBotSession";
 	public static final String UNBAN_USER = "UnbanUser";
